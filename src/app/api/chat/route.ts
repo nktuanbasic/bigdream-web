@@ -50,6 +50,7 @@ export async function POST(req: NextRequest) {
       // Nếu có ảnh, ta phải dùng cấu trúc messages array
       const imageBase64: string = body.image || '';
       
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const messagesContent: any[] = [
         { type: 'text', text: userMessage }
       ];
@@ -57,12 +58,28 @@ export async function POST(req: NextRequest) {
         messagesContent.push({ type: 'image', image: imageBase64 });
       }
 
-      const result = await generateText({
-        model: google('gemini-1.5-flash-latest'), // Thử dùng alias -latest
-        system: systemPrompt,
-        messages: [{ role: 'user', content: messagesContent }],
-        temperature: 0.7,
-      });
+      const modelsToTry = ['gemini-1.5-pro-latest', 'gemini-1.5-flash-latest', 'gemini-1.5-flash'];
+      let result = null;
+      let lastModelError: unknown = null;
+
+      for (const modelName of modelsToTry) {
+        try {
+          result = await generateText({
+            model: google(modelName),
+            system: systemPrompt,
+            messages: [{ role: 'user', content: messagesContent }],
+            temperature: 0.7,
+          });
+          break; // Nếu gọi thành công thì thoát vòng lặp model ngay
+        } catch (err: unknown) {
+          lastModelError = err;
+          // Ghi nhận lỗi và tự động nhảy sang model tiếp theo trong danh sách
+        }
+      }
+
+      if (!result) {
+        throw lastModelError; // Nếu thử hết các model vẫn tạch, quăng lỗi ra ngoài để đổi API Key
+      }
 
       return NextResponse.json({ reply: result.text, keyUsed: i + 1 });
     } catch (error: unknown) {
