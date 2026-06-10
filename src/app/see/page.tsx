@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useState } from 'react';
 
 interface ChatMessage {
@@ -98,9 +99,16 @@ export default function SeeWorkspace() {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] flex flex-col md:flex-row">
-      {/* Sidebar - 8 Nhánh SEE */}
-      <aside className="w-full md:w-64 border-r border-[var(--color-border)] bg-[var(--color-surface)]/50 backdrop-blur-md p-6 flex flex-col shrink-0">
+    <div className="relative min-h-screen flex flex-col md:flex-row selection:bg-[var(--color-gold-base)] selection:text-black">
+      {/* Immersive Background */}
+      <div className="fixed inset-0 z-0 pointer-events-none">
+        <Image src="/assets/C_DR_04.png" alt="Workspace Background" fill className="object-cover opacity-20" priority />
+        <div className="absolute inset-0 bg-gradient-to-br from-black/90 via-black/70 to-black/90"></div>
+      </div>
+
+      <div className="relative z-10 w-full flex flex-col md:flex-row min-h-screen">
+        {/* Sidebar - 8 Nhánh SEE */}
+        <aside className="w-full md:w-64 border-r border-white/10 bg-black/40 backdrop-blur-xl p-6 flex flex-col shrink-0 text-white">
         <div className="mb-8">
           <Link href="/" className="text-sm text-[var(--color-muted)] hover:text-[var(--color-gold-base)] transition-colors">
             ← Quay lại Hub
@@ -124,14 +132,14 @@ export default function SeeWorkspace() {
             </button>
           ))}
         </nav>
-      </aside>
+        </aside>
 
-      {/* Main Workspace */}
-      <main className="flex-1 flex flex-col h-screen">
-        {/* Header */}
-        <header className="h-16 border-b border-[var(--color-border)] flex items-center px-8 shrink-0">
-          <h2 className="text-lg tracking-wider text-[var(--color-muted)]">
-            Workspace: <span className="text-[var(--foreground)] font-bold">{activeBranch}</span>
+        {/* Main Workspace */}
+        <main className="flex-1 flex flex-col min-h-screen bg-transparent">
+          {/* Header */}
+          <header className="h-16 border-b border-white/10 bg-black/20 backdrop-blur-md flex items-center px-8 shrink-0 text-white">
+            <h2 className="text-lg tracking-wider text-gray-400">
+              Workspace: <span className="text-white font-bold">{activeBranch}</span>
             <span className="text-sm ml-2">({activeInfo?.desc})</span>
           </h2>
         </header>
@@ -178,9 +186,9 @@ export default function SeeWorkspace() {
           </div>
         </div>
 
-        {/* Input */}
-        <div className="p-8 border-t border-[var(--color-border)] bg-[var(--background)] shrink-0">
-          <form onSubmit={handleSubmit} className="max-w-3xl mx-auto relative">
+          {/* Input */}
+          <div className="p-8 border-t border-white/10 bg-black/40 backdrop-blur-xl shrink-0">
+            <form onSubmit={handleSubmit} className="max-w-3xl mx-auto relative">
             {selectedImage && (
               <div className="absolute bottom-full left-0 mb-4 p-2 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl shadow-lg flex items-start gap-2">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -229,9 +237,10 @@ export default function SeeWorkspace() {
                 </button>
               </div>
             </div>
-          </form>
-        </div>
-      </main>
+            </form>
+          </div>
+        </main>
+      </div>
     </div>
   );
 }

@@ -96,45 +96,41 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-             {/* Thẻ 1 */}
-             <div className="bg-black/60 backdrop-blur-xl border border-white/10 p-12 hover:border-[var(--color-gold-base)] transition-all duration-500 group cursor-default">
+             <Link href="/model" className="block bg-black/60 backdrop-blur-xl border border-white/10 p-12 hover:border-[var(--color-gold-base)] transition-all duration-500 group cursor-pointer">
                 <h3 className="text-4xl font-bold tracking-tighter mb-4 text-white group-hover:text-[var(--color-gold-base)] transition-colors">
                   BIG MODEL
                 </h3>
                 <p className="text-gray-400 font-light text-lg">
                   Thư viện 3D Model độc quyền, tối ưu hoá hoàn toàn lưới Mesh cho quy trình AI Render.
                 </p>
-             </div>
+             </Link>
              
-             {/* Thẻ 2 */}
-             <div className="bg-black/60 backdrop-blur-xl border border-white/10 p-12 hover:border-[var(--color-gold-base)] transition-all duration-500 group cursor-default">
+             <Link href="/lens" className="block bg-black/60 backdrop-blur-xl border border-white/10 p-12 hover:border-[var(--color-gold-base)] transition-all duration-500 group cursor-pointer">
                 <h3 className="text-4xl font-bold tracking-tighter mb-4 text-white group-hover:text-[var(--color-gold-base)] transition-colors">
                   BIG LENS
                 </h3>
                 <p className="text-gray-400 font-light text-lg">
                   Hệ thống kiểm định thị giác và hậu kỳ tự động chuẩn điện ảnh.
                 </p>
-             </div>
+             </Link>
              
-             {/* Thẻ 3 */}
-             <div className="bg-black/60 backdrop-blur-xl border border-white/10 p-12 hover:border-[var(--color-gold-base)] transition-all duration-500 group cursor-default">
+             <Link href="/think" className="block bg-black/60 backdrop-blur-xl border border-white/10 p-12 hover:border-[var(--color-gold-base)] transition-all duration-500 group cursor-pointer">
                 <h3 className="text-4xl font-bold tracking-tighter mb-4 text-white group-hover:text-[var(--color-gold-base)] transition-colors">
                   BIG THINK
                 </h3>
                 <p className="text-gray-400 font-light text-lg">
                   Không gian tư duy kiến trúc, phân tích Layout và Styling chuyên sâu.
                 </p>
-             </div>
+             </Link>
              
-             {/* Thẻ 4 */}
-             <div className="bg-black/60 backdrop-blur-xl border border-white/10 p-12 hover:border-[var(--color-gold-base)] transition-all duration-500 group cursor-default">
+             <Link href="/class" className="block bg-black/60 backdrop-blur-xl border border-white/10 p-12 hover:border-[var(--color-gold-base)] transition-all duration-500 group cursor-pointer">
                 <h3 className="text-4xl font-bold tracking-tighter mb-4 text-white group-hover:text-[var(--color-gold-base)] transition-colors">
                   BIG CLASS
                 </h3>
                 <p className="text-gray-400 font-light text-lg">
                   Học viện đào tạo AI Master, hướng dẫn vận hành toàn bộ hệ sinh thái.
                 </p>
-             </div>
+             </Link>
           </div>
         </div>
       </section>
