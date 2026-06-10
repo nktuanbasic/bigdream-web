@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
       }
 
       const result = await generateText({
-        model: google('gemini-1.5-flash'), // Sửa cú pháp model chuẩn
+        model: google('gemini-1.5-flash-latest'), // Thử dùng alias -latest
         system: systemPrompt,
         messages: [{ role: 'user', content: messagesContent }],
         temperature: 0.7,
