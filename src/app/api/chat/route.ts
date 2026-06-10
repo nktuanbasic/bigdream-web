@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
       // Nếu có ảnh, ta phải dùng cấu trúc messages array
       const imageBase64: string = body.image || '';
       
-      const messagesContent: Array<{ type: 'text' | 'image'; text?: string; image?: string }> = [
+      const messagesContent: any[] = [
         { type: 'text', text: userMessage }
       ];
       if (imageBase64) {
