@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useChat } from 'ai/react';
+import { useChat } from '@ai-sdk/react';
 
 export default function SeeWorkspace() {
   const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat();
