@@ -1,6 +1,10 @@
-import { google } from '@ai-sdk/google';
+import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { generateText } from 'ai';
 import { NextRequest, NextResponse } from 'next/server';
+
+const google = createGoogleGenerativeAI({
+  apiKey: process.env.GEMINI_API_KEY || '',
+});
 
 const SYSTEM_PROMPTS: Record<string, string> = {
   BOARD: `Mày là BOARD — nhánh tiền kỳ của SEE Engine. 
