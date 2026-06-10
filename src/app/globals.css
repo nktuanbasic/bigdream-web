@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+@theme inline {
+  /* Khống chế Bảng màu theo Tỷ lệ 60-30-10 (Đen - Trắng - Vàng Kim) */
+  
+  /* 60% Đen - Background */
+  --color-background: var(--background);
+  --color-surface: #111111;
+  --color-border: #222222;
+
+  /* 30% Trắng/Bạc - Foreground (Text) */
+  --color-foreground: var(--foreground);
+  --color-muted: #A3A3A3;
+  
+  /* 10% Vàng Kim (Mệnh Kim) - Accent/Highlight */
+  --color-gold-light: #FCE69C;
+  --color-gold-base: #D4AF37;   /* Metallic Gold */
+  --color-gold-dark: #AA8822;
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+/* Ép toàn bộ hệ thống chạy Dark Mode vĩnh viễn */
+:root {
+  --background: #050505; /* Đen sâu thẳm (Void) */
+  --foreground: #E5E5E5; /* Trắng ngà/Bạc chống mỏi mắt */
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+  /* Chống cuộn mượt mà chuẩn Luxury */
+  scroll-behavior: smooth;
+  /* Chống nhiễu text */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Các lớp tiện ích phụ trợ cho hệ màu mới */
+@layer utilities {
+  .text-gold {
+    color: var(--color-gold-base);
+  }
+  .bg-gold {
+    background-color: var(--color-gold-base);
+  }
+  .border-gold {
+    border-color: var(--color-gold-base);
+  }
+  /* Hiệu ứng Glow Vàng Kim cho các nút bấm quan trọng */
+  .glow-gold {
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+  }
+}
