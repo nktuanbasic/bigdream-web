@@ -58,7 +58,13 @@ export async function POST(req: NextRequest) {
         messagesContent.push({ type: 'image', image: imageBase64 });
       }
 
-      const modelsToTry = ['gemini-1.5-pro-latest', 'gemini-1.5-flash-latest', 'gemini-1.5-flash'];
+      const modelsToTry = [
+        'gemini-2.5-pro',
+        'gemini-2.5-flash',
+        'gemini-1.5-pro-latest',
+        'gemini-1.5-flash-latest',
+        'gemini-1.5-flash'
+      ];
       let result = null;
       let lastModelError: unknown = null;
 
