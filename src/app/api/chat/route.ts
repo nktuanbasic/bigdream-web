@@ -29,7 +29,7 @@ export async function POST(req: Request) {
     });
 
     // Trả về dòng chảy text (streaming) cho client
-    return result.toDataStreamResponse();
+    return (result as any).toDataStreamResponse();
   } catch (error) {
     console.error("Lỗi khi kết nối Gemini:", error);
     return new Response(JSON.stringify({ error: "Lỗi kết nối AI" }), { status: 500 });
