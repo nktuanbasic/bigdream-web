@@ -7,6 +7,7 @@ interface ChatMessage {
   id: string;
   role: 'user' | 'assistant';
   content: string;
+  image?: string | null;
 }
 
 const BRANCHES = [
@@ -25,23 +26,29 @@ export default function SeeWorkspace() {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [activeBranch, setActiveBranch] = useState('BOARD');
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const activeInfo = BRANCHES.find(b => b.key === activeBranch);
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!input.trim() || isLoading) return;
+  async function handleSubmit(e?: React.FormEvent) {
+    if (e) e.preventDefault();
+    if ((!input.trim() && !selectedImage) || isLoading) return;
 
-    const userMsg: ChatMessage = { id: Date.now().toString(), role: 'user', content: input };
+    const userMsg: ChatMessage = { id: Date.now().toString(), role: 'user', content: input, image: selectedImage };
     setMessages(prev => [...prev, userMsg]);
+    
+    const payloadInput = input;
+    const payloadImage = selectedImage;
+    
     setInput('');
+    setSelectedImage(null);
     setIsLoading(true);
 
     try {
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: input, branch: activeBranch }),
+        body: JSON.stringify({ message: payloadInput, branch: activeBranch, image: payloadImage }),
       });
       const data = await res.json();
       const aiMsg: ChatMessage = {
@@ -57,9 +64,37 @@ export default function SeeWorkspace() {
     }
   }
 
+  // Xử lý Ctrl+V dán ảnh
+  function handlePaste(e: React.ClipboardEvent<HTMLTextAreaElement>) {
+    const items = e.clipboardData?.items;
+    if (!items) return;
+
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].type.indexOf('image') !== -1) {
+        const file = items[i].getAsFile();
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (event) => setSelectedImage(event.target?.result as string);
+          reader.readAsDataURL(file);
+        }
+      }
+    }
+  }
+
+  // Xử lý nút chọn ảnh
+  function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => setSelectedImage(event.target?.result as string);
+      reader.readAsDataURL(file);
+    }
+  }
+
   function handleBranchSwitch(key: string) {
     setActiveBranch(key);
     setMessages([]);
+    setSelectedImage(null);
   }
 
   return (
@@ -105,12 +140,15 @@ export default function SeeWorkspace() {
         <div className="flex-1 p-8 overflow-y-auto">
           <div className="max-w-3xl mx-auto space-y-6">
             {messages.length === 0 ? (
-              <div className="border-2 border-dashed border-[var(--color-border)] rounded-2xl p-12 flex flex-col items-center justify-center text-center hover:border-[var(--color-gold-base)] transition-colors cursor-pointer group">
+              <div 
+                className="border-2 border-dashed border-[var(--color-border)] rounded-2xl p-12 flex flex-col items-center justify-center text-center hover:border-[var(--color-gold-base)] transition-colors cursor-pointer group"
+                onClick={() => document.getElementById('file-upload')?.click()}
+              >
                 <div className="w-16 h-16 rounded-full bg-[var(--color-surface)] flex items-center justify-center mb-4 group-hover:glow-gold transition-all">
                   <span className="text-2xl">📸</span>
                 </div>
                 <h3 className="text-[var(--foreground)] font-bold mb-2">Nhánh {activeBranch} đã sẵn sàng</h3>
-                <p className="text-[var(--color-muted)] text-sm">Nhập prompt thô hoặc kéo thả ảnh tham chiếu vào bên dưới để bắt đầu biên dịch.</p>
+                <p className="text-[var(--color-muted)] text-sm">Nhập prompt thô, ấn Ctrl+V để dán ảnh, hoặc Click vào đây để tải ảnh lên.</p>
               </div>
             ) : (
               messages.map(m => (
@@ -118,6 +156,12 @@ export default function SeeWorkspace() {
                   <span className={`text-xs font-bold uppercase tracking-widest mb-3 block ${m.role === 'user' ? 'text-[var(--color-muted)]' : 'text-[var(--color-gold-base)]'}`}>
                     {m.role === 'user' ? 'Client Request' : `SEE Master / ${activeBranch}`}
                   </span>
+                  {m.image && (
+                    <div className="mb-4">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={m.image} alt="Reference" className="max-h-64 rounded-xl border border-[var(--color-border)] object-contain" />
+                    </div>
+                  )}
                   <div className="whitespace-pre-wrap text-[15px] leading-relaxed">
                     {m.content}
                   </div>
@@ -136,23 +180,49 @@ export default function SeeWorkspace() {
 
         {/* Input */}
         <div className="p-8 border-t border-[var(--color-border)] bg-[var(--background)] shrink-0">
-          <form onSubmit={handleSubmit} className="max-w-3xl mx-auto">
+          <form onSubmit={handleSubmit} className="max-w-3xl mx-auto relative">
+            {selectedImage && (
+              <div className="absolute bottom-full left-0 mb-4 p-2 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl shadow-lg flex items-start gap-2">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={selectedImage} alt="Preview" className="h-20 w-auto rounded border border-[var(--color-border)] object-cover" />
+                <button 
+                  type="button" 
+                  onClick={() => setSelectedImage(null)}
+                  className="bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white rounded-full w-6 h-6 flex items-center justify-center transition-colors"
+                >
+                  ✕
+                </button>
+              </div>
+            )}
             <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl p-4 flex flex-col focus-within:border-[var(--color-gold-base)] transition-colors">
               <textarea
                 value={input}
                 onChange={e => setInput(e.target.value)}
+                onPaste={handlePaste}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSubmit();
+                  }
+                }}
                 className="w-full bg-transparent border-none outline-none resize-none text-[var(--foreground)] placeholder-[var(--color-muted)] min-h-[80px]"
-                placeholder="Nhập prompt thô, mô tả lộn xộn, hoặc yêu cầu của khách hàng vào đây..."
+                placeholder="Nhập prompt thô, ấn Ctrl+V để dán ảnh trực tiếp vào đây..."
                 disabled={isLoading}
               />
               <div className="flex justify-between items-center mt-4 pt-4 border-t border-[var(--color-border)]">
-                <span className="text-xs text-[var(--color-muted)] flex items-center gap-2">
-                  <div className={`w-2 h-2 rounded-full ${isLoading ? 'bg-orange-500 animate-pulse' : 'bg-green-500'}`}></div>
-                  {isLoading ? 'Đang chạy phân tích 6 bước' : `Sẵn sàng — Nhánh ${activeBranch}`}
-                </span>
+                <div className="flex items-center gap-4">
+                  <input type="file" accept="image/*" id="file-upload" className="hidden" onChange={handleImageUpload} />
+                  <label htmlFor="file-upload" className="cursor-pointer text-[var(--color-muted)] hover:text-[var(--color-gold-base)] transition-colors p-2 bg-transparent rounded-lg border border-transparent hover:border-[var(--color-gold-base)]/30">
+                    📎 Tải ảnh
+                  </label>
+                  <span className="text-xs text-[var(--color-muted)] flex items-center gap-2">
+                    <div className={`w-2 h-2 rounded-full ${isLoading ? 'bg-orange-500 animate-pulse' : 'bg-green-500'}`}></div>
+                    {isLoading ? 'Đang chạy phân tích 6 bước' : `Sẵn sàng — Nhánh ${activeBranch}`}
+                  </span>
+                </div>
                 <button
                   type="submit"
-                  disabled={isLoading || !input.trim()}
+                  disabled={isLoading || (!input.trim() && !selectedImage)}
                   className="px-6 py-2 bg-[var(--color-gold-base)] text-black font-bold rounded-lg hover:bg-[var(--color-gold-light)] transition-colors glow-gold disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Khởi chạy SEE

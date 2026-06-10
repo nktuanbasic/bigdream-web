@@ -47,10 +47,20 @@ export async function POST(req: NextRequest) {
     try {
       const google = createGoogleGenerativeAI({ apiKey: keys[i] });
 
+      // Nếu có ảnh, ta phải dùng cấu trúc messages array
+      const imageBase64: string = body.image || '';
+      
+      const messagesContent: Array<{ type: 'text' | 'image'; text?: string; image?: string }> = [
+        { type: 'text', text: userMessage }
+      ];
+      if (imageBase64) {
+        messagesContent.push({ type: 'image', image: imageBase64 });
+      }
+
       const result = await generateText({
-        model: google('models/gemini-1.5-flash'),
+        model: google('gemini-1.5-flash'), // Sửa cú pháp model chuẩn
         system: systemPrompt,
-        prompt: userMessage,
+        messages: [{ role: 'user', content: messagesContent }],
         temperature: 0.7,
       });
 
