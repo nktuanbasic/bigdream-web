@@ -2,9 +2,11 @@ import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { generateText } from 'ai';
 import { NextRequest, NextResponse } from 'next/server';
 
-const google = createGoogleGenerativeAI({
-  apiKey: process.env.GEMINI_API_KEY || '',
-});
+// Đọc danh sách API Keys từ biến môi trường (phân cách bằng dấu phẩy)
+function getApiKeys(): string[] {
+  const keys = process.env.GEMINI_API_KEYS || process.env.GEMINI_API_KEY || '';
+  return keys.split(',').map(k => k.trim()).filter(k => k.length > 0);
+}
 
 const SYSTEM_PROMPTS: Record<string, string> = {
   BOARD: `Mày là BOARD — nhánh tiền kỳ của SEE Engine. 
@@ -30,24 +32,42 @@ EXPLAIN
 };
 
 export async function POST(req: NextRequest) {
-  try {
-    const body = await req.json();
-    const userMessage: string = body.message || '';
-    const branch: string = body.branch || 'BOARD';
+  const body = await req.json();
+  const userMessage: string = body.message || '';
+  const branch: string = body.branch || 'BOARD';
+  const systemPrompt = SYSTEM_PROMPTS[branch] || SYSTEM_PROMPTS['BOARD'];
 
-    const systemPrompt = SYSTEM_PROMPTS[branch] || SYSTEM_PROMPTS['BOARD'];
-
-    const result = await generateText({
-      model: google('models/gemini-2.0-flash'),
-      system: systemPrompt,
-      prompt: userMessage,
-      temperature: 0.7,
-    });
-
-    return NextResponse.json({ reply: result.text });
-  } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : 'Unknown error';
-    console.error('Lỗi kết nối Gemini:', message);
-    return NextResponse.json({ error: 'Lỗi kết nối AI: ' + message }, { status: 500 });
+  const keys = getApiKeys();
+  if (keys.length === 0) {
+    return NextResponse.json({ error: 'Chưa cấu hình API Key. Vui lòng thêm GEMINI_API_KEY hoặc GEMINI_API_KEYS vào Environment Variables.' }, { status: 500 });
   }
+
+  // Xoay vòng: thử từng key, hết key này nhảy sang key kế tiếp
+  for (let i = 0; i < keys.length; i++) {
+    try {
+      const google = createGoogleGenerativeAI({ apiKey: keys[i] });
+
+      const result = await generateText({
+        model: google('models/gemini-1.5-flash'),
+        system: systemPrompt,
+        prompt: userMessage,
+        temperature: 0.7,
+      });
+
+      return NextResponse.json({ reply: result.text, keyUsed: i + 1 });
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : '';
+      const isQuotaError = msg.includes('quota') || msg.includes('429') || msg.includes('RESOURCE_EXHAUSTED');
+
+      if (isQuotaError && i < keys.length - 1) {
+        // Key này hết quota → nhảy sang key tiếp theo
+        continue;
+      }
+
+      // Key cuối cùng cũng lỗi, hoặc lỗi không phải quota → báo lỗi
+      return NextResponse.json({ error: 'Lỗi kết nối AI: ' + msg }, { status: 500 });
+    }
+  }
+
+  return NextResponse.json({ error: 'Tất cả API Key đều đã hết quota.' }, { status: 500 });
 }

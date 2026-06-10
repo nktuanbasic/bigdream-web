@@ -22,7 +22,7 @@ export default function Home() {
               SEE <span className="text-sm font-normal text-[var(--color-muted)] ml-2">(BIG PROMPT)</span>
             </h2>
             <p className="text-[var(--color-muted)] group-hover:text-[var(--foreground)] transition-colors">
-              "Bộ não" Biên dịch & Vận hành LLM Wrapper với 8 nhánh chuyên biệt. Nhấn vào đây để vào không gian làm việc.
+              &quot;Bộ não&quot; Biên dịch & Vận hành LLM Wrapper với 8 nhánh chuyên biệt. Nhấn vào đây để vào không gian làm việc.
             </p>
           </Link>
 
