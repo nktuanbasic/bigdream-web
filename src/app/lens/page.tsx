@@ -8,60 +8,9 @@ import LensResults from '@/components/lens/LensResults';
 import { supabase } from '@/lib/supabase/client';
 
 export default function BigLensPage() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [walletInfo, setWalletInfo] = useState({ bas: 6, adv: 4, coin: 0 });
   const [scanStatus, setScanStatus] = useState<'idle' | 'loading' | 'success'>('idle');
   const [loadingText, setLoadingText] = useState("");
   const [resultData, setResultData] = useState<any>(null);
-
-  useEffect(() => {
-    // Check initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setIsLoggedIn(!!session);
-      if (session) fetchWallet();
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setIsLoggedIn(!!session);
-      if (session) fetchWallet();
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  const fetchWallet = async () => {
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return;
-      
-      const res = await fetch('/api/lens/analyze', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`
-        },
-        body: JSON.stringify({ action: 'get_wallet' })
-      });
-      const data = await res.json();
-      if (data.wallet) setWalletInfo(data.wallet);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const handleLogin = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: window.location.origin + '/lens'
-      }
-    });
-    if (error) alert("Lỗi đăng nhập: " + error.message);
-  };
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-  };
 
   const callAnalyzeAPI = async (action: string, payload: any, mode: string) => {
     const { data: { session } } = await supabase.auth.getSession();
@@ -86,7 +35,7 @@ export default function BigLensPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Lỗi server');
       
-      if (data.wallet) setWalletInfo(data.wallet);
+      
       setResultData(data.data);
       setScanStatus('success');
       return data;
@@ -119,12 +68,7 @@ export default function BigLensPage() {
         <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/50 to-[#070707]"></div>
       </div>
 
-      <LensHeader 
-        isLoggedIn={isLoggedIn} 
-        walletInfo={walletInfo} 
-        onLogin={handleLogin} 
-        onLogout={handleLogout} 
-      />
+      <LensHeader />
 
       <div className="w-full max-w-7xl flex-1 relative p-4 md:p-8 pt-0 mt-4 md:mt-0 z-10 mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -146,7 +90,7 @@ export default function BigLensPage() {
       {/* FOOTER ĐỒNG BỘ */}
       <footer className="relative w-full max-w-7xl mx-auto border-t border-[#222222] mt-12 py-10 px-8 flex flex-col md:flex-row justify-between gap-8 text-[#A3A3A3] z-50">
         <div className="flex-1">
-          <h3 className="text-[var(--color-gold-base)] font-black tracking-[0.2em] mb-2">LUXURY CURATOR</h3>
+          <h3 className="text-[var(--color-gold-base)] font-black tracking-[0.2em] mb-2">BIG LENS</h3>
           <p className="text-[9px] uppercase tracking-widest leading-loose text-[#A3A3A3]">
             Hệ thống nhận diện nội thất cao cấp thuộc Big Dream Studio.
           </p>
