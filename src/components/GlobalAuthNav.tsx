@@ -52,13 +52,21 @@ export default function GlobalAuthNav() {
   };
 
   const handleLogin = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: window.location.origin // Redirect to current domain
+    try {
+      if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
+        alert("Lỗi: Chưa nhận được NEXT_PUBLIC_SUPABASE_URL. Nếu chạy localhost, hãy tắt terminal và chạy lại npm run dev. Nếu trên Vercel, hãy Redeploy.");
+        return;
       }
-    });
-    if (error) alert("Lỗi đăng nhập: " + error.message);
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: window.location.origin + '/auth/callback' // Đổi sang route phụ để bắt auth
+        }
+      });
+      if (error) alert("Lỗi Supabase Auth: " + error.message);
+    } catch (e: any) {
+      alert("Lỗi gọi Supabase: " + e.message);
+    }
   };
 
   const handleLogout = async () => {
