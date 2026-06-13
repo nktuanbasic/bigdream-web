@@ -141,9 +141,9 @@ export default function GlobalAuthNav() {
             </div>
             
             <div className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-full bg-surface-container-high border border-glass-border overflow-hidden flex items-center justify-center text-on-surface-variant">
+              <Link href="/account" className="w-10 h-10 rounded-full bg-surface-container-high hover:bg-charcoal-surface border border-glass-border overflow-hidden flex items-center justify-center text-on-surface-variant hover:text-primary hover:border-primary transition-all duration-300">
                 <User size={24} weight="fill" />
-              </div>
+              </Link>
               <button
                 onClick={handleLogout}
                 className="w-10 h-10 rounded-full bg-surface-container-high hover:bg-error-container border border-glass-border hover:border-error hover:text-error text-on-surface-variant transition-colors flex items-center justify-center"
