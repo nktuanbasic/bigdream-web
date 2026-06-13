@@ -8,19 +8,51 @@ export default function AuthCallbackPage() {
   const router = useRouter();
 
   useEffect(() => {
-    // Supabase client automatically parses the URL hash (#access_token=...)
-    // Just wait for it to process, then redirect to home
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    // Kiểm tra xem URL có chứa lỗi không (Supabase sẽ trả về ?error=... nếu sai Client Secret)
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const error = urlParams.get('error');
+      const errorDescription = urlParams.get('error_description');
+      if (error) {
+        alert(`Lỗi từ Supabase/Google: ${errorDescription || error}. (Sếp check lại Client Secret nhé!)`);
+        router.push('/');
+        return;
+      }
+      
+      const hashParams = new URLSearchParams(window.location.hash.substring(1));
+      if (hashParams.get('error')) {
+        alert(`Lỗi từ Supabase: ${hashParams.get('error_description')}`);
+        router.push('/');
+        return;
+      }
+    }
+
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      if (error) {
+        alert("Lỗi lấy session: " + error.message);
+        router.push('/');
+        return;
+      }
+      
       if (session) {
         router.push('/');
       } else {
-        // If no session found yet, wait for onAuthStateChange
         const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
           if (session) {
             router.push('/');
           }
         });
-        return () => subscription.unsubscribe();
+        
+        // Timeout 10s nếu bị kẹt thì báo lỗi
+        const timeout = setTimeout(() => {
+          alert("Lỗi: Quá thời gian xác thực. Supabase không phản hồi token hợp lệ.");
+          router.push('/');
+        }, 10000);
+
+        return () => {
+          subscription.unsubscribe();
+          clearTimeout(timeout);
+        };
       }
     });
   }, [router]);
