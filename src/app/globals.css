@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-@theme inline {
+@theme {
   /* Colors */
   --color-background: #131313;
   --color-obsidian-deep: #050505;
