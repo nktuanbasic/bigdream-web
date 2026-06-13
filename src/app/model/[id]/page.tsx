@@ -2,7 +2,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { CaretLeft, Download, Heart, ShareNetwork, Cube, CheckCircle, WarningCircle, Eye } from '@phosphor-icons/react/dist/ssr';
 
-export default function ModelDetailPage({ params }: { params: { id: string } }) {
+export default async function ModelDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   // Mock data for the demonstration
   const modelName = "Minimalist Lounge Sofa";
   
