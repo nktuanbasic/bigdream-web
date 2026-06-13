@@ -22,13 +22,13 @@
   --color-glass-border: rgba(255, 255, 255, 0.08);
 
   /* Fonts */
-  --font-headline-lg-mobile: var(--font-bodoni), serif;
-  --font-headline-lg: var(--font-bodoni), serif;
-  --font-display-lg: var(--font-bodoni), serif;
-  --font-headline-md: var(--font-bodoni), serif;
-  --font-body-lg: var(--font-hanken), sans-serif;
-  --font-body-md: var(--font-hanken), sans-serif;
-  --font-label-sm: var(--font-hanken), sans-serif;
+  --font-headline-lg-mobile: var(--font-bodoni);
+  --font-headline-lg: var(--font-bodoni);
+  --font-display-lg: var(--font-bodoni);
+  --font-headline-md: var(--font-bodoni);
+  --font-body-lg: var(--font-hanken);
+  --font-body-md: var(--font-hanken);
+  --font-label-sm: var(--font-hanken);
 
   /* Spacing */
   --spacing-margin-desktop: 64px;
