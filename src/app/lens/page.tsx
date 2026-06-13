@@ -156,7 +156,7 @@ export default function LensPage() {
                       <span className="uppercase tracking-widest text-xs">Source Vector</span>
                     </div>
                     {/* Targeting HUD Overlay */}
-                    <div className="absolute top-1/4 left-1/3 w-16 h-16 border border-[#f2ca50]/50 bg-[#f2ca50]/10 flex items-center justify-center before:content-[''] before:absolute before:w-full before:h-[1px] before:bg-[#f2ca50]/30 before:-left-full after:content-[''] after:absolute after:h-full after:w-[1px] after:bg-[#f2ca50]/30 after:-bottom-full pointer-events-none group-hover:scale-110 transition-transform">
+                    <div className={`absolute top-1/4 left-1/3 w-16 h-16 border border-[#f2ca50]/50 bg-[#f2ca50]/10 flex items-center justify-center before:content-[""] before:absolute before:w-full before:h-[1px] before:bg-[#f2ca50]/30 before:-left-full after:content-[""] after:absolute after:h-full after:w-[1px] after:bg-[#f2ca50]/30 after:-bottom-full pointer-events-none group-hover:scale-110 transition-transform`}>
                       <Crosshair className="text-[#f2ca50] opacity-70" />
                     </div>
                   </div>
