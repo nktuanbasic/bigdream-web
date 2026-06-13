@@ -1,8 +1,10 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { supabase } from '@/lib/supabase/client';
-import { User, SignOut, Coin } from '@phosphor-icons/react';
+import { User, SignOut, Coin, MagnifyingGlass } from '@phosphor-icons/react';
 
 interface WalletInfo {
   bas: number;
@@ -10,7 +12,17 @@ interface WalletInfo {
   coin: number;
 }
 
+const NAV_LINKS = [
+  { label: 'SEE', href: '/see' },
+  { label: 'MODEL', href: '/model' },
+  { label: 'LENS', href: '/lens' },
+  { label: 'THINK', href: '/think' },
+  { label: 'CLASS', href: '/class' },
+  { label: 'ABOUT', href: '/about' },
+];
+
 export default function GlobalAuthNav() {
+  const pathname = usePathname();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [walletInfo, setWalletInfo] = useState<WalletInfo>({ bas: 0, adv: 0, coin: 0 });
 
@@ -54,13 +66,13 @@ export default function GlobalAuthNav() {
   const handleLogin = async () => {
     try {
       if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
-        alert("Lỗi: Chưa nhận được NEXT_PUBLIC_SUPABASE_URL. Nếu chạy localhost, hãy tắt terminal và chạy lại npm run dev. Nếu trên Vercel, hãy Redeploy.");
+        alert("Lỗi: Chưa nhận được NEXT_PUBLIC_SUPABASE_URL. Hãy Redeploy.");
         return;
       }
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: window.location.origin + '/auth/callback' // Đổi sang route phụ để bắt auth
+          redirectTo: window.location.origin + '/auth/callback'
         }
       });
       if (error) alert("Lỗi Supabase Auth: " + error.message);
@@ -74,47 +86,75 @@ export default function GlobalAuthNav() {
   };
 
   return (
-    <div className="fixed top-0 right-0 z-[100] p-4 flex justify-end w-full pointer-events-none">
-      <div className="pointer-events-auto">
+    <nav className="fixed top-0 w-full bg-surface/60 backdrop-blur-3xl border-b border-glass-border flex justify-between items-center px-4 md:px-margin-desktop py-4 z-50">
+      <div className="flex items-center gap-8">
+        <Link href="/" className="font-headline-md text-headline-md font-bold text-primary">
+          Big Dream
+        </Link>
+        <div className="hidden lg:flex items-center gap-6">
+          {NAV_LINKS.map((link) => {
+            const isActive = pathname === link.href || pathname.startsWith(link.href + '/');
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`font-body-md text-body-md px-3 py-1 transition-colors ${
+                  isActive
+                    ? 'text-primary font-bold border-b-2 border-primary pb-1'
+                    : 'text-on-surface-variant hover:text-on-surface hover:bg-white/5 rounded'
+                }`}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="flex items-center gap-4">
+        <div className="relative hidden xl:block">
+          <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" size={20} />
+          <input
+            className="bg-charcoal-surface border border-glass-border rounded-full pl-10 pr-4 py-2 text-sm text-on-surface focus:outline-none focus:border-primary focus:bg-surface-container-high transition-all w-64"
+            placeholder="Search parameters..."
+            type="text"
+          />
+        </div>
+
         {!isLoggedIn ? (
           <button
             onClick={handleLogin}
-            className="text-[10px] bg-white text-black hover:bg-gray-200 border border-transparent px-5 py-2.5 rounded uppercase font-bold transition-all flex items-center gap-2 shadow-lg"
+            className="bg-primary text-on-primary px-6 py-2 rounded-full font-bold hover:bg-primary-fixed transition-colors active:scale-95 duration-200"
           >
-            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" className="w-4 h-4" alt="G" />
-            Đăng nhập
+            Connect Wallet
           </button>
         ) : (
-          <div className="flex items-center gap-3 bg-[#111111]/80 backdrop-blur-md px-4 py-2 rounded-lg border border-[var(--color-gold-base)]/20 shadow-[0_0_15px_rgba(212,175,55,0.1)] transition-all">
-            <div className="flex flex-col text-right mr-2 hidden sm:flex">
-              <span className="text-[8px] text-[#A3A3A3] uppercase font-bold tracking-widest mb-1">Ví của bạn</span>
-              <div className="flex gap-1.5 items-center">
-                <span className="text-[9px] text-white bg-[#050505] px-1.5 py-0.5 rounded border border-[#222222]" title="Lượt Cơ Bản">
-                  CB: <b className="text-white">{walletInfo.bas}</b>
-                </span>
-                <span className="text-[9px] text-white bg-[#050505] px-1.5 py-0.5 rounded border border-[#222222]" title="Lượt VIP">
-                  VIP: <b className="text-[var(--color-gold-base)]">{walletInfo.adv}</b>
-                </span>
-                <span className="text-[9px] text-black bg-gold px-1.5 py-0.5 rounded border border-[var(--color-gold-base)] font-bold flex items-center gap-1">
-                  <Coin weight="fill" /> <b>{walletInfo.coin}</b>
-                </span>
+          <div className="flex items-center gap-4">
+            <div className="hidden md:flex items-center gap-2 bg-charcoal-surface border border-glass-border rounded-full px-4 py-1.5 inner-glow">
+              <span className="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold">CB: {walletInfo.bas}</span>
+              <span className="w-1 h-1 rounded-full bg-glass-border"></span>
+              <span className="text-[10px] text-primary uppercase tracking-widest font-bold">VIP: {walletInfo.adv}</span>
+              <span className="w-1 h-1 rounded-full bg-glass-border"></span>
+              <span className="text-[11px] text-primary font-bold flex items-center gap-1">
+                <Coin weight="fill" /> {walletInfo.coin}
+              </span>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <div className="w-10 h-10 rounded-full bg-surface-container-high border border-glass-border overflow-hidden flex items-center justify-center text-on-surface-variant">
+                <User size={24} weight="fill" />
               </div>
-            </div>
-            <div className="w-px h-8 bg-[#222222] hidden sm:block"></div>
-            <div className="flex gap-2">
-              <button className="text-[9px] bg-[var(--color-gold-base)]/10 text-[var(--color-gold-base)] hover:bg-gold hover:text-black border border-[var(--color-gold-base)]/30 px-3 py-1.5 rounded uppercase font-bold transition-all hidden sm:block">
-                Nạp Coin
-              </button>
-              <button className="text-[9px] bg-[#050505] text-white border border-[#222222] hover:border-[#A3A3A3] px-3 py-1.5 rounded uppercase font-bold flex items-center gap-1 transition-all">
-                <User weight="bold" /> <span className="hidden sm:inline">Tài khoản</span>
+              <button
+                onClick={handleLogout}
+                className="w-10 h-10 rounded-full bg-surface-container-high hover:bg-error-container border border-glass-border hover:border-error hover:text-error text-on-surface-variant transition-colors flex items-center justify-center"
+                title="Disconnect Wallet"
+              >
+                <SignOut size={20} weight="bold" />
               </button>
             </div>
-            <button onClick={handleLogout} className="text-[#A3A3A3] hover:text-red-500 ml-1 transition-colors" title="Đăng xuất">
-              <SignOut weight="bold" className="text-lg" />
-            </button>
           </div>
         )}
       </div>
-    </div>
+    </nav>
   );
 }

@@ -1,65 +1,22 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from 'react';
-import { TextT, Sparkle, Aperture, X, Scan } from '@phosphor-icons/react';
+import { Camera, UploadSimple, Link as LinkIcon, Scan, X } from '@phosphor-icons/react';
 
 interface LensScannerProps {
   onTextSearch: (text: string, mode: 'basic' | 'lens') => void;
   onImageScan: (imageBase64: string, mode: 'basic' | 'lens') => void;
 }
 
-const SMART_PLACEHOLDERS = [
-  "Minotti Horizonte", "Poliform Concorde", "Flos Arco", 
-  "B&B Italia Camaleonda", "Cassina LC4", "Louis Poulsen PH Artichoke", 
-  "Roche Bobois Mah Jong", "Baxter Chester Moon"
-];
-
 export default function LensScanner({ onTextSearch, onImageScan }: LensScannerProps) {
-  const [mode, setMode] = useState<'basic' | 'lens'>('basic');
-  const [inputText, setInputText] = useState("");
-  const [placeholder, setPlaceholder] = useState("");
+  const [mode, setMode] = useState<'basic' | 'lens'>('lens');
   const [imageBase64, setImageBase64] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Typewriter effect for placeholder
-  useEffect(() => {
-    let currentIdx = 0;
-    let charIdx = 0;
-    let isDeleting = false;
-    let timeoutId: NodeJS.Timeout;
-
-    const typeWriter = () => {
-      const currentText = SMART_PLACEHOLDERS[currentIdx];
-      
-      if (!isDeleting) {
-        setPlaceholder(currentText.substring(0, charIdx + 1));
-        charIdx++;
-        if (charIdx === currentText.length) {
-          isDeleting = true;
-          timeoutId = setTimeout(typeWriter, 2000);
-          return;
-        }
-      } else {
-        setPlaceholder(currentText.substring(0, charIdx - 1));
-        charIdx--;
-        if (charIdx === 0) {
-          isDeleting = false;
-          currentIdx = (currentIdx + 1) % SMART_PLACEHOLDERS.length;
-        }
-      }
-      timeoutId = setTimeout(typeWriter, isDeleting ? 30 : 80);
-    };
-
-    timeoutId = setTimeout(typeWriter, 1000);
-    return () => clearTimeout(timeoutId);
-  }, []);
-
-  // Handle paste events
   useEffect(() => {
     const handlePaste = (e: ClipboardEvent) => {
-      // Don't intercept if typing in input
       if (document.activeElement?.tagName === 'INPUT') return;
       
       const items = e.clipboardData?.items;
@@ -80,7 +37,7 @@ export default function LensScanner({ onTextSearch, onImageScan }: LensScannerPr
 
   const handleFile = (file: File) => {
     if (file.size > 5 * 1024 * 1024) {
-      alert('File ảnh quá lớn (Giới hạn 5MB).');
+      alert('File size exceeds limit (5MB).');
       return;
     }
     const reader = new FileReader();
@@ -115,110 +72,91 @@ export default function LensScanner({ onTextSearch, onImageScan }: LensScannerPr
     }
   };
 
-  const triggerTextSearch = () => {
-    const query = inputText.trim() || placeholder;
-    onTextSearch(query, mode);
-  };
-
   return (
-    <div className="lg:col-span-5 flex flex-col gap-6">
-      {/* TEXT SEARCH */}
-      <div className="bg-[#111111]/60 backdrop-blur-md p-1.5 rounded-lg border border-[#222222] shadow-lg">
-        <div className="relative flex items-center w-full bg-[#050505] rounded focus-within:border-[var(--color-gold-base)] transition-colors border border-transparent">
-          <div className="px-4 text-[var(--color-gold-base)]">
-            <TextT weight="bold" />
-          </div>
-          <input 
-            type="text" 
-            value={inputText}
-            onChange={(e) => setInputText(e.target.value)}
-            placeholder={placeholder || "Đang nạp dữ liệu..."} 
-            className="flex-1 bg-transparent text-xs text-white font-mono outline-none py-4 pr-4 cursor-text"
-            onKeyDown={(e) => e.key === 'Enter' && triggerTextSearch()}
-          />
-          <button 
-            onClick={triggerTextSearch}
-            className="bg-[#222222] text-[#A3A3A3] hover:bg-gold hover:text-black px-6 py-4 text-[10px] font-bold uppercase tracking-widest transition-all rounded-r"
-          >
-            Quét
-          </button>
-        </div>
-      </div>
-
-      {/* MODE TOGGLE */}
-      <div className="flex items-center gap-2 bg-[#050505] p-1.5 border border-[#222222] rounded-lg w-fit">
-        <button 
-          onClick={() => setMode('basic')}
-          className={`w-[110px] text-[9px] font-bold py-2.5 uppercase rounded transition-all ${
-            mode === 'basic' ? "bg-[#222222] text-white" : "text-[#A3A3A3] hover:text-white"
-          }`}
-        >
-          BASIC SCAN
-        </button>
-        <button 
-          onClick={() => setMode('lens')}
-          className={`w-[130px] text-[9px] font-bold py-2.5 uppercase rounded transition-all flex items-center justify-center gap-1 ${
-            mode === 'lens' ? "bg-gold text-black" : "text-[#A3A3A3] hover:text-white"
-          }`}
-        >
-          <Sparkle weight="fill" className={mode === 'lens' ? 'text-black' : 'text-[var(--color-gold-base)]'} /> ADVANCED SCAN
-        </button>
-      </div>
-
-      {/* UPLOAD ZONE */}
+    <section className="w-full relative group">
+      <input 
+        type="file" 
+        ref={fileInputRef}
+        className="hidden" 
+        accept="image/jpeg, image/png, image/webp"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (file) handleFile(file);
+        }}
+      />
+      
       {!imageBase64 ? (
         <div 
           onDragOver={onDragOver}
           onDragLeave={onDragLeave}
           onDrop={onDrop}
-          onClick={() => fileInputRef.current?.click()}
-          className={`bg-[#111111]/60 backdrop-blur-md rounded-xl h-[340px] flex flex-col items-center justify-center p-8 text-center cursor-pointer transition-all group border border-dashed ${
-            isDragging ? 'border-[var(--color-gold-base)]' : 'border-[#222222] hover:border-[var(--color-gold-base)]/50'
+          className={`glass-panel rounded-xl flex flex-col items-center justify-center min-h-[500px] lg:min-h-[600px] relative overflow-hidden transition-colors duration-500 border-dashed border-2 ${
+            isDragging ? 'border-primary' : 'border-glass-border hover:border-primary/30'
           }`}
         >
-          <input 
-            type="file" 
-            ref={fileInputRef}
-            className="hidden" 
-            accept="image/jpeg, image/png, image/webp"
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              if (file) handleFile(file);
-            }}
-          />
-          <Aperture weight="light" className="text-5xl text-[var(--color-gold-base)] mb-6 group-hover:scale-110 transition-transform" />
-          <h3 className="text-xs font-bold mb-2 text-white uppercase tracking-[0.2em]">Khởi tạo không gian</h3>
-          <p className="text-[#A3A3A3] text-[10px] font-light mb-6 tracking-wide leading-relaxed">
-            Kéo thả ảnh nội thất vào đây<br/>hoặc dùng phím <b className="text-white bg-[#050505] px-1 py-0.5 rounded border border-[#222222]">Ctrl + V</b> để dán ảnh
-          </p>
-          <span className="bg-[#050505] border border-[#222222] text-[#A3A3A3] px-6 py-2.5 rounded text-[9px] font-bold uppercase tracking-widest group-hover:bg-gold group-hover:text-black transition-all">
-            Chọn Tệp
-          </span>
-        </div>
-      ) : (
-        /* PREVIEW ZONE */
-        <div className="bg-[#111111]/60 backdrop-blur-md border border-[#222222] rounded-xl overflow-hidden relative min-h-[340px] flex flex-col">
-          <button 
-            onClick={() => setImageBase64(null)}
-            className="absolute top-4 right-4 z-30 w-8 h-8 bg-[#050505]/80 border border-[#222222] rounded-full flex items-center justify-center text-[#A3A3A3] hover:text-red-500 transition-all"
-          >
-            <X weight="bold" className="text-xs" />
-          </button>
-          
-          <div className="relative flex-1 bg-[#030303] flex items-center justify-center p-4 min-h-[200px] overflow-hidden">
-            <img src={imageBase64} alt="preview" className="max-w-full max-h-[350px] object-contain drop-shadow-xl rounded" />
+          {/* Background decorative elements */}
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-primary/5 rounded-full blur-[80px] animate-pulse"></div>
           </div>
           
-          <div className="bg-[#050505] border-t border-[#222222] p-4 w-full shrink-0">
+          <div className="relative z-10 flex flex-col items-center text-center gap-8 max-w-2xl px-6">
+            <div className="w-24 h-24 rounded-full border border-glass-border flex items-center justify-center bg-obsidian-deep/50 text-primary mb-4 relative">
+              <Camera size={48} weight="light" />
+              {/* Scanning line effect */}
+              <div className="absolute top-0 left-0 w-full h-[2px] bg-primary/50 shadow-[0_0_10px_rgba(242,202,80,0.8)] opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ animation: 'scan 2s linear infinite' }}></div>
+            </div>
+            
+            <div>
+              <h1 className="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-2">Initialize Visual Query</h1>
+              <p className="font-body-lg text-body-lg text-on-surface-variant max-w-lg mx-auto">Drop an architectural render, real-world photograph, or high-fidelity mesh file to identify components and cross-reference our database.</p>
+            </div>
+            
+            {/* Action Buttons */}
+            <div className="flex flex-wrap justify-center gap-4 mt-4">
+              <button onClick={() => fileInputRef.current?.click()} className="bg-primary text-on-primary px-8 py-4 rounded font-label-sm text-label-sm uppercase tracking-tighter flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all duration-200">
+                <UploadSimple size={20} /> Upload Image
+              </button>
+              <button className="bg-transparent border border-glass-border text-on-surface px-8 py-4 rounded font-label-sm text-label-sm uppercase tracking-tighter flex items-center gap-2 hover:bg-surface-container hover:text-primary transition-all duration-200 active:scale-95">
+                <LinkIcon size={20} /> Paste URL
+              </button>
+              <button className="bg-transparent border border-glass-border text-on-surface px-8 py-4 rounded font-label-sm text-label-sm uppercase tracking-tighter flex items-center gap-2 hover:bg-surface-container hover:text-primary transition-all duration-200 active:scale-95">
+                <Camera size={20} /> Camera Scan
+              </button>
+            </div>
+            
+            <p className="font-label-sm text-label-sm text-on-surface-variant/50 uppercase tracking-widest mt-8">Supported: .JPG, .PNG, .OBJ, .FBX (Max 5MB)</p>
+          </div>
+        </div>
+      ) : (
+        <div className="glass-panel rounded-xl flex flex-col items-center justify-center min-h-[500px] lg:min-h-[600px] relative overflow-hidden">
+          <button 
+            onClick={() => setImageBase64(null)}
+            className="absolute top-6 right-6 z-30 w-10 h-10 bg-obsidian-deep/80 border border-glass-border rounded-full flex items-center justify-center text-on-surface-variant hover:text-error hover:border-error transition-all"
+          >
+            <X size={20} weight="bold" />
+          </button>
+          
+          <div className="relative flex-1 w-full bg-obsidian-deep flex items-center justify-center p-8 overflow-hidden inner-glow">
+            <img src={imageBase64} alt="preview" className="max-w-full max-h-[450px] object-contain drop-shadow-2xl rounded-xl border border-glass-border" />
+          </div>
+          
+          <div className="bg-charcoal-surface border-t border-glass-border p-6 w-full shrink-0 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div className="flex items-center gap-4">
+              <span className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">Select Mode:</span>
+              <div className="flex bg-obsidian-deep rounded-lg p-1 border border-glass-border">
+                <button onClick={() => setMode('basic')} className={`px-4 py-2 font-label-sm text-label-sm uppercase rounded ${mode === 'basic' ? 'bg-surface-container-high text-on-surface' : 'text-on-surface-variant hover:text-on-surface'}`}>BASIC SCAN</button>
+                <button onClick={() => setMode('lens')} className={`px-4 py-2 font-label-sm text-label-sm uppercase rounded ${mode === 'lens' ? 'bg-primary text-obsidian-deep' : 'text-on-surface-variant hover:text-on-surface'}`}>ADVANCED SCAN</button>
+              </div>
+            </div>
             <button 
               onClick={triggerScan}
-              className="w-full bg-gold text-black font-black text-[10px] uppercase tracking-[0.2em] py-3.5 rounded hover:bg-white transition-all flex items-center justify-center gap-2 glow-gold"
+              className="w-full md:w-auto bg-primary text-on-primary font-bold font-label-sm text-label-sm uppercase tracking-widest px-12 py-4 rounded hover:bg-primary-fixed transition-all flex items-center justify-center gap-2"
             >
-              <Scan weight="bold" className="text-lg" /> TIẾN HÀNH QUÉT ẢNH NÀY
+              <Scan size={20} weight="bold" /> INITIALIZE SCAN
             </button>
           </div>
         </div>
       )}
-    </div>
+    </section>
   );
 }
