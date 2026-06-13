@@ -1,142 +1,110 @@
 import Link from 'next/link';
-import Image from 'next/image';
-import { ArrowRight, CaretRight, ArrowUpRight } from '@phosphor-icons/react/dist/ssr';
+import { ArrowUpRight } from '@phosphor-icons/react/dist/ssr';
 
 export default function BigThinkPage() {
+  const articles = [
+    {
+      id: 1,
+      title: "The Geometry of Silence: Acoustic Architecture in the Virtual Void",
+      date: "OCTOBER 12, 2026",
+      category: "Spatial Synthesis",
+      excerpt: "By simulating non-Euclidean material properties, we examine how the absence of physical limitation redefines acoustic dampening in purely digital monumental spaces.",
+      image: "/assets/C_DR_04.png",
+      featured: true
+    },
+    {
+      id: 2,
+      title: "Refraction & Memory",
+      date: "SEPTEMBER 28, 2026",
+      category: "Light Theory",
+      excerpt: "Analyzing the emotional impact of volumetric lighting algorithms in artificially constructed twilight scenarios. How do we code melancholy?",
+      image: "/assets/01.png"
+    },
+    {
+      id: 3,
+      title: "The Obsidian Protocol",
+      date: "AUGUST 15, 2026",
+      category: "Materiality",
+      excerpt: "A study on creating virtual textures that imply impossible density. When weight is an illusion, how do we anchor the user's perception?",
+      image: "/assets/02.png"
+    },
+    {
+      id: 4,
+      title: "Structural Logic in AI",
+      date: "JULY 02, 2026",
+      category: "Frameworks",
+      excerpt: "Mapping neural network pathways using architectural blueprints. Translating data flow into spatial corridors for intuitive navigation.",
+      image: "/assets/03.png"
+    }
+  ];
+
   return (
-    <div className="flex flex-col min-h-screen bg-obsidian-deep text-on-surface selection:bg-primary/30 selection:text-primary">
-      <main className="pt-32 pb-32 px-4 md:px-margin-desktop max-w-[1600px] mx-auto space-y-32 flex-grow">
-        <header className="max-w-3xl space-y-4">
-          <h1 className="font-display-lg text-5xl md:text-7xl text-on-surface tracking-tighter">
-            The Journal
-          </h1>
-          <p className="font-body-lg text-lg text-on-surface-variant max-w-2xl">
-            Essays, explorations, and technical deep-dives into the synthesis of artificial intelligence, spatial design, and digital phenomenology.
-          </p>
-        </header>
-
-        <section className="relative w-full h-[614px] md:h-[768px] rounded-xl overflow-hidden group cursor-pointer border border-glass-border">
-          <div className="absolute inset-0 bg-surface-container-high">
-            <img src="/assets/C_DR_04.png" alt="Featured architectural render" className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" />
-          </div>
-          <div className="absolute inset-0 bg-gradient-to-t from-obsidian-deep via-obsidian-deep/50 to-transparent"></div>
-          <div className="absolute bottom-0 left-0 w-full p-8 md:p-16 flex flex-col justify-end items-start h-full">
-            <div className="space-y-6 max-w-4xl relative z-10">
-              <span className="inline-block border border-primary text-primary px-3 py-1 rounded font-label-sm text-xs uppercase tracking-widest backdrop-blur-md bg-charcoal-surface/30">
-                Spatial Synthesis
-              </span>
-              <h2 className="font-headline-lg-mobile md:font-headline-lg text-3xl md:text-5xl text-on-surface">
-                The Geometry of Silence: Acoustic Architecture in the Virtual Void
-              </h2>
-              <p className="font-body-lg text-lg text-on-surface-variant max-w-2xl hidden md:block">
-                By simulating non-Euclidean material properties, we examine how the absence of physical limitation redefines acoustic dampening in purely digital monumental spaces.
-              </p>
-              <div className="pt-4">
-                <button className="bg-primary text-on-primary px-8 py-3 rounded font-label-sm text-xs uppercase tracking-widest hover:bg-secondary transition-colors duration-300 active:scale-95 flex items-center gap-2">
-                  Read Essay
-                  <ArrowRight size={16} />
-                </button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="space-y-12">
-          <div className="flex items-center justify-between border-b border-glass-border pb-4">
-            <h3 className="font-headline-md text-3xl text-on-surface">Latest Exhibitions</h3>
-            <button className="text-on-surface-variant hover:text-primary transition-colors font-label-sm text-xs uppercase tracking-widest flex items-center gap-1">
-              View Archive <CaretRight size={16} />
-            </button>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-            {/* Card 1 */}
-            <article className="md:col-span-8 bg-charcoal-surface/60 backdrop-blur-md border border-glass-border rounded-xl overflow-hidden hover:shadow-[inset_0_0_0_1px_var(--color-primary)] group flex flex-col md:flex-row h-full min-h-[400px] transition-all duration-400">
-              <div className="w-full md:w-1/2 relative overflow-hidden h-64 md:h-auto">
-                <div className="absolute inset-0 bg-black/40 group-hover:opacity-0 transition-opacity duration-500 z-10"></div>
-                <img src="/assets/01.png" alt="Light refraction" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-              </div>
-              <div className="w-full md:w-1/2 p-8 flex flex-col justify-center space-y-4">
-                <span className="text-primary font-label-sm text-xs uppercase tracking-widest">Light Theory</span>
-                <h4 className="font-headline-md text-3xl text-on-surface">Refraction & Memory</h4>
-                <p className="font-body-md text-base text-on-surface-variant">
-                  Analyzing the emotional impact of volumetric lighting algorithms in artificially constructed twilight scenarios. How do we code melancholy?
-                </p>
-                <div className="pt-4 mt-auto">
-                  <button className="text-on-surface-variant hover:text-primary transition-colors font-label-sm text-xs uppercase tracking-widest flex items-center gap-1">
-                    Explore <ArrowUpRight size={16} />
-                  </button>
-                </div>
-              </div>
-            </article>
-
-            {/* Card 2 */}
-            <article className="md:col-span-4 bg-charcoal-surface/60 backdrop-blur-md border border-glass-border rounded-xl overflow-hidden hover:shadow-[inset_0_0_0_1px_var(--color-primary)] group flex flex-col h-full min-h-[400px] transition-all duration-400">
-              <div className="w-full h-48 relative overflow-hidden shrink-0">
-                <div className="absolute inset-0 bg-black/40 group-hover:opacity-0 transition-opacity duration-500 z-10"></div>
-                <img src="/assets/02.png" alt="Material study" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-              </div>
-              <div className="p-6 flex flex-col flex-grow space-y-4">
-                <span className="text-primary font-label-sm text-xs uppercase tracking-widest">Materiality</span>
-                <h4 className="font-headline-md text-2xl leading-8 text-on-surface">The Obsidian Protocol</h4>
-                <p className="font-body-md text-base text-on-surface-variant line-clamp-3">
-                  A study on creating virtual textures that imply impossible density. When weight is an illusion, how do we anchor the user's perception?
-                </p>
-              </div>
-            </article>
-
-            {/* Card 3 */}
-            <article className="md:col-span-4 bg-charcoal-surface/60 backdrop-blur-md border border-glass-border rounded-xl overflow-hidden hover:shadow-[inset_0_0_0_1px_var(--color-primary)] group flex flex-col h-full min-h-[400px] transition-all duration-400">
-              <div className="w-full h-48 relative overflow-hidden shrink-0">
-                <div className="absolute inset-0 bg-black/40 group-hover:opacity-0 transition-opacity duration-500 z-10"></div>
-                <img src="/assets/03.png" alt="Structural framework" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-              </div>
-              <div className="p-6 flex flex-col flex-grow space-y-4">
-                <span className="text-primary font-label-sm text-xs uppercase tracking-widest">Frameworks</span>
-                <h4 className="font-headline-md text-2xl leading-8 text-on-surface">Structural Logic in AI</h4>
-                <p className="font-body-md text-base text-on-surface-variant line-clamp-3">
-                  Mapping neural network pathways using architectural blueprints. Translating data flow into spatial corridors for intuitive navigation.
-                </p>
-              </div>
-            </article>
-
-            {/* Card 4 */}
-            <article className="md:col-span-8 bg-charcoal-surface/60 backdrop-blur-md border border-glass-border rounded-xl overflow-hidden hover:shadow-[inset_0_0_0_1px_var(--color-primary)] group flex flex-col md:flex-row h-full min-h-[400px] transition-all duration-400">
-              <div className="w-full md:w-1/2 p-8 flex flex-col justify-center space-y-4 order-2 md:order-1">
-                <span className="text-primary font-label-sm text-xs uppercase tracking-widest">Digital Phenomenology</span>
-                <h4 className="font-headline-md text-3xl text-on-surface">Atmosphere without Air</h4>
-                <p className="font-body-md text-base text-on-surface-variant">
-                  Constructing 'mood' through particle systems and focal depth blur. An exploration of the visceral reaction to engineered environmental static.
-                </p>
-                <div className="pt-4 mt-auto">
-                  <button className="text-on-surface-variant hover:text-primary transition-colors font-label-sm text-xs uppercase tracking-widest flex items-center gap-1">
-                    Explore <ArrowUpRight size={16} />
-                  </button>
-                </div>
-              </div>
-              <div className="w-full md:w-1/2 relative overflow-hidden h-64 md:h-auto order-1 md:order-2">
-                <div className="absolute inset-0 bg-black/40 group-hover:opacity-0 transition-opacity duration-500 z-10"></div>
-                <img src="/assets/C_LOBBY_007.png" alt="Atmospheric render" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-              </div>
-            </article>
-          </div>
-        </section>
-
-        <section className="bg-surface-container border border-glass-border rounded-xl p-8 md:p-16 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden">
-          <div className="absolute -top-24 -right-24 w-64 h-64 bg-primary/10 rounded-full blur-[80px] pointer-events-none"></div>
-          <div className="space-y-4 max-w-xl z-10">
-            <h3 className="font-headline-md text-3xl text-on-surface">Join the Synthesis</h3>
-            <p className="font-body-md text-base text-on-surface-variant">
-              Receive irregular transmissions regarding our latest architectural models, essays on digital materiality, and early access to generative tools.
+    <div className="flex flex-col min-h-screen bg-obsidian-deep text-on-surface selection:bg-primary/30 selection:text-primary pt-32">
+      <main className="max-w-[1400px] mx-auto w-full px-6 md:px-12 pb-32">
+        <header className="mb-24 flex flex-col md:flex-row md:items-end justify-between border-b border-glass-border pb-12 gap-8">
+          <div className="max-w-2xl">
+            <h1 className="font-display-lg text-6xl md:text-8xl text-on-surface tracking-tighter mb-6 uppercase">
+              The Journal
+            </h1>
+            <p className="font-body-lg text-xl md:text-2xl text-on-surface-variant font-light leading-relaxed">
+              Essays, explorations, and technical deep-dives into the synthesis of artificial intelligence, spatial design, and digital phenomenology.
             </p>
           </div>
-          <div className="w-full md:w-auto flex flex-col sm:flex-row gap-4 z-10">
-            <input className="bg-surface-dim border border-glass-border rounded px-4 py-3 font-body-md text-on-surface focus:outline-none focus:border-primary focus:bg-charcoal-surface transition-all w-full md:w-72 placeholder:text-on-surface-variant/50" placeholder="ENTER EMAIL" type="email" />
-            <button className="bg-transparent border border-glass-border text-on-surface px-8 py-3 rounded font-label-sm text-xs uppercase tracking-widest hover:border-primary hover:text-primary transition-all duration-300 active:scale-95 whitespace-nowrap">
-              Subscribe
-            </button>
+          <div className="text-sm font-label-sm tracking-widest text-on-surface-variant uppercase flex flex-col gap-2">
+            <span>Vol. 04</span>
+            <span>Est. 2026</span>
           </div>
+        </header>
+
+        <section className="flex flex-col gap-24">
+          {articles.map((article, index) => (
+            <article 
+              key={article.id} 
+              className={`group flex flex-col ${index % 2 !== 0 ? 'md:flex-row-reverse' : 'md:flex-row'} gap-8 md:gap-16 items-center`}
+            >
+              {/* Image Container */}
+              <div className={`w-full ${article.featured ? 'md:w-3/5' : 'md:w-1/2'} relative overflow-hidden glass-panel rounded-2xl aspect-[4/3] md:aspect-[16/10]`}>
+                <div className="absolute inset-0 bg-obsidian-deep/20 group-hover:bg-transparent transition-colors duration-700 z-10"></div>
+                <img 
+                  src={article.image} 
+                  alt={article.title} 
+                  className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" 
+                />
+              </div>
+
+              {/* Content */}
+              <div className={`w-full ${article.featured ? 'md:w-2/5' : 'md:w-1/2'} flex flex-col justify-center space-y-6 md:px-8 py-8`}>
+                <div className="flex items-center gap-4 text-xs font-label-sm uppercase tracking-widest text-primary">
+                  <span>{article.category}</span>
+                  <span className="w-8 h-[1px] bg-primary/50"></span>
+                  <span className="text-on-surface-variant">{article.date}</span>
+                </div>
+                
+                <h2 className="font-headline-lg text-4xl md:text-5xl text-on-surface leading-tight group-hover:text-primary transition-colors duration-500">
+                  {article.title}
+                </h2>
+                
+                <p className="font-body-lg text-lg text-on-surface-variant leading-relaxed opacity-80">
+                  {article.excerpt}
+                </p>
+                
+                <div className="pt-8">
+                  <Link href="#" className="inline-flex items-center gap-2 text-on-surface hover:text-primary font-label-sm text-sm uppercase tracking-widest transition-all duration-300 group/btn pb-2 border-b border-glass-border hover:border-primary">
+                    Read Article
+                    <ArrowUpRight size={16} className="transition-transform duration-300 group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1" />
+                  </Link>
+                </div>
+              </div>
+            </article>
+          ))}
         </section>
+
+        <div className="mt-32 pt-16 border-t border-glass-border flex justify-center">
+          <button className="px-8 py-4 glass-panel font-label-sm text-sm uppercase tracking-widest text-on-surface hover:text-primary hover:border-primary transition-all duration-300 rounded-full flex items-center gap-3">
+            Load Archive
+            <div className="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
+          </button>
+        </div>
       </main>
     </div>
   );

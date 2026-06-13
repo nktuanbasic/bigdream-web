@@ -3,147 +3,95 @@ import Image from 'next/image';
 
 export default function Home() {
   return (
-    <main className="relative bg-obsidian-deep text-on-surface w-full overflow-x-hidden selection:bg-primary selection:text-obsidian-deep">
+    <main className="relative bg-obsidian-deep text-on-surface w-full min-h-screen overflow-hidden selection:bg-primary selection:text-obsidian-deep">
       
-      {/* SECTION 1: HERO */}
-      <section className="relative w-full h-screen flex flex-col items-center justify-center overflow-hidden">
-        {/* Background Image 01 */}
-        <div className="absolute inset-0 z-0">
-          <Image 
-            src="/assets/01.png" 
-            alt="Hero Background" 
-            fill 
-            className="object-cover opacity-50 scale-105 animate-[pulse_20s_ease-in-out_infinite_alternate]" 
-            priority 
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-obsidian-deep/20 via-obsidian-deep/50 to-obsidian-deep"></div>
-        </div>
-        
-        {/* Content */}
-        <div className="relative z-10 text-center px-6 w-full flex flex-col items-center mt-12">
-          <h1 className="font-display-lg text-display-lg md:text-[140px] md:leading-[140px] text-on-surface mb-6 drop-shadow-2xl">
-            Big<span className="text-primary">Dream</span>
+      {/* Background Cinematic Video/Image */}
+      <div className="fixed inset-0 z-0">
+        <Image 
+          src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2560&auto=format&fit=crop" 
+          alt="Cinematic Background" 
+          fill 
+          className="object-cover opacity-40 scale-105 animate-[pulse_30s_ease-in-out_infinite_alternate]" 
+          priority 
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-obsidian-deep/30 via-obsidian-deep/60 to-obsidian-deep"></div>
+      </div>
+
+      {/* Hero Content */}
+      <div className="relative z-10 w-full h-screen flex flex-col items-center justify-center px-4 pt-20">
+        <div className="text-center">
+          <p className="font-label-sm text-sm text-primary uppercase tracking-[0.3em] mb-6 animate-fade-in-up">The Ecosystem</p>
+          <h1 className="font-display-lg text-6xl md:text-9xl lg:text-[160px] text-on-surface leading-none mb-8 drop-shadow-2xl tracking-tight">
+            Big<span className="text-primary italic">Dream</span>
           </h1>
-          <p className="font-label-sm text-label-sm text-on-surface-variant uppercase mb-16 max-w-4xl tracking-widest">
-            Cinematic Architecture & Art Ecosystem
+          <p className="font-body-lg text-lg md:text-2xl text-on-surface-variant max-w-2xl mx-auto font-light leading-relaxed">
+            A state-of-the-art cinematic architecture & art ecosystem. Reimagining spatial design through AI.
           </p>
+        </div>
+      </div>
+
+      {/* Floating Cards Section */}
+      <div className="relative z-20 -mt-32 pb-32 px-4 md:px-12 max-w-[1800px] mx-auto w-full">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
           
-          <div className="mt-12 flex flex-col items-center text-on-surface-variant animate-bounce">
-            <span className="font-label-sm text-label-sm uppercase tracking-widest mb-2">Scroll to discover</span>
-            <span>↓</span>
-          </div>
-        </div>
-      </section>
-
-      {/* SECTION 2: BIG PROMPT (SEE) */}
-      <section className="relative w-full min-h-screen flex items-center py-32">
-        <div className="absolute inset-0 z-0">
-          <Image 
-            src="/assets/C_DR_04.png" 
-            alt="BIG PROMPT Background" 
-            fill 
-            className="object-cover opacity-20" 
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-obsidian-deep via-transparent to-obsidian-deep"></div>
-          <div className="absolute inset-0 bg-gradient-to-r from-obsidian-deep via-transparent to-transparent"></div>
-        </div>
-        
-        <div className="relative z-10 max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop w-full">
-          <div className="max-w-2xl space-y-8 glass-panel p-12 rounded-xl inner-glow">
-            <div className="inline-block px-3 py-1 border border-primary text-primary font-label-sm text-label-sm uppercase tracking-widest mb-4">
-              Core Workspace
+          {/* Card: MODEL */}
+          <Link href="/model" className="group block h-[450px] relative rounded-2xl overflow-hidden glass-panel transform hover:-translate-y-4 transition-all duration-500 hover:shadow-[0_20px_40px_rgba(242,202,80,0.15)]">
+            <Image src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?q=80&w=800&auto=format&fit=crop" alt="Big Model" fill className="object-cover opacity-60 group-hover:opacity-80 transition-opacity group-hover:scale-110 duration-700" />
+            <div className="absolute inset-0 bg-gradient-to-t from-obsidian-deep via-obsidian-deep/50 to-transparent"></div>
+            <div className="absolute bottom-0 left-0 w-full p-8 flex flex-col justify-end h-full">
+              <span className="font-label-sm text-xs text-primary uppercase tracking-[0.2em] mb-2 opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-4 group-hover:translate-y-0 duration-500">Discover</span>
+              <h3 className="font-headline-lg text-4xl text-on-surface mb-3 group-hover:text-primary transition-colors">Model</h3>
+              <p className="font-body-md text-sm text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity duration-500">Premium 3D assets & mastercrafted geometry.</p>
             </div>
-            <h2 className="font-display-lg text-display-lg text-on-surface">
-              SEE <span className="text-primary">Engine</span>
-            </h2>
-            <p className="font-body-lg text-body-lg text-on-surface-variant">
-              The AI Architectural Workspace. 
-              Multimodal analysis, spatial decoding, and cinematic prompt generation across 8 specialized branches.
-            </p>
-            
-            <div className="pt-8">
-              <Link 
-                href="/see" 
-                className="inline-block px-8 py-4 bg-primary text-on-primary hover:bg-primary-fixed transition-colors font-bold font-label-sm text-label-sm tracking-widest uppercase rounded-lg"
-              >
-                Launch Workspace →
-              </Link>
+          </Link>
+
+          {/* Card: LENS */}
+          <Link href="/lens" className="group block h-[450px] relative rounded-2xl overflow-hidden glass-panel transform hover:-translate-y-4 transition-all duration-500 hover:shadow-[0_20px_40px_rgba(242,202,80,0.15)] md:mt-12">
+            <Image src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=800&auto=format&fit=crop" alt="Big Lens" fill className="object-cover opacity-60 group-hover:opacity-80 transition-opacity group-hover:scale-110 duration-700" />
+            <div className="absolute inset-0 bg-gradient-to-t from-obsidian-deep via-obsidian-deep/50 to-transparent"></div>
+            <div className="absolute bottom-0 left-0 w-full p-8 flex flex-col justify-end h-full">
+              <span className="font-label-sm text-xs text-primary uppercase tracking-[0.2em] mb-2 opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-4 group-hover:translate-y-0 duration-500">Scan</span>
+              <h3 className="font-headline-lg text-4xl text-on-surface mb-3 group-hover:text-primary transition-colors">Lens</h3>
+              <p className="font-body-md text-sm text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity duration-500">Luxury material & interior scanner.</p>
             </div>
-          </div>
-        </div>
-      </section>
+          </Link>
 
-      {/* SECTION 3: BENTO GRID cho Hệ sinh thái */}
-      <section className="relative w-full min-h-screen flex items-center justify-center py-32">
-         <div className="absolute inset-0 z-0">
-          <Image 
-            src="/assets/C_LOBBY_007.png" 
-            alt="Ecosystem Background" 
-            fill 
-            className="object-cover opacity-10" 
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-obsidian-deep via-obsidian-deep/90 to-obsidian-deep"></div>
-        </div>
-        
-        <div className="relative z-10 max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop w-full">
-          <div className="text-center mb-24">
-            <h2 className="font-display-lg text-display-lg text-on-surface mb-6">
-              The <span className="text-primary">Ecosystem</span>
-            </h2>
-            <p className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">Architectural Pillars</p>
-          </div>
+          {/* Card: SEE */}
+          <Link href="/see" className="group block h-[450px] relative rounded-2xl overflow-hidden glass-panel transform hover:-translate-y-4 transition-all duration-500 hover:shadow-[0_20px_40px_rgba(242,202,80,0.15)]">
+            <Image src="https://images.unsplash.com/photo-1600585154526-990dced4ea07?q=80&w=800&auto=format&fit=crop" alt="Big SEE" fill className="object-cover opacity-60 group-hover:opacity-80 transition-opacity group-hover:scale-110 duration-700" />
+            <div className="absolute inset-0 bg-gradient-to-t from-obsidian-deep via-obsidian-deep/50 to-transparent"></div>
+            <div className="absolute inset-0 ring-1 ring-primary/30 group-hover:ring-primary/80 transition-all rounded-2xl z-10"></div>
+            <div className="absolute bottom-0 left-0 w-full p-8 flex flex-col justify-end h-full z-20">
+              <span className="font-label-sm text-xs text-primary uppercase tracking-[0.2em] mb-2 opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-4 group-hover:translate-y-0 duration-500">Core</span>
+              <h3 className="font-headline-lg text-5xl text-on-surface mb-3 group-hover:text-primary transition-colors">SEE</h3>
+              <p className="font-body-md text-sm text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity duration-500">The Ultimate AI Architectural Workspace.</p>
+            </div>
+          </Link>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-bento-gap">
-             <Link href="/model" className="block glass-panel p-12 inner-glow transition-all duration-500 group cursor-pointer rounded-xl">
-                <h3 className="font-headline-lg text-headline-lg mb-4 text-on-surface group-hover:text-primary transition-colors">
-                  BIG MODEL
-                </h3>
-                <p className="font-body-md text-body-md text-on-surface-variant">
-                  Premium 3D asset marketplace. Mastercrafted models optimized for cinematic rendering.
-                </p>
-             </Link>
-             
-             <Link href="/lens" className="block glass-panel p-12 inner-glow transition-all duration-500 group cursor-pointer rounded-xl">
-                <h3 className="font-headline-lg text-headline-lg mb-4 text-on-surface group-hover:text-primary transition-colors">
-                  BIG LENS
-                </h3>
-                <p className="font-body-md text-body-md text-on-surface-variant">
-                  Luxury material and interior scanner. Automated AI visual verification.
-                </p>
-             </Link>
-             
-             <Link href="/think" className="block glass-panel p-12 inner-glow transition-all duration-500 group cursor-pointer rounded-xl">
-                <h3 className="font-headline-lg text-headline-lg mb-4 text-on-surface group-hover:text-primary transition-colors">
-                  BIG THINK
-                </h3>
-                <p className="font-body-md text-body-md text-on-surface-variant">
-                  Architectural design journal. In-depth analysis of space and form.
-                </p>
-             </Link>
-             
-             <Link href="/class" className="block glass-panel p-12 inner-glow transition-all duration-500 group cursor-pointer rounded-xl">
-                <h3 className="font-headline-lg text-headline-lg mb-4 text-on-surface group-hover:text-primary transition-colors">
-                  BIG CLASS
-                </h3>
-                <p className="font-body-md text-body-md text-on-surface-variant">
-                  Masterclasses in AI architecture. Learn to direct the machine.
-                </p>
-             </Link>
-          </div>
-        </div>
-      </section>
+          {/* Card: CLASS */}
+          <Link href="/class" className="group block h-[450px] relative rounded-2xl overflow-hidden glass-panel transform hover:-translate-y-4 transition-all duration-500 hover:shadow-[0_20px_40px_rgba(242,202,80,0.15)] md:mt-12">
+            <Image src="https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=800&auto=format&fit=crop" alt="Big Class" fill className="object-cover opacity-60 group-hover:opacity-80 transition-opacity group-hover:scale-110 duration-700" />
+            <div className="absolute inset-0 bg-gradient-to-t from-obsidian-deep via-obsidian-deep/50 to-transparent"></div>
+            <div className="absolute bottom-0 left-0 w-full p-8 flex flex-col justify-end h-full">
+              <span className="font-label-sm text-xs text-primary uppercase tracking-[0.2em] mb-2 opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-4 group-hover:translate-y-0 duration-500">Learn</span>
+              <h3 className="font-headline-lg text-4xl text-on-surface mb-3 group-hover:text-primary transition-colors">Class</h3>
+              <p className="font-body-md text-sm text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity duration-500">Masterclasses in AI architecture.</p>
+            </div>
+          </Link>
 
-      {/* FOOTER */}
-      <footer className="relative w-full py-16 bg-obsidian-deep border-t border-glass-border text-center flex flex-col items-center justify-center">
-        <div className="mb-6">
-          <span className="font-headline-md text-headline-md text-on-surface opacity-50">
-            Big<span className="text-primary">Dream</span>
-          </span>
+          {/* Card: THINK */}
+          <Link href="/think" className="group block h-[450px] relative rounded-2xl overflow-hidden glass-panel transform hover:-translate-y-4 transition-all duration-500 hover:shadow-[0_20px_40px_rgba(242,202,80,0.15)]">
+            <Image src="https://images.unsplash.com/photo-1600607686527-6fb886090705?q=80&w=800&auto=format&fit=crop" alt="Big Think" fill className="object-cover opacity-60 group-hover:opacity-80 transition-opacity group-hover:scale-110 duration-700" />
+            <div className="absolute inset-0 bg-gradient-to-t from-obsidian-deep via-obsidian-deep/50 to-transparent"></div>
+            <div className="absolute bottom-0 left-0 w-full p-8 flex flex-col justify-end h-full">
+              <span className="font-label-sm text-xs text-primary uppercase tracking-[0.2em] mb-2 opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-4 group-hover:translate-y-0 duration-500">Read</span>
+              <h3 className="font-headline-lg text-4xl text-on-surface mb-3 group-hover:text-primary transition-colors">Think</h3>
+              <p className="font-body-md text-sm text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity duration-500">Architectural design journal.</p>
+            </div>
+          </Link>
+
         </div>
-        <p className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-8">
-          Powered by SEE Engine
-        </p>
-      </footer>
+      </div>
     </main>
   );
 }

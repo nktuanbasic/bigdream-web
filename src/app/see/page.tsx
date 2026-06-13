@@ -1,282 +1,158 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import Image from 'next/image';
-import { useState, useRef, useEffect } from 'react';
-import { PaperPlaneRight, Image as ImageIcon, Sparkle, Target, SquareHalf, Aperture, Mountains, Camera, Fingerprint, MagicWand, X } from '@phosphor-icons/react';
+import React, { useState, useEffect } from "react";
+import { 
+  Images, 
+  Aperture, 
+  Faders, 
+  MagnifyingGlass, 
+  DownloadSimple, 
+  ShareNetwork,
+  Cpu,
+  ArrowsOutSimple
+} from "@phosphor-icons/react";
 
-interface ChatMessage {
-  id: string;
-  role: 'user' | 'assistant';
-  content: string;
-  image?: string | null;
-}
-
-const BRANCHES = [
-  { key: 'BOARD', icon: Target,      label: 'BOARD', desc: 'Tái cấu trúc Ý định' },
-  { key: 'ROOM',  icon: SquareHalf,  label: 'ROOM',  desc: 'Render Nội thất' },
-  { key: 'FILL',  icon: Sparkle,     label: 'FILL',  desc: 'Điền Không gian' },
-  { key: 'YARD',  icon: Aperture,    label: 'YARD',  desc: 'Ngoại thất Nhỏ' },
-  { key: 'LAND',  icon: Mountains,   label: 'LAND',  desc: 'Ngoại thất Lớn' },
-  { key: 'STAGE', icon: MagicWand,   label: 'STAGE', desc: 'Hậu kỳ Render' },
-  { key: 'RAW',   icon: Camera,      label: 'RAW',   desc: 'Tiền xử lý' },
-  { key: 'DNA',   icon: Fingerprint, label: 'DNA',   desc: 'Phân tích Phong cách' },
+// Mock data for the gallery
+const mockGallery = [
+  { id: 1, title: "Luminous Cybernetic Construct", author: "AI Core", tags: ["Cyberpunk", "Architecture"], height: "400px" },
+  { id: 2, title: "Neo-Tokyo Skyline", author: "Architect Prime", tags: ["Cityscape", "Night"], height: "300px" },
+  { id: 3, title: "Ethereal Glass Pavilion", author: "Dreamer", tags: ["Minimalist", "Glass"], height: "500px" },
+  { id: 4, title: "Obsidian Obelisk", author: "AI Core", tags: ["Monument", "Dark"], height: "350px" },
+  { id: 5, title: "Golden Hour Atrium", author: "Lumina", tags: ["Interior", "Light"], height: "450px" },
+  { id: 6, title: "Synthetic Biome", author: "Nature Protocol", tags: ["Organic", "Tech"], height: "300px" },
 ];
 
-export default function SeeWorkspace() {
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [input, setInput] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [activeBranch, setActiveBranch] = useState('BOARD');
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  
-  const chatEndRef = useRef<HTMLDivElement>(null);
-
-  const activeInfo = BRANCHES.find(b => b.key === activeBranch);
+export default function SeePage() {
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [activeFilter, setActiveFilter] = useState("All");
 
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, isLoading]);
-
-  async function handleSubmit(e?: React.FormEvent) {
-    if (e) e.preventDefault();
-    if ((!input.trim() && !selectedImage) || isLoading) return;
-
-    const userMsg: ChatMessage = { id: Date.now().toString(), role: 'user', content: input, image: selectedImage };
-    setMessages(prev => [...prev, userMsg]);
-    
-    const payloadInput = input;
-    const payloadImage = selectedImage;
-    
-    setInput('');
-    setSelectedImage(null);
-    setIsLoading(true);
-
-    try {
-      const res = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: payloadInput, branch: activeBranch, image: payloadImage }),
-      });
-      const data = await res.json();
-      const aiMsg: ChatMessage = {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: data.reply || data.error || 'Không nhận được phản hồi.',
-      };
-      setMessages(prev => [...prev, aiMsg]);
-    } catch {
-      setMessages(prev => [...prev, { id: (Date.now() + 1).toString(), role: 'assistant', content: 'Lỗi kết nối đến server.' }]);
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
-  function handlePaste(e: React.ClipboardEvent<HTMLTextAreaElement>) {
-    const items = e.clipboardData?.items;
-    if (!items) return;
-
-    for (let i = 0; i < items.length; i++) {
-      if (items[i].type.indexOf('image') !== -1) {
-        const file = items[i].getAsFile();
-        if (file) {
-          const reader = new FileReader();
-          reader.onload = (event) => setSelectedImage(event.target?.result as string);
-          reader.readAsDataURL(file);
-        }
-      }
-    }
-  }
-
-  function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => setSelectedImage(event.target?.result as string);
-      reader.readAsDataURL(file);
-    }
-  }
-
-  function handleBranchSwitch(key: string) {
-    setActiveBranch(key);
-    setMessages([]);
-    setSelectedImage(null);
-  }
+    setIsLoaded(true);
+  }, []);
 
   return (
-    <div className="flex flex-1 mt-[80px] h-[calc(100vh-80px)] w-full overflow-hidden bg-obsidian-deep selection:bg-primary selection:text-obsidian-deep">
-      {/* SideNavBar */}
-      <aside className="w-64 bg-charcoal-surface/60 backdrop-blur-3xl border-r border-glass-border flex flex-col py-8 gap-y-4 h-full shrink-0 hidden md:flex overflow-y-auto z-10">
-        <div className="px-6 mb-4">
-          <h2 className="font-headline-md text-headline-md text-primary">SEE Engine</h2>
-          <p className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mt-1">AI Workspace V15</p>
-        </div>
-        <div className="flex flex-col gap-1 w-full">
-          {BRANCHES.map((branch) => {
-            const Icon = branch.icon;
-            const isActive = branch.key === activeBranch;
-            return (
-              <button
-                key={branch.key}
-                onClick={() => handleBranchSwitch(branch.key)}
-                className={`flex items-center gap-3 px-6 py-3 w-full text-left transition-all scale-98 duration-200 ${
-                  isActive 
-                    ? 'text-primary font-bold border-l-2 border-primary pl-6 bg-primary/10' 
-                    : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high'
-                }`}
-              >
-                <Icon size={20} weight={isActive ? "fill" : "regular"} />
-                <span className="font-label-sm text-label-sm uppercase">{branch.label}</span>
-              </button>
-            )
-          })}
-        </div>
-        <div className="mt-auto px-6 pb-6">
-          <button 
-            onClick={() => handleBranchSwitch(activeBranch)}
-            className="w-full bg-surface-container-high border border-glass-border text-on-surface py-3 rounded-lg font-label-sm text-label-sm uppercase tracking-widest hover:border-primary hover:text-primary transition-colors inner-glow"
-          >
-            Clear Canvas
-          </button>
-        </div>
-      </aside>
+    <div className="min-h-screen bg-[#050505] text-[#e5e2e1] overflow-hidden relative">
+      {/* Background ambient lighting */}
+      <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-[#f2ca50] opacity-[0.03] blur-[150px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-[#f2ca50] opacity-[0.02] blur-[200px] rounded-full pointer-events-none" />
 
-      {/* Central Canvas */}
-      <main className="flex-1 flex flex-col relative border-r border-glass-border overflow-hidden">
-        {/* SVG Grid Background */}
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAwIDQwIEwgNDAgNDAgNDAgMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDMpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-50 z-0 pointer-events-none"></div>
+      {/* Terminal Grid Overlay (Subtle) */}
+      <div className="absolute inset-0 pointer-events-none opacity-[0.03]" 
+           style={{ backgroundImage: 'linear-gradient(rgba(242, 202, 80, 0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(242, 202, 80, 0.2) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+
+      <main className={`relative z-10 max-w-[1600px] mx-auto px-4 sm:px-8 py-12 transition-all duration-1000 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
         
-        {/* Canvas Header */}
-        <header className="px-8 py-4 border-b border-glass-border z-10 bg-obsidian-deep/80 backdrop-blur-md flex justify-between items-end">
-          <div>
-            <h1 className="font-display-lg text-4xl text-on-surface mb-2">Project Sigma</h1>
-            <div className="flex gap-2">
-              <span className="px-2 py-1 border border-glass-border rounded text-label-sm font-label-sm text-primary uppercase">{activeBranch}</span>
-              <span className="px-2 py-1 border border-glass-border rounded text-label-sm font-label-sm text-on-surface-variant uppercase">{activeInfo?.desc}</span>
+        {/* Header / Control Deck */}
+        <header className="glass-panel inner-glow rounded-3xl p-6 sm:p-8 mb-12 flex flex-col lg:flex-row items-center justify-between gap-8 relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-1 h-full bg-[#f2ca50]" />
+          
+          <div className="flex-1 space-y-2">
+            <div className="flex items-center gap-3 text-[#f2ca50] mb-2 text-sm uppercase tracking-[0.2em] font-semibold">
+              <Cpu weight="duotone" className="text-xl animate-pulse" />
+              <span>Vision Matrix Online</span>
             </div>
+            <h1 className="text-4xl sm:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-[#d0c5af] tracking-tight" style={{ fontFamily: 'var(--font-bodoni)' }}>
+              SEE. <span className="italic text-[#f2ca50] font-light">Gallery</span>
+            </h1>
+            <p className="text-[#a09a8e] max-w-xl text-lg font-light leading-relaxed pt-2">
+              Explore the pinnacle of architectural generation. A curated repository of cinematic renders engineered by our neural networks.
+            </p>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
+            <div className="relative group flex-1 sm:flex-none">
+              <MagnifyingGlass className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#a09a8e] group-focus-within:text-[#f2ca50] transition-colors" />
+              <input 
+                type="text" 
+                placeholder="Query parameters..." 
+                className="w-full sm:w-[280px] bg-[#1a1a1a]/50 border border-white/10 rounded-xl py-3 pl-12 pr-4 text-white focus:outline-none focus:border-[#f2ca50]/50 focus:bg-[#1a1a1a] transition-all"
+              />
+            </div>
+            <button className="glass-panel flex items-center justify-center gap-2 px-6 py-3 rounded-xl hover:bg-[#f2ca50]/10 transition-colors text-[#d0c5af] hover:text-[#f2ca50] cursor-pointer">
+              <Faders weight="duotone" />
+              <span>Calibrate</span>
+            </button>
           </div>
         </header>
 
-        {/* Chat History */}
-        <div className="flex-1 overflow-y-auto p-4 md:p-8 z-10 flex flex-col gap-8 pb-40">
-          {messages.length === 0 ? (
-             <div className="flex flex-col items-center justify-center h-full text-center opacity-50">
-                <Sparkle size={48} className="text-primary mb-4" />
-                <h3 className="font-headline-md text-headline-md text-on-surface">Canvas Ready</h3>
-                <p className="font-body-md text-body-md text-on-surface-variant mt-2">Enter your architectural prompt or paste an image to begin.</p>
-             </div>
-          ) : (
-            messages.map(m => (
-              m.role === 'user' ? (
-                <div key={m.id} className="flex gap-4 justify-end">
-                  <div className="bg-surface-container-high border border-glass-border p-4 rounded-xl max-w-xl text-right">
-                    {m.image && (
-                      <div className="mb-4 flex justify-end">
-                        <img src={m.image} alt="Reference" className="max-h-64 rounded-xl border border-glass-border object-contain" />
-                      </div>
-                    )}
-                    <p className="font-body-md text-body-md text-on-surface-variant whitespace-pre-wrap">{m.content}</p>
-                  </div>
-                </div>
-              ) : (
-                <div key={m.id} className="flex gap-4">
-                  <div className="w-8 h-8 rounded border border-primary flex items-center justify-center shrink-0 bg-primary/10">
-                    <Sparkle size={16} className="text-primary" />
-                  </div>
-                  <div className="glass-panel p-6 rounded-xl max-w-3xl inner-glow">
-                    <div className="font-body-md text-body-md text-on-surface whitespace-pre-wrap leading-relaxed">{m.content}</div>
-                  </div>
-                </div>
-              )
-            ))
-          )}
-          {isLoading && (
-            <div className="flex gap-4">
-              <div className="w-8 h-8 rounded border border-primary flex items-center justify-center shrink-0 bg-primary/10">
-                 <Sparkle size={16} className="text-primary animate-spin" />
-              </div>
-              <div className="glass-panel px-6 py-3 rounded-xl max-w-3xl inner-glow flex items-center gap-2">
-                 <div className="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
-                 <span className="font-label-sm text-label-sm text-primary uppercase tracking-widest">SEE is analyzing space...</span>
-              </div>
-            </div>
-          )}
-          <div ref={chatEndRef} />
+        {/* Filters */}
+        <div className="flex flex-wrap gap-3 mb-10">
+          {['All', 'Architecture', 'Interior', 'Cyberpunk', 'Minimalist', 'Organic'].map(filter => (
+            <button 
+              key={filter}
+              onClick={() => setActiveFilter(filter)}
+              className={`px-5 py-2 rounded-full border transition-all duration-300 backdrop-blur-md cursor-pointer ${
+                activeFilter === filter 
+                ? 'bg-[#f2ca50]/20 border-[#f2ca50] text-[#f2ca50] shadow-[0_0_15px_rgba(242,202,80,0.2)]' 
+                : 'bg-white/5 border-white/10 text-[#a09a8e] hover:border-white/30 hover:text-white'
+              }`}
+            >
+              {filter}
+            </button>
+          ))}
         </div>
 
-        {/* Prompt Input Area */}
-        <div className="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-obsidian-deep via-obsidian-deep/90 to-transparent z-20">
-          <form onSubmit={handleSubmit} className="max-w-4xl mx-auto relative group">
-            {selectedImage && (
-              <div className="absolute bottom-full left-0 mb-4 p-2 bg-charcoal-surface border border-glass-border rounded-xl shadow-lg flex items-start gap-2">
-                <img src={selectedImage} alt="Preview" className="h-20 w-auto rounded border border-glass-border object-cover" />
-                <button 
-                  type="button" 
-                  onClick={() => setSelectedImage(null)}
-                  className="bg-error-container text-error hover:bg-error hover:text-white rounded-full p-1 transition-colors"
-                >
-                  <X size={12} weight="bold" />
-                </button>
-              </div>
-            )}
-            
-            <div className="absolute -inset-0.5 bg-primary/20 rounded-xl blur opacity-0 group-focus-within:opacity-100 transition duration-500"></div>
-            <div className="relative bg-charcoal-surface border border-glass-border rounded-xl p-2 flex items-end inner-glow focus-within:border-primary transition-colors">
-              <input type="file" accept="image/*" id="file-upload" className="hidden" onChange={handleImageUpload} />
-              <label htmlFor="file-upload" className="p-3 text-on-surface-variant hover:text-primary transition-colors cursor-pointer">
-                <ImageIcon size={24} />
-              </label>
-              
-              <textarea 
-                value={input}
-                onChange={e => setInput(e.target.value)}
-                onPaste={handlePaste}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    handleSubmit();
-                  }
-                }}
-                className="w-full bg-transparent border-none focus:ring-0 text-body-md font-body-md text-on-surface resize-none py-3 px-2" 
-                placeholder="Enter architectural prompt or paste an image..." 
-                rows={1} 
-                style={{ minHeight: '48px' }}
-                disabled={isLoading}
-              />
-              
-              <button 
-                type="submit"
-                disabled={isLoading || (!input.trim() && !selectedImage)}
-                className="p-3 bg-primary text-obsidian-deep rounded-lg ml-2 hover:bg-primary-fixed transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        {/* Masonry-style Grid */}
+        <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6">
+          {mockGallery.map((item, index) => (
+            <div 
+              key={item.id} 
+              className="group relative rounded-2xl overflow-hidden glass-panel border border-white/5 hover:border-[#f2ca50]/50 transition-all duration-500 break-inside-avoid cursor-pointer"
+              style={{ 
+                height: item.height, 
+                animationDelay: `${index * 100}ms`
+              }}
+            >
+              {/* Image Placeholder with Gradient */}
+              <div 
+                className="absolute inset-0 bg-gradient-to-br from-[#1a1a1a] to-[#0e0e0e] flex items-center justify-center group-hover:scale-105 transition-transform duration-700 ease-out"
               >
-                <PaperPlaneRight size={24} weight="fill" />
-              </button>
+                <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[size:10px_10px]" />
+                <Aperture className="text-4xl text-white/10 group-hover:text-[#f2ca50]/30 transition-colors duration-500 animate-[spin_10s_linear_infinite]" />
+              </div>
+
+              {/* Holographic Overlay on Hover */}
+              <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+              {/* Content Overlay */}
+              <div className="absolute inset-x-0 bottom-0 p-6 translate-y-4 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end h-full">
+                <div className="flex justify-between items-start mb-auto pt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-700 delay-100">
+                  <div className="flex gap-2">
+                    {item.tags.map(tag => (
+                      <span key={tag} className="text-xs uppercase tracking-wider bg-[#050505]/80 backdrop-blur-md text-[#f2ca50] px-3 py-1 rounded-full border border-[#f2ca50]/30">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                  <button className="p-2 bg-[#050505]/80 backdrop-blur-md rounded-full text-white hover:text-[#f2ca50] border border-white/10 hover:border-[#f2ca50]/50 transition-colors">
+                    <ArrowsOutSimple weight="bold" />
+                  </button>
+                </div>
+
+                <div className="space-y-1">
+                  <h3 className="text-xl sm:text-2xl font-medium text-white" style={{ fontFamily: 'var(--font-bodoni)' }}>
+                    {item.title}
+                  </h3>
+                  <div className="flex items-center justify-between w-full">
+                    <p className="text-sm text-[#a09a8e] flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#f2ca50] animate-pulse" />
+                      {item.author}
+                    </p>
+                    <div className="flex gap-2">
+                      <button className="p-2 hover:bg-white/10 rounded-full transition-colors text-white">
+                        <ShareNetwork weight="duotone" />
+                      </button>
+                      <button className="p-2 hover:bg-white/10 rounded-full transition-colors text-white">
+                        <DownloadSimple weight="duotone" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-          </form>
+          ))}
         </div>
       </main>
-
-      {/* Right Gallery Sidebar */}
-      <aside className="w-96 bg-obsidian-deep hidden xl:flex flex-col z-10 shrink-0 overflow-y-auto">
-        <div className="sticky top-0 bg-obsidian-deep/90 backdrop-blur px-6 py-6 z-20 border-b border-glass-border">
-          <h3 className="font-headline-md text-headline-md text-on-surface">Gallery</h3>
-          <p className="font-label-sm text-label-sm text-on-surface-variant mt-1 uppercase tracking-widest">Recent Renders</p>
-        </div>
-        <div className="p-6 columns-1 gap-6 space-y-6">
-          <div className="glass-panel rounded-xl overflow-hidden group cursor-pointer break-inside-avoid relative">
-            <img alt="Gallery item" className="w-full h-48 object-cover" src="/assets/01.png" />
-            <div className="absolute inset-0 bg-obsidian-deep/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-4">
-              <span className="font-label-sm text-label-sm text-primary border border-primary/30 w-max px-2 py-1 rounded">EXTERIOR</span>
-            </div>
-          </div>
-          <div className="glass-panel rounded-xl overflow-hidden group cursor-pointer break-inside-avoid relative">
-            <img alt="Gallery item" className="w-full h-64 object-cover" src="/assets/C_DR_04.png" />
-            <div className="absolute inset-0 bg-obsidian-deep/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-4">
-              <span className="font-label-sm text-label-sm text-primary border border-primary/30 w-max px-2 py-1 rounded">INTERIOR</span>
-            </div>
-          </div>
-        </div>
-      </aside>
     </div>
   );
 }
