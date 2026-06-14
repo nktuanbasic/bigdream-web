@@ -88,7 +88,7 @@ export default function GlobalAuthNav() {
   return (
     <nav className="fixed top-0 w-full bg-surface/60 backdrop-blur-3xl border-b border-glass-border flex justify-between items-center px-4 md:px-margin-desktop py-4 z-50">
       <div className="flex items-center gap-8">
-        <Link href="/" className="font-headline-md text-headline-md font-bold text-primary">
+        <Link href="/" className="font-headline-lg text-2xl md:text-3xl font-extrabold text-primary tracking-tight">
           Big Dream
         </Link>
         <div className="hidden lg:flex items-center gap-6">
@@ -115,7 +115,7 @@ export default function GlobalAuthNav() {
         <div className="relative hidden xl:block">
           <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" size={20} />
           <input
-            className="bg-charcoal-surface border border-glass-border rounded-full pl-10 pr-4 py-2 text-sm text-on-surface focus:outline-none focus:border-primary focus:bg-surface-container-high transition-all w-64"
+            className="bg-charcoal-surface border border-glass-border rounded-md pl-10 pr-4 py-2 text-sm text-on-surface focus:outline-none focus:border-primary focus:bg-surface-container-high transition-all w-64"
             placeholder="Search parameters..."
             type="text"
           />
@@ -124,13 +124,13 @@ export default function GlobalAuthNav() {
         {!isLoggedIn ? (
           <button
             onClick={handleLogin}
-            className="bg-primary text-on-primary px-6 py-2 rounded-full font-bold hover:bg-primary-fixed transition-colors active:scale-95 duration-200"
+            className="bg-primary text-on-primary px-6 py-2 rounded-md font-bold hover:bg-primary-fixed transition-colors active:scale-95 duration-200"
           >
             Connect Wallet
           </button>
         ) : (
           <div className="flex items-center gap-4">
-            <div className="hidden md:flex items-center gap-2 bg-charcoal-surface border border-glass-border rounded-full px-4 py-1.5 inner-glow">
+            <div className="hidden md:flex items-center gap-2 bg-charcoal-surface border border-glass-border rounded-md px-4 py-1.5 inner-glow">
               <span className="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold">CB: {walletInfo.bas}</span>
               <span className="w-1 h-1 rounded-full bg-glass-border"></span>
               <span className="text-[10px] text-primary uppercase tracking-widest font-bold">VIP: {walletInfo.adv}</span>
@@ -141,12 +141,12 @@ export default function GlobalAuthNav() {
             </div>
             
             <div className="flex items-center gap-2">
-              <Link href="/account" className="w-10 h-10 rounded-full bg-surface-container-high hover:bg-charcoal-surface border border-glass-border overflow-hidden flex items-center justify-center text-on-surface-variant hover:text-primary hover:border-primary transition-all duration-300">
+              <Link href="/account" className="w-10 h-10 rounded-md bg-surface-container-high hover:bg-charcoal-surface border border-glass-border overflow-hidden flex items-center justify-center text-on-surface-variant hover:text-primary hover:border-primary transition-all duration-300">
                 <User size={24} weight="fill" />
               </Link>
               <button
                 onClick={handleLogout}
-                className="w-10 h-10 rounded-full bg-surface-container-high hover:bg-error-container border border-glass-border hover:border-error hover:text-error text-on-surface-variant transition-colors flex items-center justify-center"
+                className="w-10 h-10 rounded-md bg-surface-container-high hover:bg-error-container border border-glass-border hover:border-error hover:text-error text-on-surface-variant transition-colors flex items-center justify-center"
                 title="Disconnect Wallet"
               >
                 <SignOut size={20} weight="bold" />

@@ -30,33 +30,25 @@ export default function Home() {
 
         {/* Center Content */}
         <div className="relative z-10 flex flex-col items-center justify-center h-full px-6 text-center">
-          
-          {/* Logo / Brand Icon */}
-          <div className="mb-8 opacity-0 animate-[fadeInUp_1s_0.2s_forwards]">
-            <div className="w-16 h-16 mx-auto rounded-xl bg-primary/90 flex items-center justify-center shadow-[0_0_40px_rgba(242,202,80,0.3)]">
-              <span className="text-[#050505] font-bold text-2xl tracking-tight">B</span>
-            </div>
-          </div>
-
           {/* Title */}
-          <h1 className="font-display-lg text-6xl md:text-8xl lg:text-[140px] text-white leading-[0.9] tracking-tight mb-6 opacity-0 animate-[fadeInUp_1s_0.4s_forwards] drop-shadow-[0_4px_60px_rgba(0,0,0,0.5)]">
+          <h1 className="font-display-lg text-7xl md:text-9xl lg:text-[180px] text-white leading-[0.85] tracking-tight mb-6 opacity-0 animate-[fadeInUp_1s_0.4s_forwards] drop-shadow-[0_4px_60px_rgba(0,0,0,0.5)] font-black">
             BIG<span className="text-primary italic">DREAM</span>
           </h1>
 
           {/* Tagline */}
-          <p className="font-body-lg text-base md:text-xl text-white/70 max-w-2xl mx-auto mb-10 uppercase tracking-[0.25em] font-light opacity-0 animate-[fadeInUp_1s_0.6s_forwards]">
+          <p className="font-body-lg text-sm md:text-lg text-white/60 max-w-2xl mx-auto mb-12 uppercase tracking-[0.3em] font-light opacity-0 animate-[fadeInUp_1s_0.6s_forwards]">
             The Cinematic Architecture &amp; Art Ecosystem
           </p>
 
-          {/* CTA Button — Quixel-style pill */}
+          {/* CTA Button */}
           <div className="opacity-0 animate-[fadeInUp_1s_0.8s_forwards]">
             <Link
               href="#explore"
               id="hero-cta"
-              className="inline-flex items-center gap-3 px-10 py-4 rounded-full bg-primary hover:bg-primary-fixed text-[#050505] font-bold text-sm uppercase tracking-[0.15em] transition-all duration-300 hover:shadow-[0_0_40px_rgba(242,202,80,0.4)] hover:scale-105 active:scale-95"
+              className="inline-flex items-center gap-3 px-10 py-4 rounded-md bg-primary hover:bg-primary-fixed text-[#050505] font-bold text-sm uppercase tracking-[0.15em] transition-all duration-300 hover:shadow-[0_0_40px_rgba(242,202,80,0.4)] hover:scale-105 active:scale-95"
             >
               Tìm hiểu thêm
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="transition-transform group-hover:translate-x-1">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                 <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </Link>
@@ -89,7 +81,7 @@ export default function Home() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
           
           {/* Card: MODEL */}
-          <Link href="/model" className="group block h-[450px] relative rounded-2xl overflow-hidden glass-panel transform hover:-translate-y-4 transition-all duration-500 hover:shadow-[0_20px_40px_rgba(242,202,80,0.15)]">
+          <Link href="/model" className="group block h-[450px] relative rounded-md overflow-hidden glass-panel transform hover:-translate-y-4 transition-all duration-500 hover:shadow-[0_20px_40px_rgba(242,202,80,0.15)]">
             <Image src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?q=80&w=800&auto=format&fit=crop" alt="Big Model" fill className="object-cover opacity-60 group-hover:opacity-80 transition-opacity group-hover:scale-110 duration-700" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/50 to-transparent" />
             <div className="absolute bottom-0 left-0 w-full p-8 flex flex-col justify-end h-full">
@@ -100,7 +92,7 @@ export default function Home() {
           </Link>
 
           {/* Card: LENS */}
-          <Link href="/lens" className="group block h-[450px] relative rounded-2xl overflow-hidden glass-panel transform hover:-translate-y-4 transition-all duration-500 hover:shadow-[0_20px_40px_rgba(242,202,80,0.15)] md:mt-12">
+          <Link href="/lens" className="group block h-[450px] relative rounded-md overflow-hidden glass-panel transform hover:-translate-y-4 transition-all duration-500 hover:shadow-[0_20px_40px_rgba(242,202,80,0.15)] md:mt-12">
             <Image src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=800&auto=format&fit=crop" alt="Big Lens" fill className="object-cover opacity-60 group-hover:opacity-80 transition-opacity group-hover:scale-110 duration-700" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/50 to-transparent" />
             <div className="absolute bottom-0 left-0 w-full p-8 flex flex-col justify-end h-full">
@@ -111,10 +103,10 @@ export default function Home() {
           </Link>
 
           {/* Card: SEE */}
-          <Link href="/see" className="group block h-[450px] relative rounded-2xl overflow-hidden glass-panel transform hover:-translate-y-4 transition-all duration-500 hover:shadow-[0_20px_40px_rgba(242,202,80,0.15)]">
+          <Link href="/see" className="group block h-[450px] relative rounded-md overflow-hidden glass-panel transform hover:-translate-y-4 transition-all duration-500 hover:shadow-[0_20px_40px_rgba(242,202,80,0.15)]">
             <Image src="https://images.unsplash.com/photo-1600585154526-990dced4ea07?q=80&w=800&auto=format&fit=crop" alt="Big SEE" fill className="object-cover opacity-60 group-hover:opacity-80 transition-opacity group-hover:scale-110 duration-700" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/50 to-transparent" />
-            <div className="absolute inset-0 ring-1 ring-primary/30 group-hover:ring-primary/80 transition-all rounded-2xl z-10" />
+            <div className="absolute inset-0 ring-1 ring-primary/30 group-hover:ring-primary/80 transition-all rounded-md z-10" />
             <div className="absolute bottom-0 left-0 w-full p-8 flex flex-col justify-end h-full z-20">
               <span className="font-label-sm text-xs text-primary uppercase tracking-[0.2em] mb-2 opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-4 group-hover:translate-y-0 duration-500">Core</span>
               <h3 className="font-headline-lg text-5xl text-on-surface mb-3 group-hover:text-primary transition-colors">SEE</h3>
@@ -123,7 +115,7 @@ export default function Home() {
           </Link>
 
           {/* Card: CLASS */}
-          <Link href="/class" className="group block h-[450px] relative rounded-2xl overflow-hidden glass-panel transform hover:-translate-y-4 transition-all duration-500 hover:shadow-[0_20px_40px_rgba(242,202,80,0.15)] md:mt-12">
+          <Link href="/class" className="group block h-[450px] relative rounded-md overflow-hidden glass-panel transform hover:-translate-y-4 transition-all duration-500 hover:shadow-[0_20px_40px_rgba(242,202,80,0.15)] md:mt-12">
             <Image src="https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=800&auto=format&fit=crop" alt="Big Class" fill className="object-cover opacity-60 group-hover:opacity-80 transition-opacity group-hover:scale-110 duration-700" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/50 to-transparent" />
             <div className="absolute bottom-0 left-0 w-full p-8 flex flex-col justify-end h-full">
@@ -134,7 +126,7 @@ export default function Home() {
           </Link>
 
           {/* Card: THINK */}
-          <Link href="/think" className="group block h-[450px] relative rounded-2xl overflow-hidden glass-panel transform hover:-translate-y-4 transition-all duration-500 hover:shadow-[0_20px_40px_rgba(242,202,80,0.15)]">
+          <Link href="/think" className="group block h-[450px] relative rounded-md overflow-hidden glass-panel transform hover:-translate-y-4 transition-all duration-500 hover:shadow-[0_20px_40px_rgba(242,202,80,0.15)]">
             <Image src="https://images.unsplash.com/photo-1600607686527-6fb886090705?q=80&w=800&auto=format&fit=crop" alt="Big Think" fill className="object-cover opacity-60 group-hover:opacity-80 transition-opacity group-hover:scale-110 duration-700" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/50 to-transparent" />
             <div className="absolute bottom-0 left-0 w-full p-8 flex flex-col justify-end h-full">
