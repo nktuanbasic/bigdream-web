@@ -155,6 +155,7 @@ export default function GlobalAuthNav() {
           </div>
         )}
       </div>
-    </nav>
-  );
+    </div>
+  </nav>
+);
 }
