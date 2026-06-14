@@ -19,6 +19,7 @@ const NAV_LINKS = [
   { label: 'THINK', href: '/think' },
   { label: 'CLASS', href: '/class' },
   { label: 'ABOUT', href: '/about' },
+  { label: 'WORK', href: '/work' },
 ];
 
 export default function GlobalAuthNav() {
