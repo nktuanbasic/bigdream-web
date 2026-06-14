@@ -87,10 +87,9 @@ export default function GlobalAuthNav() {
 
   return (
     <nav className="fixed top-0 w-full bg-surface/60 backdrop-blur-3xl border-b border-glass-border flex justify-between items-center px-4 md:px-margin-desktop py-4 z-50">
-        <Link href="/" className="font-headline-lg text-2xl md:text-3xl font-extrabold text-primary tracking-tight">
-          Big Dream
-        </Link>
-      </div>
+      <Link href="/" className="font-headline-lg text-2xl md:text-3xl font-extrabold text-primary tracking-tight">
+        Big Dream
+      </Link>
 
       <div className="flex items-center gap-6 xl:gap-8">
         <div className="hidden lg:flex items-center gap-4 xl:gap-6">
