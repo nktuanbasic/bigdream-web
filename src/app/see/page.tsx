@@ -1,157 +1,252 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { 
-  Images, 
-  Aperture, 
-  Faders, 
-  MagnifyingGlass, 
-  DownloadSimple, 
-  ShareNetwork,
-  Cpu,
-  ArrowsOutSimple
-} from "@phosphor-icons/react";
+import React, { useState } from "react";
+import Image from "next/image";
 
-// Mock data for the gallery
-const mockGallery = [
-  { id: 1, title: "Luminous Cybernetic Construct", author: "AI Core", tags: ["Cyberpunk", "Architecture"], height: "400px" },
-  { id: 2, title: "Neo-Tokyo Skyline", author: "Architect Prime", tags: ["Cityscape", "Night"], height: "300px" },
-  { id: 3, title: "Ethereal Glass Pavilion", author: "Dreamer", tags: ["Minimalist", "Glass"], height: "500px" },
-  { id: 4, title: "Obsidian Obelisk", author: "AI Core", tags: ["Monument", "Dark"], height: "350px" },
-  { id: 5, title: "Golden Hour Atrium", author: "Lumina", tags: ["Interior", "Light"], height: "450px" },
-  { id: 6, title: "Synthetic Biome", author: "Nature Protocol", tags: ["Organic", "Tech"], height: "300px" },
+/* ═══════════════════════════════════════════════════════════
+   SEE ENGINE — 8 nhánh xử lý chính
+   Layout tham khảo: aicomplex.vn
+   ═══════════════════════════════════════════════════════════ */
+
+const BRANCHES = [
+  {
+    id: "stage",
+    label: "RENDER AI",
+    desc: "Biến ảnh 3D thô thành hình ảnh chân thực như chụp. Hậu kỳ chuyên sâu cho mọi bản render.",
+    category: ["architecture", "interior"],
+    image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1600&auto=format&fit=crop",
+  },
+  {
+    id: "dna",
+    label: "PHÂN TÍCH PHONG CÁCH",
+    desc: "Quét ảnh tham khảo, trích xuất DNA thiết kế: vật liệu, ánh sáng, bảng màu, cảm xúc không gian.",
+    category: ["interior", "architecture"],
+    image: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=1600&auto=format&fit=crop",
+  },
+  {
+    id: "board",
+    label: "TẠO CONCEPT",
+    desc: "Tổng hợp ý tưởng rời rạc thành Concept không gian hoàn chỉnh. Tự do sáng tạo bố cục.",
+    category: ["interior", "architecture", "planning"],
+    image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=1600&auto=format&fit=crop",
+  },
+  {
+    id: "room",
+    label: "THIẾT KẾ NỘI THẤT",
+    desc: "Tạo không gian nội thất hoàn chỉnh từ sketch hoặc mô tả. AI tự do đề xuất layout mới.",
+    category: ["interior"],
+    image: "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?q=80&w=1600&auto=format&fit=crop",
+  },
+  {
+    id: "fill",
+    label: "THAY ĐỔI VẬT LIỆU",
+    desc: "Thêm vật liệu và nội thất vào không gian thô. Giữ nguyên 100% kiến trúc gốc.",
+    category: ["interior", "architecture"],
+    image: "https://images.unsplash.com/photo-1600585154526-990dced4ea07?q=80&w=1600&auto=format&fit=crop",
+  },
+  {
+    id: "yard",
+    label: "CẢNH QUAN & MẶT TIỀN",
+    desc: "Cải tạo ngoại thất quy mô nhỏ: mặt tiền, sân vườn. Giữ nguyên khung công trình.",
+    category: ["landscape", "architecture"],
+    image: "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?q=80&w=1600&auto=format&fit=crop",
+  },
+  {
+    id: "land",
+    label: "QUY HOẠCH ĐÔ THỊ",
+    desc: "Tạo phối cảnh đô thị, quy hoạch tổng thể từ mô tả hoặc ảnh địa hình.",
+    category: ["planning", "landscape"],
+    image: "https://images.unsplash.com/photo-1486325212027-8081e485255e?q=80&w=1600&auto=format&fit=crop",
+  },
+  {
+    id: "raw",
+    label: "TIỀN XỬ LÝ THÔNG MINH",
+    desc: "Tự động phân loại input, làm sạch nhiễu, và chuyển đến đúng nhánh xử lý phù hợp.",
+    category: ["architecture", "interior", "planning", "landscape"],
+    image: "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=1600&auto=format&fit=crop",
+  },
+];
+
+const CATEGORIES = [
+  { key: "architecture", label: "Kiến trúc" },
+  { key: "interior", label: "Nội thất" },
+  { key: "planning", label: "Quy hoạch" },
+  { key: "landscape", label: "Cảnh quan" },
 ];
 
 export default function SeePage() {
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [activeFilter, setActiveFilter] = useState("All");
+  const [activeBranch, setActiveBranch] = useState(0);
+  const [activeCategory, setActiveCategory] = useState("architecture");
+  const [sliderPos, setSliderPos] = useState(50);
+  const [isDragging, setIsDragging] = useState(false);
 
-  useEffect(() => {
-    setIsLoaded(true);
-  }, []);
+  const current = BRANCHES[activeBranch];
+
+  const handleSliderMove = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
+    if (!isDragging) return;
+    const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
+    const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
+    const pos = ((clientX - rect.left) / rect.width) * 100;
+    setSliderPos(Math.max(5, Math.min(95, pos)));
+  };
 
   return (
-    <div className="min-h-screen bg-[#050505] text-[#e5e2e1] overflow-hidden relative">
-      {/* Background ambient lighting */}
-      <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-[#f2ca50] opacity-[0.03] blur-[150px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-[#f2ca50] opacity-[0.02] blur-[200px] rounded-full pointer-events-none" />
+    <div className="min-h-screen bg-[#050505] text-[#e5e2e1] pt-[72px]">
+      <main className="w-full max-w-[1800px] mx-auto px-4 md:px-8 lg:px-12 py-8 md:py-12">
 
-      {/* Terminal Grid Overlay (Subtle) */}
-      <div className="absolute inset-0 pointer-events-none opacity-[0.03]" 
-           style={{ backgroundImage: 'linear-gradient(rgba(242, 202, 80, 0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(242, 202, 80, 0.2) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+        {/* ── Page Header ── */}
+        <div className="mb-8 md:mb-12">
+          <h1 className="font-headline-lg text-4xl md:text-5xl font-black text-white tracking-tight">
+            CÔNG NGHỆ LÕI
+          </h1>
+          <p className="text-sm text-[#a09a8e] mt-2 uppercase tracking-[0.2em]">
+            SEE Engine — 8 nhánh xử lý AI kiến trúc
+          </p>
+        </div>
 
-      <main className={`relative z-10 max-w-[1600px] mx-auto px-4 sm:px-8 py-12 transition-all duration-1000 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-        
-        {/* Header / Control Deck */}
-        <header className="glass-panel inner-glow rounded-3xl p-6 sm:p-8 mb-12 flex flex-col lg:flex-row items-center justify-between gap-8 relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-1 h-full bg-[#f2ca50]" />
-          
-          <div className="flex-1 space-y-2">
-            <div className="flex items-center gap-3 text-[#f2ca50] mb-2 text-sm uppercase tracking-[0.2em] font-semibold">
-              <Cpu weight="duotone" className="text-xl animate-pulse" />
-              <span>Vision Matrix Online</span>
+        {/* ── Main Layout: Left Menu + Right Preview ── */}
+        <div className="flex flex-col lg:flex-row gap-0 lg:gap-8">
+
+          {/* ═══ LEFT: Branch List ═══ */}
+          <div className="w-full lg:w-[320px] flex-shrink-0 mb-6 lg:mb-0">
+            <div className="flex flex-row lg:flex-col overflow-x-auto lg:overflow-x-visible gap-0">
+              {BRANCHES.map((branch, index) => (
+                <button
+                  key={branch.id}
+                  onClick={() => setActiveBranch(index)}
+                  className={`group flex items-center gap-4 w-full text-left px-4 py-4 border-l-2 transition-all duration-300 flex-shrink-0 lg:flex-shrink ${
+                    activeBranch === index
+                      ? "border-l-[#f2ca50] bg-[#f2ca50]/5"
+                      : "border-l-transparent hover:border-l-[#f2ca50]/30 hover:bg-white/[0.02]"
+                  }`}
+                >
+                  <span className={`text-sm font-mono min-w-[28px] ${
+                    activeBranch === index ? "text-[#f2ca50]" : "text-[#6b6560]"
+                  }`}>
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <span className={`text-sm font-bold uppercase tracking-wider whitespace-nowrap ${
+                    activeBranch === index ? "text-[#f2ca50]" : "text-[#a09a8e] group-hover:text-white"
+                  }`}>
+                    {branch.label}
+                  </span>
+                </button>
+              ))}
             </div>
-            <h1 className="text-4xl sm:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-[#d0c5af] tracking-tight" style={{ fontFamily: 'var(--font-bodoni)' }}>
-              SEE. <span className="italic text-[#f2ca50] font-light">Gallery</span>
-            </h1>
-            <p className="text-[#a09a8e] max-w-xl text-lg font-light leading-relaxed pt-2">
-              Explore the pinnacle of architectural generation. A curated repository of cinematic renders engineered by our neural networks.
-            </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
-            <div className="relative group flex-1 sm:flex-none">
-              <MagnifyingGlass className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#a09a8e] group-focus-within:text-[#f2ca50] transition-colors" />
-              <input 
-                type="text" 
-                placeholder="Query parameters..." 
-                className="w-full sm:w-[280px] bg-[#1a1a1a]/50 border border-white/10 rounded-xl py-3 pl-12 pr-4 text-white focus:outline-none focus:border-[#f2ca50]/50 focus:bg-[#1a1a1a] transition-all"
+          {/* ═══ RIGHT: Preview Area ═══ */}
+          <div className="flex-1 min-w-0">
+
+            {/* Category Tabs */}
+            <div className="flex items-center justify-end gap-2 mb-4">
+              {CATEGORIES.map((cat) => (
+                <button
+                  key={cat.key}
+                  onClick={() => setActiveCategory(cat.key)}
+                  className={`px-4 py-1.5 text-xs font-bold uppercase tracking-wider border transition-all duration-200 rounded-sm ${
+                    activeCategory === cat.key
+                      ? "bg-[#f2ca50] text-[#050505] border-[#f2ca50]"
+                      : "bg-transparent text-[#a09a8e] border-[#a09a8e]/30 hover:border-white/50 hover:text-white"
+                  }`}
+                >
+                  {cat.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Image Preview with Before/After Slider */}
+            <div
+              className="relative w-full aspect-[16/9] bg-[#0e0e0e] overflow-hidden rounded-sm select-none cursor-col-resize"
+              onMouseMove={handleSliderMove}
+              onTouchMove={handleSliderMove}
+              onMouseUp={() => setIsDragging(false)}
+              onMouseLeave={() => setIsDragging(false)}
+              onTouchEnd={() => setIsDragging(false)}
+            >
+              {/* "After" layer — full image */}
+              <Image
+                src={current.image}
+                alt={current.label}
+                fill
+                className="object-cover"
+                priority
               />
-            </div>
-            <button className="glass-panel flex items-center justify-center gap-2 px-6 py-3 rounded-xl hover:bg-[#f2ca50]/10 transition-colors text-[#d0c5af] hover:text-[#f2ca50] cursor-pointer">
-              <Faders weight="duotone" />
-              <span>Calibrate</span>
-            </button>
-          </div>
-        </header>
 
-        {/* Filters */}
-        <div className="flex flex-wrap gap-3 mb-10">
-          {['All', 'Architecture', 'Interior', 'Cyberpunk', 'Minimalist', 'Organic'].map(filter => (
-            <button 
-              key={filter}
-              onClick={() => setActiveFilter(filter)}
-              className={`px-5 py-2 rounded-full border transition-all duration-300 backdrop-blur-md cursor-pointer ${
-                activeFilter === filter 
-                ? 'bg-[#f2ca50]/20 border-[#f2ca50] text-[#f2ca50] shadow-[0_0_15px_rgba(242,202,80,0.2)]' 
-                : 'bg-white/5 border-white/10 text-[#a09a8e] hover:border-white/30 hover:text-white'
-              }`}
-            >
-              {filter}
-            </button>
-          ))}
-        </div>
-
-        {/* Masonry-style Grid */}
-        <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6">
-          {mockGallery.map((item, index) => (
-            <div 
-              key={item.id} 
-              className="group relative rounded-2xl overflow-hidden glass-panel border border-white/5 hover:border-[#f2ca50]/50 transition-all duration-500 break-inside-avoid cursor-pointer"
-              style={{ 
-                height: item.height, 
-                animationDelay: `${index * 100}ms`
-              }}
-            >
-              {/* Image Placeholder with Gradient */}
-              <div 
-                className="absolute inset-0 bg-gradient-to-br from-[#1a1a1a] to-[#0e0e0e] flex items-center justify-center group-hover:scale-105 transition-transform duration-700 ease-out"
+              {/* "Before" layer — grayscale/sketch overlay clipped by slider */}
+              <div
+                className="absolute inset-0 overflow-hidden"
+                style={{ width: `${sliderPos}%` }}
               >
-                <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[size:10px_10px]" />
-                <Aperture className="text-4xl text-white/10 group-hover:text-[#f2ca50]/30 transition-colors duration-500 animate-[spin_10s_linear_infinite]" />
+                <Image
+                  src={current.image}
+                  alt={`${current.label} before`}
+                  fill
+                  className="object-cover grayscale brightness-75 contrast-110"
+                  style={{ minWidth: "100%", width: `${100 / (sliderPos / 100)}%`, maxWidth: "none" }}
+                />
               </div>
 
-              {/* Holographic Overlay on Hover */}
-              <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-              {/* Content Overlay */}
-              <div className="absolute inset-x-0 bottom-0 p-6 translate-y-4 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end h-full">
-                <div className="flex justify-between items-start mb-auto pt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-700 delay-100">
-                  <div className="flex gap-2">
-                    {item.tags.map(tag => (
-                      <span key={tag} className="text-xs uppercase tracking-wider bg-[#050505]/80 backdrop-blur-md text-[#f2ca50] px-3 py-1 rounded-full border border-[#f2ca50]/30">
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                  <button className="p-2 bg-[#050505]/80 backdrop-blur-md rounded-full text-white hover:text-[#f2ca50] border border-white/10 hover:border-[#f2ca50]/50 transition-colors">
-                    <ArrowsOutSimple weight="bold" />
-                  </button>
+              {/* Slider Line */}
+              <div
+                className="absolute top-0 bottom-0 z-20"
+                style={{ left: `${sliderPos}%`, transform: "translateX(-50%)" }}
+              >
+                <div className="w-[2px] h-full bg-[#f2ca50]" />
+                {/* Slider Handle */}
+                <div
+                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-[#f2ca50] flex items-center justify-center cursor-grab active:cursor-grabbing shadow-[0_0_20px_rgba(242,202,80,0.4)] z-30"
+                  onMouseDown={() => setIsDragging(true)}
+                  onTouchStart={() => setIsDragging(true)}
+                >
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M4 8H12" stroke="#050505" strokeWidth="2" strokeLinecap="round" />
+                    <path d="M6 5L3 8L6 11" stroke="#050505" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    <path d="M10 5L13 8L10 11" stroke="#050505" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
                 </div>
+              </div>
 
-                <div className="space-y-1">
-                  <h3 className="text-xl sm:text-2xl font-medium text-white" style={{ fontFamily: 'var(--font-bodoni)' }}>
-                    {item.title}
-                  </h3>
-                  <div className="flex items-center justify-between w-full">
-                    <p className="text-sm text-[#a09a8e] flex items-center gap-2">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#f2ca50] animate-pulse" />
-                      {item.author}
-                    </p>
-                    <div className="flex gap-2">
-                      <button className="p-2 hover:bg-white/10 rounded-full transition-colors text-white">
-                        <ShareNetwork weight="duotone" />
-                      </button>
-                      <button className="p-2 hover:bg-white/10 rounded-full transition-colors text-white">
-                        <DownloadSimple weight="duotone" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
+              {/* Labels */}
+              <div className="absolute top-4 left-4 z-10 bg-[#050505]/70 backdrop-blur-sm px-3 py-1 text-xs uppercase tracking-wider text-[#a09a8e] rounded-sm">
+                Before
+              </div>
+              <div className="absolute top-4 right-4 z-10 bg-[#050505]/70 backdrop-blur-sm px-3 py-1 text-xs uppercase tracking-wider text-[#f2ca50] rounded-sm">
+                After
               </div>
             </div>
-          ))}
+
+            {/* Branch Description */}
+            <div className="mt-4 mb-4">
+              <p className="text-sm text-[#a09a8e] leading-relaxed max-w-2xl">
+                {current.desc}
+              </p>
+            </div>
+
+            {/* Bottom Specs Bar */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-0 border border-white/10 rounded-sm overflow-hidden">
+              <div className="flex-1 px-6 py-4 border-b sm:border-b-0 sm:border-r border-white/10">
+                <p className="text-[10px] text-[#6b6560] uppercase tracking-widest mb-1">Thời gian xử lý</p>
+                <p className="text-xl font-black text-white">30S</p>
+              </div>
+              <div className="flex-1 px-6 py-4 border-b sm:border-b-0 sm:border-r border-white/10">
+                <p className="text-[10px] text-[#6b6560] uppercase tracking-widest mb-1">Độ phân giải</p>
+                <p className="text-xl font-black text-white">4K ULTRA</p>
+              </div>
+              <div className="flex-1 px-6 py-4 border-b sm:border-b-0 sm:border-r border-white/10">
+                <p className="text-[10px] text-[#6b6560] uppercase tracking-widest mb-1">AI Engine</p>
+                <p className="text-xl font-black text-white">SEE Engine</p>
+              </div>
+              <div className="flex-none px-6 py-4 flex items-center justify-center">
+                <button className="bg-[#f2ca50] hover:bg-[#ffe088] text-[#050505] font-bold text-xs uppercase tracking-wider px-6 py-3 rounded-sm transition-all duration-200 hover:shadow-[0_0_20px_rgba(242,202,80,0.3)]">
+                  Chi tiết Engine
+                </button>
+              </div>
+            </div>
+
+          </div>
         </div>
+
       </main>
     </div>
   );
