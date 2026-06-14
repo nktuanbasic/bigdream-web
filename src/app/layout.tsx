@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Bodoni_Moda, Hanken_Grotesk } from "next/font/google";
 import "./globals.css";
 import GlobalAuthNav from "@/components/GlobalAuthNav";
+import Footer from "@/components/Footer";
 
 const bodoni = Bodoni_Moda({
   variable: "--font-bodoni",
@@ -30,7 +31,10 @@ export default function RootLayout({
     >
       <body className="bg-obsidian-deep min-h-screen flex flex-col font-body-md text-body-md">
         <GlobalAuthNav />
-        {children}
+        <div className="flex-1">
+          {children}
+        </div>
+        <Footer />
       </body>
     </html>
   );

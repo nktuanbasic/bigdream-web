@@ -87,21 +87,23 @@ export default function GlobalAuthNav() {
 
   return (
     <nav className="fixed top-0 w-full bg-surface/60 backdrop-blur-3xl border-b border-glass-border flex justify-between items-center px-4 md:px-margin-desktop py-4 z-50">
-      <div className="flex items-center gap-8">
         <Link href="/" className="font-headline-lg text-2xl md:text-3xl font-extrabold text-primary tracking-tight">
           Big Dream
         </Link>
-        <div className="hidden lg:flex items-center gap-6">
+      </div>
+
+      <div className="flex items-center gap-6 xl:gap-8">
+        <div className="hidden lg:flex items-center gap-4 xl:gap-6">
           {NAV_LINKS.map((link) => {
             const isActive = pathname === link.href || pathname.startsWith(link.href + '/');
             return (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`font-body-md text-body-md px-3 py-1 transition-colors ${
+                className={`font-body-md text-sm xl:text-base px-2 py-1 transition-colors ${
                   isActive
                     ? 'text-primary font-bold border-b-2 border-primary pb-1'
-                    : 'text-on-surface-variant hover:text-on-surface hover:bg-white/5 rounded'
+                    : 'text-on-surface-variant hover:text-white rounded-sm'
                 }`}
               >
                 {link.label}
@@ -109,7 +111,6 @@ export default function GlobalAuthNav() {
             );
           })}
         </div>
-      </div>
 
       <div className="flex items-center gap-4">
         <div className="relative hidden xl:block">
