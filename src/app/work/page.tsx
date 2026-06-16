@@ -3,11 +3,11 @@ import { ArrowUpRight } from '@phosphor-icons/react/dist/ssr';
 
 export default function BigWorkPage() {
   const works = [
-    { id: 1, title: "The Obsidian Tower", location: "Neo-Tokyo", image: "/assets/C_DR_04.png", colSpan: "md:col-span-12", aspect: "aspect-[21/9]" },
-    { id: 2, title: "Silence Pavilion", location: "Oslo", image: "/assets/01.png", colSpan: "md:col-span-6", aspect: "aspect-[4/5]" },
-    { id: 3, title: "Echo Chamber", location: "Berlin", image: "/assets/01.png", colSpan: "md:col-span-6", aspect: "aspect-[4/5]" },
-    { id: 4, title: "Aether Complex", location: "Seoul", image: "/assets/C_DR_04.png", colSpan: "md:col-span-8", aspect: "aspect-[16/9]" },
-    { id: 5, title: "Lumina", location: "Reykjavik", image: "/assets/C_LOBBY_007.png", colSpan: "md:col-span-4", aspect: "aspect-[3/4]" },
+    { id: 1, title: "The Obsidian Tower", location: "Neo-Tokyo", image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=800&auto=format&fit=crop", colSpan: "md:col-span-12", aspect: "aspect-[21/9]" },
+    { id: 2, title: "Silence Pavilion", location: "Oslo", image: "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=800&auto=format&fit=crop", colSpan: "md:col-span-6", aspect: "aspect-[4/5]" },
+    { id: 3, title: "Echo Chamber", location: "Berlin", image: "https://images.unsplash.com/photo-1600607686527-6fb886090705?q=80&w=800&auto=format&fit=crop", colSpan: "md:col-span-6", aspect: "aspect-[4/5]" },
+    { id: 4, title: "Aether Complex", location: "Seoul", image: "https://images.unsplash.com/photo-1600566752355-35792bedcfea?q=80&w=800&auto=format&fit=crop", colSpan: "md:col-span-8", aspect: "aspect-[16/9]" },
+    { id: 5, title: "Lumina", location: "Reykjavik", image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=800&auto=format&fit=crop", colSpan: "md:col-span-4", aspect: "aspect-[3/4]" },
   ];
 
   return (

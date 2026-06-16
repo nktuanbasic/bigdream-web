@@ -8,28 +8,28 @@ export default function BigClassPage() {
       title: "Foundation & Lighting",
       duration: "Week 1-2",
       description: "Mastering the physics of light. Setting up physical cameras, understanding exposure values, and building cinematic lighting scenarios from scratch.",
-      image: "/assets/C_DR_04.png"
+      image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=800&auto=format&fit=crop"
     },
     {
       step: "02",
       title: "Material Authorship",
       duration: "Week 3-4",
       description: "Advanced node-based material creation. Procedural dirt, edge wear, and hyper-realistic PBR workflows for architectural surfaces.",
-      image: "/assets/01.png"
+      image: "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?q=80&w=800&auto=format&fit=crop"
     },
     {
       step: "03",
       title: "Atmospherics & Volume",
       duration: "Week 5-6",
       description: "Crafting depth and mood. Utilizing aerial perspective, volumetric fog, and particle systems to ground your architecture in reality.",
-      image: "/assets/01.png"
+      image: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=800&auto=format&fit=crop"
     },
     {
       step: "04",
       title: "Post-Production Synthesis",
       duration: "Week 7-8",
       description: "The final polish. Grading, compositing passes, and applying photographic imperfections to bridge the gap between render and reality.",
-      image: "/assets/C_DR_04.png"
+      image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=800&auto=format&fit=crop"
     }
   ];
 
@@ -39,7 +39,7 @@ export default function BigClassPage() {
         {/* Cinematic Hero */}
         <section className="relative w-full h-[90vh] min-h-[700px] flex items-center justify-center overflow-hidden border-b border-glass-border">
           <div className="absolute inset-0 z-0">
-            <img src="/assets/C_LOBBY_007.png" alt="Hero Background" className="w-full h-full object-cover opacity-60 scale-105" />
+            <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=800&auto=format&fit=crop" alt="Hero Background" className="w-full h-full object-cover opacity-60 scale-105" />
             <div className="absolute inset-0 bg-gradient-to-b from-obsidian-deep via-transparent to-obsidian-deep"></div>
             <div className="absolute inset-0 bg-black/40 mix-blend-overlay"></div>
           </div>

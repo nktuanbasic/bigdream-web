@@ -14,12 +14,12 @@ interface WalletInfo {
 
 const NAV_LINKS = [
   { label: 'SEE', href: '/see' },
-  { label: 'MODEL', href: '/model' },
   { label: 'LENS', href: '/lens' },
-  { label: 'THINK', href: '/think' },
+  { label: 'MODEL', href: '/model' },
   { label: 'CLASS', href: '/class' },
-  { label: 'WORK', href: '/work' },
+  { label: 'THINK', href: '/think' },
   { label: 'ABOUT', href: '/about' },
+  { label: 'WORK', href: '/work' },
 ];
 
 export default function GlobalAuthNav() {

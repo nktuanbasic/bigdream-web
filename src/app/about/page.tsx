@@ -2,10 +2,10 @@ import Link from 'next/link';
 
 export default function BigAboutPage() {
   const team = [
-    { name: "Julian Vance", role: "Creative Director", image: "/assets/01.png" },
-    { name: "Elena Rostova", role: "Lead Architect", image: "/assets/01.png" },
-    { name: "Marcus Chen", role: "VFX Supervisor", image: "/assets/C_DR_04.png" },
-    { name: "Sarah Jenkins", role: "Lighting Specialist", image: "/assets/C_DR_04.png" }
+    { name: "Julian Vance", role: "Creative Director", image: "https://images.unsplash.com/photo-1600607686527-6fb886090705?q=80&w=800&auto=format&fit=crop" },
+    { name: "Elena Rostova", role: "Lead Architect", image: "https://images.unsplash.com/photo-1600566752355-35792bedcfea?q=80&w=800&auto=format&fit=crop" },
+    { name: "Marcus Chen", role: "VFX Supervisor", image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=800&auto=format&fit=crop" },
+    { name: "Sarah Jenkins", role: "Lighting Specialist", image: "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?q=80&w=800&auto=format&fit=crop" }
   ];
 
   return (
@@ -14,7 +14,7 @@ export default function BigAboutPage() {
         {/* Studio Hero - Immersive Full Screen */}
         <section className="relative w-full h-screen min-h-[800px] flex items-center justify-center overflow-hidden">
           <div className="absolute inset-0 z-0">
-            <img src="/assets/C_LOBBY_007.png" alt="Studio Background" className="w-full h-full object-cover opacity-40 scale-105" />
+            <img src="https://images.unsplash.com/photo-1600585154526-990dced4ea07?q=80&w=800&auto=format&fit=crop" alt="Studio Background" className="w-full h-full object-cover opacity-40 scale-105" />
             <div className="absolute inset-0 bg-gradient-to-b from-obsidian-deep via-transparent to-obsidian-deep"></div>
           </div>
           
@@ -59,15 +59,15 @@ export default function BigAboutPage() {
           <div className="flex overflow-hidden gap-4 px-4 md:px-8">
             <div className="w-1/3 aspect-[4/5] overflow-hidden rounded-sm relative group">
               <div className="absolute inset-0 bg-primary/20 mix-blend-overlay group-hover:bg-transparent transition-colors duration-700 z-10"></div>
-              <img src="/assets/01.png" alt="Process 1" className="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-105" />
+              <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=800&auto=format&fit=crop" alt="Process 1" className="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-105" />
             </div>
             <div className="w-1/3 aspect-[4/5] overflow-hidden rounded-sm relative group mt-16">
               <div className="absolute inset-0 bg-primary/20 mix-blend-overlay group-hover:bg-transparent transition-colors duration-700 z-10"></div>
-              <img src="/assets/C_DR_04.png" alt="Process 2" className="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-105" />
+              <img src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?q=80&w=800&auto=format&fit=crop" alt="Process 2" className="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-105" />
             </div>
             <div className="w-1/3 aspect-[4/5] overflow-hidden rounded-sm relative group">
               <div className="absolute inset-0 bg-primary/20 mix-blend-overlay group-hover:bg-transparent transition-colors duration-700 z-10"></div>
-              <img src="/assets/01.png" alt="Process 3" className="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-105" />
+              <img src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=800&auto=format&fit=crop" alt="Process 3" className="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-105" />
             </div>
           </div>
         </section>
