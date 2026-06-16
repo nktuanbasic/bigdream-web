@@ -106,9 +106,9 @@ export default function BigAboutPage() {
           <p className="font-body-lg text-xl text-on-surface-variant mb-12 font-light max-w-xl mx-auto">
             We are always looking for visionary clients and exceptional talent.
           </p>
-          <button className="bg-primary text-on-primary font-label-sm text-sm uppercase tracking-widest px-12 py-5 rounded-sm hover:bg-primary-fixed transition-colors duration-300">
+          <a href="https://www.facebook.com/tuan.khanh.722968?locale=vi_VN" target="_blank" rel="noopener noreferrer" className="inline-block bg-primary text-on-primary font-label-sm text-sm uppercase tracking-widest px-12 py-5 rounded-sm hover:bg-primary-fixed transition-colors duration-300">
             Contact Studio
-          </button>
+          </a>
         </section>
       </main>
     </div>

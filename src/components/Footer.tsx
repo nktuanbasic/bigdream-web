@@ -48,7 +48,7 @@ export default function Footer() {
           <div>
             <h4 className="text-white font-bold mb-4 uppercase tracking-wider text-sm">Công Ty</h4>
             <ul className="space-y-3 text-sm text-[#a09a8e]">
-              <li><a href="#" className="hover:text-primary transition-colors">Liên hệ</a></li>
+              <li><a href="https://www.facebook.com/tuan.khanh.722968?locale=vi_VN" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">Liên hệ</a></li>
               <li><a href="#" className="hover:text-primary transition-colors">Tuyển dụng</a></li>
               <li><a href="#" className="hover:text-primary transition-colors">Đối tác</a></li>
             </ul>
