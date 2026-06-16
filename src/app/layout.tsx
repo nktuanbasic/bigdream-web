@@ -1,23 +1,17 @@
 import type { Metadata } from "next";
-import { Bebas_Neue, Montserrat, Hanken_Grotesk } from "next/font/google";
+import { Montserrat, Hanken_Grotesk } from "next/font/google";
 import "./globals.css";
 import GlobalAuthNav from "@/components/GlobalAuthNav";
 import Footer from "@/components/Footer";
 
-const bebas = Bebas_Neue({
-  weight: "400",
-  variable: "--font-bebas",
-  subsets: ["latin"],
-});
-
 const montserrat = Montserrat({
   variable: "--font-montserrat",
-  subsets: ["latin"],
+  subsets: ["latin", "vietnamese"],
 });
 
 const hanken = Hanken_Grotesk({
   variable: "--font-hanken",
-  subsets: ["latin"],
+  subsets: ["latin", "vietnamese"],
 });
 
 export const metadata: Metadata = {
@@ -32,8 +26,8 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
-      className={`dark ${bebas.variable} ${montserrat.variable} ${hanken.variable} h-full antialiased`}
+      lang="vi"
+      className={`dark ${montserrat.variable} ${hanken.variable} h-full antialiased`}
     >
       <body className="bg-obsidian-deep min-h-screen flex flex-col font-body-md text-body-md">
         <GlobalAuthNav />
