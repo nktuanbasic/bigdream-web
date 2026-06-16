@@ -80,14 +80,15 @@ export default function Home() {
         {/* Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
           
-          {/* Card: MODEL */}
-          <Link href="/model" className="group block h-[450px] relative rounded-md overflow-hidden glass-panel transform hover:-translate-y-4 transition-all duration-500 hover:shadow-[0_20px_40px_rgba(242,202,80,0.15)]">
-            <Image src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?q=80&w=800&auto=format&fit=crop" alt="Big Model" fill className="object-cover opacity-60 group-hover:opacity-80 transition-opacity group-hover:scale-110 duration-700" />
+          {/* Card: SEE */}
+          <Link href="/see" className="group block h-[450px] relative rounded-md overflow-hidden glass-panel transform hover:-translate-y-4 transition-all duration-500 hover:shadow-[0_20px_40px_rgba(242,202,80,0.15)]">
+            <Image src="https://images.unsplash.com/photo-1600585154526-990dced4ea07?q=80&w=800&auto=format&fit=crop" alt="Big SEE" fill className="object-cover opacity-60 group-hover:opacity-80 transition-opacity group-hover:scale-110 duration-700" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/50 to-transparent" />
-            <div className="absolute bottom-0 left-0 w-full p-8 flex flex-col justify-end h-full">
-              <span className="font-label-sm text-xs text-primary uppercase tracking-[0.2em] mb-2 opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-4 group-hover:translate-y-0 duration-500">Discover</span>
-              <h3 className="font-headline-lg text-4xl text-on-surface mb-3 group-hover:text-primary transition-colors">Model</h3>
-              <p className="font-body-md text-sm text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity duration-500">Premium 3D assets & mastercrafted geometry.</p>
+            <div className="absolute inset-0 ring-1 ring-primary/30 group-hover:ring-primary/80 transition-all rounded-md z-10" />
+            <div className="absolute bottom-0 left-0 w-full p-8 flex flex-col justify-end h-full z-20">
+              <span className="font-label-sm text-xs text-primary uppercase tracking-[0.2em] mb-2 opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-4 group-hover:translate-y-0 duration-500">Core</span>
+              <h3 className="font-headline-lg text-5xl text-on-surface mb-3 group-hover:text-primary transition-colors">SEE</h3>
+              <p className="font-body-md text-sm text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity duration-500">The Ultimate AI Architectural Workspace.</p>
             </div>
           </Link>
 
@@ -102,15 +103,14 @@ export default function Home() {
             </div>
           </Link>
 
-          {/* Card: SEE */}
-          <Link href="/see" className="group block h-[450px] relative rounded-md overflow-hidden glass-panel transform hover:-translate-y-4 transition-all duration-500 hover:shadow-[0_20px_40px_rgba(242,202,80,0.15)]">
-            <Image src="https://images.unsplash.com/photo-1600585154526-990dced4ea07?q=80&w=800&auto=format&fit=crop" alt="Big SEE" fill className="object-cover opacity-60 group-hover:opacity-80 transition-opacity group-hover:scale-110 duration-700" />
+          {/* Card: MODEL */}
+          <Link href="/model" className="group block h-[450px] relative rounded-md overflow-hidden glass-panel transform hover:-translate-y-4 transition-all duration-500 hover:shadow-[0_20px_40px_rgba(242,202,80,0.15)]">
+            <Image src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?q=80&w=800&auto=format&fit=crop" alt="Big Model" fill className="object-cover opacity-60 group-hover:opacity-80 transition-opacity group-hover:scale-110 duration-700" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/50 to-transparent" />
-            <div className="absolute inset-0 ring-1 ring-primary/30 group-hover:ring-primary/80 transition-all rounded-md z-10" />
-            <div className="absolute bottom-0 left-0 w-full p-8 flex flex-col justify-end h-full z-20">
-              <span className="font-label-sm text-xs text-primary uppercase tracking-[0.2em] mb-2 opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-4 group-hover:translate-y-0 duration-500">Core</span>
-              <h3 className="font-headline-lg text-5xl text-on-surface mb-3 group-hover:text-primary transition-colors">SEE</h3>
-              <p className="font-body-md text-sm text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity duration-500">The Ultimate AI Architectural Workspace.</p>
+            <div className="absolute bottom-0 left-0 w-full p-8 flex flex-col justify-end h-full">
+              <span className="font-label-sm text-xs text-primary uppercase tracking-[0.2em] mb-2 opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-4 group-hover:translate-y-0 duration-500">Discover</span>
+              <h3 className="font-headline-lg text-4xl text-on-surface mb-3 group-hover:text-primary transition-colors">Model</h3>
+              <p className="font-body-md text-sm text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity duration-500">Premium 3D assets & mastercrafted geometry.</p>
             </div>
           </Link>
 
