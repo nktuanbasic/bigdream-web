@@ -62,7 +62,7 @@ export default function LensPage() {
             <span>Lens Core v2.0</span>
           </div>
           <h1 className="text-5xl sm:text-7xl font-bold tracking-tight text-white drop-shadow-lg" style={{ fontFamily: 'var(--font-bodoni)' }}>
-            Deconstruct <span className="italic text-[#f2ca50] font-light">Reality</span>
+            Deconstruct <span className="text-[#f2ca50] font-light">Reality</span>
           </h1>
           <p className="text-[#a09a8e] text-lg sm:text-xl font-light max-w-2xl mx-auto leading-relaxed">
             Upload any architectural image. Our neural engine will instantly extract materials, styles, and structural prompt vectors.
@@ -136,7 +136,7 @@ export default function LensPage() {
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 border-b border-white/10 pb-4 gap-4">
                 <h2 className="text-3xl text-white font-bold flex items-center gap-3" style={{ fontFamily: 'var(--font-bodoni)' }}>
                   <Sparkle className="text-[#f2ca50]" />
-                  Analysis <span className="italic font-light">Complete</span>
+                  Analysis <span className="font-light">Complete</span>
                 </h2>
                 <button 
                   onClick={() => setResultReady(false)}

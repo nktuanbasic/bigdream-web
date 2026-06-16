@@ -32,7 +32,7 @@ export default function Home() {
         <div className="relative z-10 flex flex-col items-center justify-center h-full px-6 text-center">
           {/* Title */}
           <h1 className="font-display-lg text-7xl md:text-9xl lg:text-[180px] text-white leading-[0.85] tracking-tight mb-6 opacity-0 animate-[fadeInUp_1s_0.4s_forwards] drop-shadow-[0_4px_60px_rgba(0,0,0,0.5)] font-black">
-            BIG<span className="text-primary italic">DREAM</span>
+            BIG<span className="text-primary">DREAM</span>
           </h1>
 
           {/* Tagline */}
@@ -73,7 +73,7 @@ export default function Home() {
         <div className="text-center mb-16 md:mb-20">
           <p className="font-label-sm text-xs text-primary uppercase tracking-[0.3em] mb-4">Explore the ecosystem</p>
           <h2 className="font-headline-lg text-4xl md:text-6xl text-white">
-            Tất cả trong <span className="text-primary italic">một nền tảng</span>
+            Tất cả trong <span className="text-primary">một nền tảng</span>
           </h2>
         </div>
 

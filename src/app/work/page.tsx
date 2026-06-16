@@ -5,8 +5,8 @@ export default function BigWorkPage() {
   const works = [
     { id: 1, title: "The Obsidian Tower", location: "Neo-Tokyo", image: "/assets/C_DR_04.png", colSpan: "md:col-span-12", aspect: "aspect-[21/9]" },
     { id: 2, title: "Silence Pavilion", location: "Oslo", image: "/assets/01.png", colSpan: "md:col-span-6", aspect: "aspect-[4/5]" },
-    { id: 3, title: "Echo Chamber", location: "Berlin", image: "/assets/02.png", colSpan: "md:col-span-6", aspect: "aspect-[4/5]" },
-    { id: 4, title: "Aether Complex", location: "Seoul", image: "/assets/03.png", colSpan: "md:col-span-8", aspect: "aspect-[16/9]" },
+    { id: 3, title: "Echo Chamber", location: "Berlin", image: "/assets/01.png", colSpan: "md:col-span-6", aspect: "aspect-[4/5]" },
+    { id: 4, title: "Aether Complex", location: "Seoul", image: "/assets/C_DR_04.png", colSpan: "md:col-span-8", aspect: "aspect-[16/9]" },
     { id: 5, title: "Lumina", location: "Reykjavik", image: "/assets/C_LOBBY_007.png", colSpan: "md:col-span-4", aspect: "aspect-[3/4]" },
   ];
 
@@ -18,7 +18,7 @@ export default function BigWorkPage() {
         <header className="max-w-[1920px] mx-auto mb-16 md:mb-24 flex flex-col md:flex-row justify-between items-end gap-8 border-b border-glass-border pb-12">
           <div>
             <h1 className="font-display-lg text-6xl md:text-[120px] leading-none text-on-surface tracking-tighter uppercase drop-shadow-lg">
-              Selected <br/><span className="text-primary italic">Works</span>
+              Selected <br/><span className="text-primary">Works</span>
             </h1>
           </div>
           <div className="flex flex-col items-start md:items-end gap-4 max-w-sm">

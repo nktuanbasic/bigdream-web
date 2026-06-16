@@ -70,7 +70,7 @@ export default function AccountDashboardPage() {
       <div className="min-h-screen flex flex-col items-center justify-center bg-obsidian-deep text-on-surface relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-radial from-primary/10 to-transparent opacity-50"></div>
         <Crown size={64} className="text-primary mb-8" weight="thin" />
-        <h2 className="font-display-lg text-6xl mb-4 text-center tracking-tighter uppercase drop-shadow-lg">Restricted <br/><span className="text-primary italic">Access</span></h2>
+        <h2 className="font-display-lg text-6xl mb-4 text-center tracking-tighter uppercase drop-shadow-lg">Restricted <br/><span className="text-primary">Access</span></h2>
         <p className="font-body-lg text-xl text-on-surface-variant font-light mt-4">Please authenticate to access your Pro Member dashboard.</p>
       </div>
     );
@@ -137,7 +137,7 @@ export default function AccountDashboardPage() {
           {activeTab === 'overview' && (
             <div className="space-y-12 animate-in fade-in slide-in-from-bottom-8 duration-700">
               <header className="border-b border-glass-border pb-8">
-                <h2 className="font-display-lg text-5xl md:text-7xl text-on-surface uppercase tracking-tighter">Command <span className="text-primary italic">Center</span></h2>
+                <h2 className="font-display-lg text-5xl md:text-7xl text-on-surface uppercase tracking-tighter">Command <span className="text-primary">Center</span></h2>
               </header>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -181,7 +181,7 @@ export default function AccountDashboardPage() {
           {activeTab === 'library' && (
             <div className="space-y-12 animate-in fade-in slide-in-from-bottom-8 duration-700">
               <header className="border-b border-glass-border pb-8 flex justify-between items-end">
-                <h2 className="font-display-lg text-5xl md:text-7xl text-on-surface uppercase tracking-tighter">Asset <span className="text-primary italic">Library</span></h2>
+                <h2 className="font-display-lg text-5xl md:text-7xl text-on-surface uppercase tracking-tighter">Asset <span className="text-primary">Library</span></h2>
                 <span className="font-label-sm text-xs text-on-surface-variant uppercase tracking-widest border border-glass-border px-4 py-2 rounded-full">{purchases.length} Items</span>
               </header>
               
@@ -220,7 +220,7 @@ export default function AccountDashboardPage() {
           {activeTab === 'activity' && (
             <div className="space-y-12 animate-in fade-in slide-in-from-bottom-8 duration-700">
               <header className="border-b border-glass-border pb-8">
-                <h2 className="font-display-lg text-5xl md:text-7xl text-on-surface uppercase tracking-tighter">System <span className="text-primary italic">Logs</span></h2>
+                <h2 className="font-display-lg text-5xl md:text-7xl text-on-surface uppercase tracking-tighter">System <span className="text-primary">Logs</span></h2>
               </header>
               
               <div className="glass-panel rounded-2xl overflow-hidden">
@@ -259,7 +259,7 @@ export default function AccountDashboardPage() {
           {activeTab === 'transactions' && (
             <div className="space-y-12 animate-in fade-in slide-in-from-bottom-8 duration-700">
               <header className="border-b border-glass-border pb-8">
-                <h2 className="font-display-lg text-5xl md:text-7xl text-on-surface uppercase tracking-tighter">Treasury <span className="text-primary italic">Ledger</span></h2>
+                <h2 className="font-display-lg text-5xl md:text-7xl text-on-surface uppercase tracking-tighter">Treasury <span className="text-primary">Ledger</span></h2>
               </header>
               
               <div className="glass-panel rounded-2xl overflow-hidden">

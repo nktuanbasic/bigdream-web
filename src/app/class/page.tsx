@@ -22,14 +22,14 @@ export default function BigClassPage() {
       title: "Atmospherics & Volume",
       duration: "Week 5-6",
       description: "Crafting depth and mood. Utilizing aerial perspective, volumetric fog, and particle systems to ground your architecture in reality.",
-      image: "/assets/02.png"
+      image: "/assets/01.png"
     },
     {
       step: "04",
       title: "Post-Production Synthesis",
       duration: "Week 7-8",
       description: "The final polish. Grading, compositing passes, and applying photographic imperfections to bridge the gap between render and reality.",
-      image: "/assets/03.png"
+      image: "/assets/C_DR_04.png"
     }
   ];
 

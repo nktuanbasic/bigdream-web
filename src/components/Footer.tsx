@@ -18,7 +18,7 @@ export default function Footer() {
           {/* Brand Col */}
           <div className="lg:col-span-1">
             <Link href="/" className="font-headline-lg text-2xl font-extrabold text-primary tracking-tight mb-4 inline-block">
-              Big Dream
+              BIG DREAM
             </Link>
             <p className="text-sm text-[#a09a8e] mb-6">
               Hệ sinh thái AI kiến trúc tối cao. <br/>

@@ -17,7 +17,7 @@ export default function BigModelPage() {
         <div className="absolute inset-0 bg-gradient-to-t from-obsidian-deep via-obsidian-deep/40 to-transparent"></div>
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
           <h1 className="font-display-lg text-5xl md:text-7xl text-on-surface mb-6 drop-shadow-lg">
-            Mastercrafted <span className="text-primary italic">3D Assets</span>
+            Mastercrafted <span className="text-primary">3D Assets</span>
           </h1>
           <div className="w-full max-w-3xl relative">
             <MagnifyingGlass size={24} className="absolute left-6 top-1/2 -translate-y-1/2 text-on-surface-variant" />

@@ -3,8 +3,8 @@ import Link from 'next/link';
 export default function BigAboutPage() {
   const team = [
     { name: "Julian Vance", role: "Creative Director", image: "/assets/01.png" },
-    { name: "Elena Rostova", role: "Lead Architect", image: "/assets/02.png" },
-    { name: "Marcus Chen", role: "VFX Supervisor", image: "/assets/03.png" },
+    { name: "Elena Rostova", role: "Lead Architect", image: "/assets/01.png" },
+    { name: "Marcus Chen", role: "VFX Supervisor", image: "/assets/C_DR_04.png" },
     { name: "Sarah Jenkins", role: "Lighting Specialist", image: "/assets/C_DR_04.png" }
   ];
 
@@ -20,7 +20,7 @@ export default function BigAboutPage() {
           
           <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-12 flex flex-col items-center text-center mt-20">
             <h1 className="font-display-lg text-7xl md:text-[150px] text-on-surface leading-none tracking-tighter uppercase drop-shadow-2xl mb-8">
-              The <span className="text-primary italic">Studio</span>
+              The <span className="text-primary">Studio</span>
             </h1>
             <p className="font-body-lg text-xl md:text-3xl text-on-surface-variant max-w-3xl font-light leading-relaxed">
               We are a collective of digital architects, light sculptors, and visual engineers building the unbuilt.
@@ -40,7 +40,7 @@ export default function BigAboutPage() {
             <div className="md:col-span-5 md:col-start-2">
               <span className="inline-block font-label-sm text-xs text-primary uppercase tracking-widest mb-6">Our Philosophy</span>
               <h2 className="font-headline-lg text-4xl md:text-6xl leading-tight text-on-surface mb-8">
-                Form follows <br/><span className="text-on-surface-variant italic">emotion.</span>
+                Form follows <br/><span className="text-on-surface-variant">emotion.</span>
               </h2>
             </div>
             <div className="md:col-span-5">
@@ -67,7 +67,7 @@ export default function BigAboutPage() {
             </div>
             <div className="w-1/3 aspect-[4/5] overflow-hidden rounded-sm relative group">
               <div className="absolute inset-0 bg-primary/20 mix-blend-overlay group-hover:bg-transparent transition-colors duration-700 z-10"></div>
-              <img src="/assets/02.png" alt="Process 3" className="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-105" />
+              <img src="/assets/01.png" alt="Process 3" className="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-105" />
             </div>
           </div>
         </section>

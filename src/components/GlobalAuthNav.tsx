@@ -18,8 +18,8 @@ const NAV_LINKS = [
   { label: 'LENS', href: '/lens' },
   { label: 'THINK', href: '/think' },
   { label: 'CLASS', href: '/class' },
-  { label: 'ABOUT', href: '/about' },
   { label: 'WORK', href: '/work' },
+  { label: 'ABOUT', href: '/about' },
 ];
 
 export default function GlobalAuthNav() {
@@ -89,7 +89,7 @@ export default function GlobalAuthNav() {
   return (
     <nav className="fixed top-0 w-full bg-surface/60 backdrop-blur-3xl border-b border-glass-border flex justify-between items-center px-4 md:px-margin-desktop py-4 z-50">
       <Link href="/" className="font-headline-lg text-2xl md:text-3xl font-extrabold text-primary tracking-tight">
-        Big Dream
+        BIG DREAM
       </Link>
 
       <div className="flex items-center gap-6 xl:gap-8">
