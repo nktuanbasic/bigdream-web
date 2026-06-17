@@ -1,10 +1,28 @@
 import { NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
 export const maxDuration = 60; // Render ảnh có thể lâu, cho phép API chạy max 60s
 
 export async function POST(req: Request) {
   try {
-    const { prompt, imageBase64 } = await req.json();
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    // Xác thực người dùng
+    const authHeader = req.headers.get('authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return NextResponse.json({ error: 'Quý khách vui lòng đăng nhập trước khi sử dụng tính năng này.' }, { status: 401 });
+    }
+    const token = authHeader.split('Bearer ')[1];
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+    
+    if (authError || !user) {
+      return NextResponse.json({ error: 'Phiên đăng nhập không hợp lệ.' }, { status: 401 });
+    }
+
+    const { prompt, imageBase64, messageId } = await req.json();
 
     let modelToUse = '';
     let baseCostUSD = 0;
@@ -18,6 +36,16 @@ export async function POST(req: Request) {
       // User chỉ gõ text -> Tạo ảnh mới hoàn toàn
       modelToUse = 'imagen-4.0-fast-generate-001';
       baseCostUSD = 0.02;
+    }
+
+    // 2. Logic Tính Tiền (+30% lợi nhuận)
+    const finalPriceUSD = baseCostUSD * 1.3;
+    const finalPriceVND = Math.ceil(finalPriceUSD * 25000);
+
+    // Kiểm tra số dư trước khi cho phép render
+    const { data: userDoc, error: walletError } = await supabase.from('users').select('purchased_coins').eq('id', user.id).single();
+    if (walletError || !userDoc || userDoc.purchased_coins < finalPriceVND) {
+      return NextResponse.json({ error: 'Tài khoản của quý khách không đủ Gem để render ảnh. Vui lòng nạp thêm!' }, { status: 402 });
     }
 
     console.log(`[IMAGE GEN] Bắt đầu render ảnh với Model: ${modelToUse}`);
@@ -34,17 +62,30 @@ export async function POST(req: Request) {
     
     // Ảnh kết quả (Tạm thời trả về ảnh Demo từ Picsum)
     const fakeGeneratedImageUrl = `https://picsum.photos/seed/${Math.floor(Math.random()*1000)}/800/450`;
+    
+    // Tương lai khi tích hợp SDK thật, upload ảnh Base64 lên Supabase Storage và lấy link vĩnh viễn ở đây
+    let finalImageUrl = fakeGeneratedImageUrl;
 
-    // 2. Logic Tính Tiền (+30% lợi nhuận)
-    const finalPriceUSD = baseCostUSD * 1.3;
-    const finalPriceVND = Math.ceil(finalPriceUSD * 25000);
+    // Lưu thông tin ảnh tạo ra vào Database
+    if (messageId) {
+      await supabase.from('generated_images').insert({
+        message_id: messageId,
+        prompt: prompt,
+        image_url: finalImageUrl,
+        model: modelToUse
+      });
+    }
+
+    // 3. Trừ tiền thật trên Database
+    const newBalance = Math.max(0, userDoc.purchased_coins - finalPriceVND);
+    await supabase.from('users').update({ purchased_coins: newBalance }).eq('id', user.id);
 
     console.log(`[BILLING IMAGE] Giá gốc: $${baseCostUSD} | Giá bán (+30%): $${finalPriceUSD}`);
-    console.log(`[BILLING IMAGE] SỐ TIỀN TRỪ VÀO VÍ KHÁCH: -${finalPriceVND} GEM`);
+    console.log(`[BILLING IMAGE] SỐ TIỀN TRỪ VÀO VÍ KHÁCH (${user.email}): -${finalPriceVND} GEM. Số dư mới: ${newBalance}`);
 
     return NextResponse.json({ 
       success: true, 
-      imageUrl: fakeGeneratedImageUrl, // Đổi thành Base64 thực tế sau này
+      imageUrl: finalImageUrl,
       costVnd: finalPriceVND,
       modelUsed: modelToUse
     });
