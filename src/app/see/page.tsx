@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import { useChat } from "@ai-sdk/react";
-import { Paperclip, PaperPlaneRight, Image as ImageIcon, MagicWand, Lightning, Brain, Gem } from "@phosphor-icons/react";
+import { DefaultChatTransport, type UIMessage } from "ai";
+import { Paperclip, PaperPlaneRight, Image as ImageIcon, MagicWand, Lightning, Brain, Diamond } from "@phosphor-icons/react";
 import Image from "next/image";
 
 /* ═══════════════════════════════════════════════════════════
@@ -20,10 +21,19 @@ const BRANCHES = [
   { id: "stage", label: "STAGE", desc: "Hậu Kỳ Ảnh Render", type: "Giữ nguyên" },
 ];
 
+const getMessageText = (message: UIMessage) =>
+  message.parts
+    .filter((part) => part.type === "text")
+    .map((part) => part.text)
+    .join("");
+
+const Gem = Diamond;
+
 export default function SeeWorkspace() {
   const [activeBranch, setActiveBranch] = useState("room");
   const [activeTier, setActiveTier] = useState("medium"); // Mặc định Trung bình
   const [balance, setBalance] = useState(500000); // 500,000 VND giả lập
+  const [input, setInput] = useState("");
   
   const [attachments, setAttachments] = useState<FileList | null>(null);
   const [lastUploadedBase64, setLastUploadedBase64] = useState<string | null>(null); // Lưu ảnh gốc cho inpainting
@@ -32,14 +42,11 @@ export default function SeeWorkspace() {
   
   const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const chatTransport = useMemo(() => new DefaultChatTransport({ api: "/api/see" }), []);
 
   // Khởi tạo Chat Hook từ AI SDK
-  const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages } = useChat({
-    api: "/api/see",
-    body: {
-      branchId: activeBranch,
-      tier: activeTier,
-    },
+  const { messages, sendMessage, status, setMessages } = useChat({
+    transport: chatTransport,
     onFinish: () => {
       // Giả lập trừ một số tiền (tùy thuộc vào Tier) để sếp có cảm giác dòng tiền đang chảy
       let fakeCost = 500;
@@ -48,6 +55,7 @@ export default function SeeWorkspace() {
       setBalance(prev => Math.max(0, prev - fakeCost));
     }
   });
+  const isLoading = status === "submitted" || status === "streaming";
 
   // Tự động cuộn xuống cuối khi có tin nhắn mới
   useEffect(() => {
@@ -59,6 +67,29 @@ export default function SeeWorkspace() {
     setActiveBranch(branchId);
     setMessages([]);
     setAttachments(null);
+  };
+
+  const handleSendMessage = async (e?: React.FormEvent<HTMLFormElement>) => {
+    e?.preventDefault();
+
+    const text = input.trim();
+    const files = attachments ?? undefined;
+
+    if (!text && !files) return;
+
+    await sendMessage(
+      text ? { text, files } : { files: files! },
+      {
+        body: {
+          branchId: activeBranch,
+          tier: activeTier,
+        },
+      }
+    );
+
+    setInput("");
+    setAttachments(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   // Thực thi gọi API Tạo Ảnh
@@ -168,7 +199,10 @@ export default function SeeWorkspace() {
               </p>
             </div>
           ) : (
-            messages.map((m) => (
+            messages.map((m) => {
+              const messageText = getMessageText(m);
+
+              return (
               <div key={m.id} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
                 <div className={`max-w-[80%] rounded-xl p-4 ${
                   m.role === "user" 
@@ -184,15 +218,15 @@ export default function SeeWorkspace() {
                   
                   {/* Nội dung tin nhắn */}
                   <div className="whitespace-pre-wrap text-sm leading-relaxed text-[#c0bcb5]">
-                    {m.content}
+                    {messageText}
                   </div>
 
                   {/* Nhận diện Block Prompt để hiển thị nút Tạo Ảnh */}
-                  {m.role === "assistant" && m.content.includes("PROMPT") && m.content.includes("EXPLAIN") && (
+                  {m.role === "assistant" && messageText.includes("PROMPT") && messageText.includes("EXPLAIN") && (
                     <div className="mt-4 pt-4 border-t border-white/10 flex flex-col gap-3">
                       {!renderedImages[m.id] ? (
                         <button 
-                          onClick={() => handleGenerateImage(m.content, m.id)}
+                          onClick={() => handleGenerateImage(messageText, m.id)}
                           disabled={generatingForMsg === m.id}
                           className="flex w-fit items-center gap-2 bg-[#f2ca50] hover:bg-[#ffe088] disabled:bg-[#f2ca50]/50 disabled:cursor-wait text-[#050505] font-bold text-xs uppercase tracking-wider px-4 py-2 rounded-sm transition-all duration-200"
                         >
@@ -214,7 +248,8 @@ export default function SeeWorkspace() {
                   )}
                 </div>
               </div>
-            ))
+              );
+            })
           )}
           {isLoading && (
             <div className="flex justify-start">
@@ -254,11 +289,7 @@ export default function SeeWorkspace() {
           </div>
 
           <form 
-            onSubmit={(e) => {
-              handleSubmit(e, { experimental_attachments: attachments });
-              setAttachments(null);
-              if (fileInputRef.current) fileInputRef.current.value = "";
-            }} 
+            onSubmit={handleSendMessage}
             className="relative flex items-end gap-2 max-w-4xl mx-auto"
           >
             {/* Input File Ẩn */}
@@ -294,7 +325,7 @@ export default function SeeWorkspace() {
 
               <textarea
                 value={input}
-                onChange={handleInputChange}
+                onChange={(e) => setInput(e.target.value)}
                 placeholder="Mô tả không gian hoặc dán ảnh vào đây..."
                 className="w-full max-h-48 min-h-[56px] bg-transparent text-white placeholder:text-[#6b6560] p-4 text-sm focus:outline-none resize-none overflow-y-auto custom-scrollbar"
                 rows={1}

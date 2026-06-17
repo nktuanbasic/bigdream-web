@@ -1,4 +1,4 @@
-import { streamText, Message } from 'ai';
+import { convertToModelMessages, streamText, type UIMessage } from 'ai';
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { SEE_INSTRUCTIONS } from '@/lib/see/systemInstructions';
 
@@ -26,6 +26,7 @@ function getRandomKey(): string {
 export async function POST(req: Request) {
   try {
     const { messages, branchId, tier } = await req.json();
+    const modelMessages = await convertToModelMessages(messages as UIMessage[]);
 
     // 1. Phân bổ Model theo Tier
     let mainModel = 'gemini-2.5-flash';
@@ -58,10 +59,11 @@ Luôn giao tiếp bằng Tiếng Việt thân thiện, chuyên nghiệp, trừ p
       return streamText({
         model: googleProvider(modelName),
         system: fullSystemPrompt,
-        messages: messages as Message[],
+        messages: modelMessages,
         onFinish: async ({ usage }) => {
           // --- HỆ THỐNG TÍNH TIỀN (BILLING ENGINE) ---
-          const { promptTokens, completionTokens } = usage;
+          const promptTokens = usage.inputTokens ?? 0;
+          const completionTokens = usage.outputTokens ?? 0;
           const rates = PRICING[modelName] || PRICING['gemini-2.5-flash'];
           
           // Tính giá gốc (USD)
@@ -85,13 +87,13 @@ Luôn giao tiếp bằng Tiếng Việt thân thiện, chuyên nghiệp, trừ p
     try {
       // Gọi thử Model Chính trước
       const result = callAI(mainModel, getRandomKey());
-      return result.toDataStreamResponse();
+      return result.toUIMessageStreamResponse();
     } catch (error: any) {
       // Nếu lỗi Rate Limit (429) và có Model Dự phòng
       if ((error.statusCode === 429 || error.status === 429) && backupModel) {
         console.log(`[FALLBACK] Model chính ${mainModel} quá tải. Tự động chuyển sang ${backupModel} với Key mới!`);
         const fallbackResult = callAI(backupModel, getRandomKey());
-        return fallbackResult.toDataStreamResponse();
+        return fallbackResult.toUIMessageStreamResponse();
       }
       throw error;
     }
