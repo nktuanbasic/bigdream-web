@@ -1,253 +1,249 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import { useChat } from "@ai-sdk/react";
+import { Paperclip, PaperPlaneRight, Image as ImageIcon, MagicWand } from "@phosphor-icons/react";
 import Image from "next/image";
 
 /* ═══════════════════════════════════════════════════════════
-   SEE ENGINE — 8 nhánh xử lý chính
-   Layout tham khảo: aicomplex.vn
+   SEE ENGINE WORKSPACE — Chat Interface
    ═══════════════════════════════════════════════════════════ */
 
 const BRANCHES = [
-  {
-    id: "stage",
-    label: "RENDER AI",
-    desc: "Biến ảnh 3D thô thành hình ảnh chân thực như chụp. Hậu kỳ chuyên sâu cho mọi bản render.",
-    category: ["architecture", "interior"],
-    image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1600&auto=format&fit=crop",
-  },
-  {
-    id: "dna",
-    label: "PHÂN TÍCH PHONG CÁCH",
-    desc: "Quét ảnh tham khảo, trích xuất DNA thiết kế: vật liệu, ánh sáng, bảng màu, cảm xúc không gian.",
-    category: ["interior", "architecture"],
-    image: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=1600&auto=format&fit=crop",
-  },
-  {
-    id: "board",
-    label: "TẠO CONCEPT",
-    desc: "Tổng hợp ý tưởng rời rạc thành Concept không gian hoàn chỉnh. Tự do sáng tạo bố cục.",
-    category: ["interior", "architecture", "planning"],
-    image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=1600&auto=format&fit=crop",
-  },
-  {
-    id: "room",
-    label: "THIẾT KẾ NỘI THẤT",
-    desc: "Tạo không gian nội thất hoàn chỉnh từ sketch hoặc mô tả. AI tự do đề xuất layout mới.",
-    category: ["interior"],
-    image: "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?q=80&w=1600&auto=format&fit=crop",
-  },
-  {
-    id: "fill",
-    label: "THAY ĐỔI VẬT LIỆU",
-    desc: "Thêm vật liệu và nội thất vào không gian thô. Giữ nguyên 100% kiến trúc gốc.",
-    category: ["interior", "architecture"],
-    image: "https://images.unsplash.com/photo-1600585154526-990dced4ea07?q=80&w=1600&auto=format&fit=crop",
-  },
-  {
-    id: "yard",
-    label: "CẢNH QUAN & MẶT TIỀN",
-    desc: "Cải tạo ngoại thất quy mô nhỏ: mặt tiền, sân vườn. Giữ nguyên khung công trình.",
-    category: ["landscape", "architecture"],
-    image: "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?q=80&w=1600&auto=format&fit=crop",
-  },
-  {
-    id: "land",
-    label: "QUY HOẠCH ĐÔ THỊ",
-    desc: "Tạo phối cảnh đô thị, quy hoạch tổng thể từ mô tả hoặc ảnh địa hình.",
-    category: ["planning", "landscape"],
-    image: "https://images.unsplash.com/photo-1486325212027-8081e485255e?q=80&w=1600&auto=format&fit=crop",
-  },
-  {
-    id: "raw",
-    label: "TIỀN XỬ LÝ THÔNG MINH",
-    desc: "Tự động phân loại input, làm sạch nhiễu, và chuyển đến đúng nhánh xử lý phù hợp.",
-    category: ["architecture", "interior", "planning", "landscape"],
-    image: "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=1600&auto=format&fit=crop",
-  },
+  { id: "raw", label: "RAW", desc: "Tiền Xử Lý (Phân loại yêu cầu)", type: "Tiện ích" },
+  { id: "dna", label: "DNA", desc: "Phân Tích Phong Cách", type: "Phân tích" },
+  { id: "board", label: "BOARD", desc: "Sáng Tạo Concept Tổng Thể", type: "Sáng tạo" },
+  { id: "room", label: "ROOM", desc: "Thiết Kế Nội Thất Hoàn Chỉnh", type: "Sáng tạo" },
+  { id: "fill", label: "FILL", desc: "Thay Vật Liệu / Thêm Nội Thất", type: "Giữ nguyên" },
+  { id: "yard", label: "YARD", desc: "Cải Tạo Ngoại Thất / Sân Vườn", type: "Giữ nguyên" },
+  { id: "land", label: "LAND", desc: "Quy Hoạch Cảnh Quan", type: "Sáng tạo" },
+  { id: "stage", label: "STAGE", desc: "Hậu Kỳ Ảnh Render", type: "Giữ nguyên" },
 ];
 
-const CATEGORIES = [
-  { key: "architecture", label: "Kiến trúc" },
-  { key: "interior", label: "Nội thất" },
-  { key: "planning", label: "Quy hoạch" },
-  { key: "landscape", label: "Cảnh quan" },
-];
+export default function SeeWorkspace() {
+  const [activeBranch, setActiveBranch] = useState("room");
+  const [attachments, setAttachments] = useState<FileList | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-export default function SeePage() {
-  const [activeBranch, setActiveBranch] = useState(0);
-  const [activeCategory, setActiveCategory] = useState("architecture");
-  const [sliderPos, setSliderPos] = useState(50);
-  const [isDragging, setIsDragging] = useState(false);
+  // Khởi tạo Chat Hook từ AI SDK
+  const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages } = useChat({
+    api: "/api/see",
+    body: {
+      branchId: activeBranch,
+    },
+  });
 
-  const current = BRANCHES[activeBranch];
+  // Tự động cuộn xuống cuối khi có tin nhắn mới
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
-  const handleSliderMove = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
-    if (!isDragging) return;
-    const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
-    const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
-    const pos = ((clientX - rect.left) / rect.width) * 100;
-    setSliderPos(Math.max(5, Math.min(95, pos)));
+  // Đổi nhánh -> Xóa lịch sử chat cũ
+  const handleBranchChange = (branchId: string) => {
+    setActiveBranch(branchId);
+    setMessages([]);
+    setAttachments(null);
+  };
+
+  // Nút giả lập tính năng tạo ảnh
+  const handleGenerateImage = (promptText: string) => {
+    alert("Đang gửi lệnh tạo ảnh với Prompt: \n" + promptText.substring(0, 100) + "...");
   };
 
   return (
-    <div className="min-h-screen bg-[#050505] text-[#e5e2e1] pt-[72px]">
-      <main className="w-full max-w-[1800px] mx-auto px-4 md:px-8 lg:px-12 py-8 md:py-12">
+    <div className="flex h-screen bg-[#050505] text-[#e5e2e1] pt-[72px] overflow-hidden">
+      
+      {/* ═══ LEFT SIDEBAR: CHỌN NHÁNH ═══ */}
+      <div className="w-[300px] flex-shrink-0 border-r border-white/10 flex flex-col bg-[#0a0a0a]">
+        <div className="p-6 border-b border-white/10">
+          <h2 className="font-black text-xl text-white tracking-widest uppercase">SEE WORKSPACE</h2>
+          <p className="text-xs text-[#a09a8e] mt-1">Core Prompt Engine</p>
+        </div>
+        
+        <div className="flex-1 overflow-y-auto p-4 space-y-2 custom-scrollbar">
+          {BRANCHES.map((branch) => (
+            <button
+              key={branch.id}
+              onClick={() => handleBranchChange(branch.id)}
+              className={`w-full text-left p-3 rounded-md transition-all duration-200 border ${
+                activeBranch === branch.id
+                  ? "bg-[#f2ca50]/10 border-[#f2ca50]/50"
+                  : "bg-transparent border-transparent hover:bg-white/5"
+              }`}
+            >
+              <div className="flex justify-between items-center mb-1">
+                <span className={`font-bold text-sm uppercase ${activeBranch === branch.id ? "text-[#f2ca50]" : "text-white"}`}>
+                  {branch.label}
+                </span>
+                <span className="text-[10px] bg-white/10 text-[#a09a8e] px-1.5 py-0.5 rounded-sm">
+                  {branch.type}
+                </span>
+              </div>
+              <p className="text-xs text-[#6b6560] leading-snug">{branch.desc}</p>
+            </button>
+          ))}
+        </div>
+      </div>
 
-        {/* ── Page Header ── */}
-        <div className="mb-8 md:mb-12">
-          <h1 className="font-headline-lg text-4xl md:text-5xl font-black text-white tracking-tight">
-            CÔNG NGHỆ LÕI
-          </h1>
-          <p className="text-sm text-[#a09a8e] mt-2 uppercase tracking-[0.2em]">
-            SEE Engine — 8 nhánh xử lý AI kiến trúc
-          </p>
+      {/* ═══ RIGHT: MAIN CHAT AREA ═══ */}
+      <div className="flex-1 flex flex-col relative bg-[#050505]">
+        
+        {/* Chat Header */}
+        <div className="p-4 border-b border-white/10 flex justify-between items-center bg-[#050505]/80 backdrop-blur-md absolute top-0 w-full z-10">
+          <div>
+            <span className="text-xs text-[#a09a8e] uppercase tracking-wider">Đang thao tác trên nhánh</span>
+            <h3 className="font-bold text-lg text-[#f2ca50] uppercase">{BRANCHES.find(b => b.id === activeBranch)?.label}</h3>
+          </div>
         </div>
 
-        {/* ── Main Layout: Left Menu + Right Preview ── */}
-        <div className="flex flex-col lg:flex-row gap-0 lg:gap-8">
-
-          {/* ═══ LEFT: Branch List ═══ */}
-          <div className="w-full lg:w-[320px] flex-shrink-0 mb-6 lg:mb-0">
-            <div className="flex flex-row lg:flex-col overflow-x-auto lg:overflow-x-visible gap-0">
-              {BRANCHES.map((branch, index) => (
-                <button
-                  key={branch.id}
-                  onClick={() => setActiveBranch(index)}
-                  className={`group flex items-center gap-4 w-full text-left px-4 py-4 border-l-2 transition-all duration-300 flex-shrink-0 lg:flex-shrink ${
-                    activeBranch === index
-                      ? "border-l-[#f2ca50] bg-[#f2ca50]/5"
-                      : "border-l-transparent hover:border-l-[#f2ca50]/30 hover:bg-white/[0.02]"
-                  }`}
-                >
-                  <span className={`text-sm font-mono min-w-[28px] ${
-                    activeBranch === index ? "text-[#f2ca50]" : "text-[#6b6560]"
-                  }`}>
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                  <span className={`text-sm font-bold uppercase tracking-wider whitespace-nowrap ${
-                    activeBranch === index ? "text-[#f2ca50]" : "text-[#a09a8e] group-hover:text-white"
-                  }`}>
-                    {branch.label}
-                  </span>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* ═══ RIGHT: Preview Area ═══ */}
-          <div className="flex-1 min-w-0">
-
-            {/* Category Tabs */}
-            <div className="flex items-center justify-end gap-2 mb-4">
-              {CATEGORIES.map((cat) => (
-                <button
-                  key={cat.key}
-                  onClick={() => setActiveCategory(cat.key)}
-                  className={`px-4 py-1.5 text-xs font-bold uppercase tracking-wider border transition-all duration-200 rounded-sm ${
-                    activeCategory === cat.key
-                      ? "bg-[#f2ca50] text-[#050505] border-[#f2ca50]"
-                      : "bg-transparent text-[#a09a8e] border-[#a09a8e]/30 hover:border-white/50 hover:text-white"
-                  }`}
-                >
-                  {cat.label}
-                </button>
-              ))}
-            </div>
-
-            {/* Image Preview with Before/After Slider */}
-            <div
-              className="relative w-full aspect-[16/9] bg-[#0e0e0e] overflow-hidden rounded-sm select-none cursor-col-resize"
-              onMouseMove={handleSliderMove}
-              onTouchMove={handleSliderMove}
-              onMouseUp={() => setIsDragging(false)}
-              onMouseLeave={() => setIsDragging(false)}
-              onTouchEnd={() => setIsDragging(false)}
-            >
-              {/* "After" layer — full image */}
-              <Image
-                src={current.image}
-                alt={current.label}
-                fill
-                className="object-cover"
-                priority
-              />
-
-              {/* "Before" layer — grayscale/sketch overlay clipped by slider */}
-              <div
-                className="absolute inset-0 overflow-hidden"
-                style={{ width: `${sliderPos}%` }}
-              >
-                <Image
-                  src={current.image}
-                  alt={`${current.label} before`}
-                  fill
-                  className="object-cover grayscale brightness-75 contrast-110"
-                  style={{ minWidth: "100%", width: `${100 / (sliderPos / 100)}%`, maxWidth: "none" }}
-                />
-              </div>
-
-              {/* Slider Line */}
-              <div
-                className="absolute top-0 bottom-0 z-20"
-                style={{ left: `${sliderPos}%`, transform: "translateX(-50%)" }}
-              >
-                <div className="w-[2px] h-full bg-[#f2ca50]" />
-                {/* Slider Handle */}
-                <div
-                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-[#f2ca50] flex items-center justify-center cursor-grab active:cursor-grabbing shadow-[0_0_20px_rgba(242,202,80,0.4)] z-30"
-                  onMouseDown={() => setIsDragging(true)}
-                  onTouchStart={() => setIsDragging(true)}
-                >
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <path d="M4 8H12" stroke="#050505" strokeWidth="2" strokeLinecap="round" />
-                    <path d="M6 5L3 8L6 11" stroke="#050505" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                    <path d="M10 5L13 8L10 11" stroke="#050505" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </div>
-              </div>
-
-              {/* Labels */}
-              <div className="absolute top-4 left-4 z-10 bg-[#050505]/70 backdrop-blur-sm px-3 py-1 text-xs uppercase tracking-wider text-[#a09a8e] rounded-sm">
-                Before
-              </div>
-              <div className="absolute top-4 right-4 z-10 bg-[#050505]/70 backdrop-blur-sm px-3 py-1 text-xs uppercase tracking-wider text-[#f2ca50] rounded-sm">
-                After
-              </div>
-            </div>
-
-            {/* Branch Description */}
-            <div className="mt-4 mb-4">
-              <p className="text-sm text-[#a09a8e] leading-relaxed max-w-2xl">
-                {current.desc}
+        {/* Messages List */}
+        <div className="flex-1 overflow-y-auto p-6 pt-24 space-y-6 custom-scrollbar pb-32">
+          {messages.length === 0 ? (
+            <div className="h-full flex flex-col items-center justify-center text-center opacity-50">
+              <MagicWand size={48} className="text-[#f2ca50] mb-4" />
+              <p className="text-lg font-bold text-white mb-2">Hệ thống đã sẵn sàng</p>
+              <p className="text-sm text-[#a09a8e] max-w-md">
+                Tải ảnh tham khảo lên hoặc nhập mô tả của bạn để SEE Engine bóc tách không gian và tạo Prompt.
               </p>
             </div>
+          ) : (
+            messages.map((m) => (
+              <div key={m.id} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
+                <div className={`max-w-[80%] rounded-xl p-4 ${
+                  m.role === "user" 
+                    ? "bg-[#1a1a1a] border border-white/10 text-white" 
+                    : "bg-transparent text-[#e5e2e1]"
+                }`}>
+                  {m.role === "assistant" && (
+                    <div className="flex items-center gap-2 mb-2 text-[#f2ca50]">
+                      <MagicWand size={16} weight="fill" />
+                      <span className="text-xs font-bold uppercase tracking-wider">SEE ENGINE</span>
+                    </div>
+                  )}
+                  
+                  {/* Nội dung tin nhắn (Xử lý xuống dòng) */}
+                  <div className="whitespace-pre-wrap text-sm leading-relaxed text-[#c0bcb5]">
+                    {m.content}
+                  </div>
 
-            {/* Bottom Specs Bar */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-0 border border-white/10 rounded-sm overflow-hidden">
-              <div className="flex-1 px-6 py-4 border-b sm:border-b-0 sm:border-r border-white/10">
-                <p className="text-[10px] text-[#6b6560] uppercase tracking-widest mb-1">Thời gian xử lý</p>
-                <p className="text-xl font-black text-white">30S</p>
+                  {/* Nhận diện Block Prompt để hiển thị nút Tạo Ảnh */}
+                  {m.role === "assistant" && m.content.includes("PROMPT") && m.content.includes("EXPLAIN") && (
+                    <div className="mt-4 pt-4 border-t border-white/10">
+                      <button 
+                        onClick={() => handleGenerateImage(m.content)}
+                        className="flex items-center gap-2 bg-[#f2ca50] hover:bg-[#ffe088] text-[#050505] font-bold text-xs uppercase tracking-wider px-4 py-2 rounded-sm transition-all duration-200"
+                      >
+                        <ImageIcon size={16} weight="bold" />
+                        Tạo ảnh với Prompt vừa tạo
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
-              <div className="flex-1 px-6 py-4 border-b sm:border-b-0 sm:border-r border-white/10">
-                <p className="text-[10px] text-[#6b6560] uppercase tracking-widest mb-1">Độ phân giải</p>
-                <p className="text-xl font-black text-white">4K ULTRA</p>
+            ))
+          )}
+          {isLoading && (
+            <div className="flex justify-start">
+              <div className="flex gap-1 items-center p-4">
+                <div className="w-1.5 h-1.5 bg-[#f2ca50] rounded-full animate-bounce"></div>
+                <div className="w-1.5 h-1.5 bg-[#f2ca50] rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                <div className="w-1.5 h-1.5 bg-[#f2ca50] rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
               </div>
-              <div className="flex-1 px-6 py-4 border-b sm:border-b-0 sm:border-r border-white/10">
-                <p className="text-[10px] text-[#6b6560] uppercase tracking-widest mb-1">AI Engine</p>
-                <p className="text-xl font-black text-white">SEE Engine</p>
-              </div>
-              <div className="flex-none px-6 py-4 flex items-center justify-center">
-                <button className="bg-[#f2ca50] hover:bg-[#ffe088] text-[#050505] font-bold text-xs uppercase tracking-wider px-6 py-3 rounded-sm transition-all duration-200 hover:shadow-[0_0_20px_rgba(242,202,80,0.3)]">
-                  Chi tiết Engine
+            </div>
+          )}
+          <div ref={messagesEndRef} />
+        </div>
+
+        {/* Input Area */}
+        <div className="absolute bottom-0 w-full p-6 bg-gradient-to-t from-[#050505] via-[#050505] to-transparent">
+          <form 
+            onSubmit={(e) => {
+              // Gửi tin nhắn và đính kèm (nếu API có hỗ trợ experimental_attachments)
+              handleSubmit(e, { experimental_attachments: attachments });
+              setAttachments(null);
+              if (fileInputRef.current) fileInputRef.current.value = "";
+            }} 
+            className="relative flex items-end gap-2 max-w-4xl mx-auto"
+          >
+            {/* Input File Ẩn */}
+            <input 
+              type="file" 
+              ref={fileInputRef}
+              onChange={(e) => setAttachments(e.target.files)}
+              className="hidden"
+              multiple 
+              accept="image/*"
+            />
+
+            <div className="flex-1 bg-[#1a1a1a] border border-white/20 rounded-xl overflow-hidden focus-within:border-[#f2ca50] transition-colors">
+              {/* Preview Ảnh Đã Chọn */}
+              {attachments && attachments.length > 0 && (
+                <div className="flex gap-2 p-3 pb-0 overflow-x-auto">
+                  {Array.from(attachments).map((file, idx) => (
+                    <div key={idx} className="relative w-12 h-12 rounded-md overflow-hidden border border-white/20">
+                      <Image src={URL.createObjectURL(file)} alt="preview" fill className="object-cover" />
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <textarea
+                value={input}
+                onChange={handleInputChange}
+                placeholder="Mô tả không gian hoặc dán ảnh vào đây..."
+                className="w-full max-h-48 min-h-[56px] bg-transparent text-white placeholder:text-[#6b6560] p-4 text-sm focus:outline-none resize-none overflow-y-auto custom-scrollbar"
+                rows={1}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    if(input.trim() || attachments) {
+                      e.currentTarget.form?.requestSubmit();
+                    }
+                  }
+                }}
+              />
+              
+              <div className="flex justify-between items-center p-2 pt-0">
+                <button 
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="p-2 text-[#a09a8e] hover:text-white transition-colors rounded-lg hover:bg-white/5"
+                  title="Đính kèm ảnh"
+                >
+                  <Paperclip size={20} />
                 </button>
+                <div className="text-[10px] text-[#6b6560]">Nhấn Enter để gửi, Shift + Enter để xuống dòng</div>
               </div>
             </div>
 
-          </div>
+            <button
+              type="submit"
+              disabled={isLoading || (!input.trim() && !attachments)}
+              className="w-14 h-14 flex items-center justify-center bg-[#f2ca50] hover:bg-[#ffe088] disabled:bg-[#f2ca50]/20 disabled:text-black/20 text-[#050505] rounded-xl transition-colors shrink-0"
+            >
+              <PaperPlaneRight size={24} weight="fill" />
+            </button>
+          </form>
         </div>
 
-      </main>
+      </div>
+
+      <style jsx global>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: #333;
+          border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: #555;
+        }
+      `}</style>
     </div>
   );
 }
