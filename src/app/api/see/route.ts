@@ -2,6 +2,7 @@ import { convertToModelMessages, streamText, type UIMessage } from 'ai';
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { SEE_INSTRUCTIONS } from '@/lib/see/systemInstructions';
 import { createClient } from '@supabase/supabase-js';
+import { NextResponse } from 'next/server';
 
 type AttachmentLike = {
   url: string;
