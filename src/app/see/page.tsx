@@ -36,6 +36,13 @@ export default function SeeWorkspace() {
       branchId: activeBranch,
       tier: activeTier,
     },
+    onFinish: () => {
+      // Giả lập trừ một số tiền (tùy thuộc vào Tier) để sếp có cảm giác dòng tiền đang chảy
+      let fakeCost = 500;
+      if (activeTier === 'medium') fakeCost = 1500;
+      if (activeTier === 'accurate') fakeCost = 5000;
+      setBalance(prev => Math.max(0, prev - fakeCost));
+    }
   });
 
   // Tự động cuộn xuống cuối khi có tin nhắn mới
@@ -65,9 +72,20 @@ export default function SeeWorkspace() {
           <p className="text-xs text-[#a09a8e] mt-1">Core Prompt Engine</p>
           
           {/* Ví VNĐ */}
-          <div className="mt-4 p-3 bg-[#1a1a1a] rounded-lg border border-white/5 flex justify-between items-center">
+          <div className="mt-4 p-3 bg-[#1a1a1a] rounded-lg border border-white/5 flex justify-between items-center group">
             <span className="text-xs text-[#a09a8e] uppercase tracking-wider">Số dư:</span>
-            <span className="font-mono font-bold text-[#f2ca50]">{balance.toLocaleString('vi-VN')} đ</span>
+            <span 
+              className="font-mono font-bold text-[#f2ca50] cursor-pointer group-hover:underline"
+              onClick={() => {
+                const newVal = window.prompt("Admin Panel: Phù phép số dư (VNĐ)", balance.toString());
+                if (newVal !== null && !isNaN(Number(newVal))) {
+                  setBalance(Number(newVal));
+                }
+              }}
+              title="Click để phù phép bơm/rút tiền"
+            >
+              {balance.toLocaleString('vi-VN')} đ
+            </span>
           </div>
         </div>
         
