@@ -32,7 +32,8 @@ const Gem = Diamond;
 export default function SeeWorkspace() {
   const [activeBranch, setActiveBranch] = useState("room");
   const [activeTier, setActiveTier] = useState("medium"); // Mặc định Trung bình
-  const [balance, setBalance] = useState(500000); // 500,000 VND giả lập
+  const [balance, setBalance] = useState(0);
+  const [isWalletLoaded, setIsWalletLoaded] = useState(false);
   const [input, setInput] = useState("");
   
   const [attachments, setAttachments] = useState<FileList | null>(null);
@@ -55,6 +56,25 @@ export default function SeeWorkspace() {
       setBalance(prev => Math.max(0, prev - fakeCost));
     }
   });
+
+  // Tải ví tiền từ LocalStorage khi khởi động
+  useEffect(() => {
+    const saved = localStorage.getItem('mockWalletBalance');
+    if (saved !== null) {
+      setBalance(Number(saved));
+    } else {
+      setBalance(500000); // Tặng mặc định 500k cho khách mới
+    }
+    setIsWalletLoaded(true);
+  }, []);
+
+  // Lưu lại mỗi khi tiêu tiền
+  useEffect(() => {
+    if (isWalletLoaded) {
+      localStorage.setItem('mockWalletBalance', balance.toString());
+    }
+  }, [balance, isWalletLoaded]);
+
   const isLoading = status === "submitted" || status === "streaming";
 
   // Tự động cuộn xuống cuối khi có tin nhắn mới
@@ -135,19 +155,10 @@ export default function SeeWorkspace() {
           <p className="text-xs text-[#a09a8e] mt-1">Core Prompt Engine</p>
           
           {/* Ví VNĐ */}
-          <div className="mt-4 p-3 bg-[#1a1a1a] rounded-lg border border-white/5 flex justify-between items-center group">
+          <div className="mt-4 p-3 bg-[#1a1a1a] rounded-lg border border-white/5 flex justify-between items-center">
             <span className="text-xs text-[#a09a8e] uppercase tracking-wider">Số dư:</span>
-            <span 
-              className="font-mono font-bold text-[#f2ca50] cursor-pointer group-hover:underline"
-              onClick={() => {
-                const newVal = window.prompt("Admin Panel: Phù phép số dư (VNĐ)", balance.toString());
-                if (newVal !== null && !isNaN(Number(newVal))) {
-                  setBalance(Number(newVal));
-                }
-              }}
-              title="Click để phù phép bơm/rút tiền"
-            >
-              {balance.toLocaleString('vi-VN')} đ
+            <span className="font-mono font-bold text-[#f2ca50] cursor-default">
+              {!isWalletLoaded ? "..." : balance.toLocaleString('vi-VN')} đ
             </span>
           </div>
         </div>
