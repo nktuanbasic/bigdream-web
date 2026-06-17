@@ -42,10 +42,21 @@ export async function POST(req: Request) {
     const finalPriceUSD = baseCostUSD * 1.3;
     const finalPriceVND = Math.ceil(finalPriceUSD * 25000);
 
-    // Kiểm tra số dư trước khi cho phép render
-    const { data: userDoc, error: walletError } = await supabase.from('users').select('purchased_coins').eq('id', user.id).single();
-    if (walletError || !userDoc || userDoc.purchased_coins < finalPriceVND) {
-      return NextResponse.json({ error: 'Tài khoản của quý khách không đủ Gem để render ảnh. Vui lòng nạp thêm!' }, { status: 402 });
+    // 4. Kiểm tra số dư Gem
+    let { data: userDoc, error: walletError } = await supabase.from('users').select('purchased_coins').eq('id', user.id).single();
+    
+    // NẾU CHƯA CÓ VÍ -> TỰ ĐỘNG TẠO VÍ LUÔN TRONG DB
+    if (walletError && walletError.code === 'PGRST116') {
+      const { data: newDoc } = await supabase.from('users').insert({
+        id: user.id,
+        email: user.email,
+        purchased_coins: 0
+      }).select('purchased_coins').single();
+      userDoc = newDoc;
+    }
+
+    if (!userDoc || userDoc.purchased_coins < finalPriceVND) {
+      return NextResponse.json({ error: `Bạn không đủ Gem. Cần ${finalPriceVND} Gem để tạo ảnh này.` }, { status: 402 });
     }
 
     console.log(`[IMAGE GEN] Bắt đầu render ảnh với Model: ${modelToUse}`);

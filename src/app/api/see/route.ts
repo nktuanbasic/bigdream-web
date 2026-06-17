@@ -159,9 +159,19 @@ export async function POST(req: Request) {
     }
 
     // Kiểm tra số dư trước khi cho phép chat
-    const { data: userDoc, error: walletError } = await supabase.from('users').select('purchased_coins').eq('id', user.id).single();
+    let { data: userDoc, error: walletError } = await supabase.from('users').select('purchased_coins').eq('id', user.id).single();
     
-    if (walletError || !userDoc || userDoc.purchased_coins <= 0) {
+    // NẾU CHƯA CÓ VÍ -> TỰ ĐỘNG TẠO VÍ LUÔN TRONG DB
+    if (walletError && walletError.code === 'PGRST116') {
+      const { data: newDoc } = await supabase.from('users').insert({
+        id: user.id,
+        email: user.email,
+        purchased_coins: 0
+      }).select('purchased_coins').single();
+      userDoc = newDoc;
+    }
+
+    if (!userDoc || userDoc.purchased_coins <= 0) {
       return new Response(JSON.stringify({ error: 'Tài khoản của quý khách đã hết Gem. Vui lòng nạp thêm để tiếp tục!' }), { status: 402 });
     }
 
