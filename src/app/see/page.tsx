@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { useChat } from "@ai-sdk/react";
-import { Paperclip, PaperPlaneRight, Image as ImageIcon, MagicWand } from "@phosphor-icons/react";
+import { Paperclip, PaperPlaneRight, Image as ImageIcon, MagicWand, Lightning, Brain, Gem } from "@phosphor-icons/react";
 import Image from "next/image";
 
 /* ═══════════════════════════════════════════════════════════
@@ -22,6 +22,9 @@ const BRANCHES = [
 
 export default function SeeWorkspace() {
   const [activeBranch, setActiveBranch] = useState("room");
+  const [activeTier, setActiveTier] = useState("medium"); // Mặc định Trung bình
+  const [balance, setBalance] = useState(500000); // 500,000 VND giả lập
+  
   const [attachments, setAttachments] = useState<FileList | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -31,6 +34,7 @@ export default function SeeWorkspace() {
     api: "/api/see",
     body: {
       branchId: activeBranch,
+      tier: activeTier,
     },
   });
 
@@ -59,6 +63,12 @@ export default function SeeWorkspace() {
         <div className="p-6 border-b border-white/10">
           <h2 className="font-black text-xl text-white tracking-widest uppercase">SEE WORKSPACE</h2>
           <p className="text-xs text-[#a09a8e] mt-1">Core Prompt Engine</p>
+          
+          {/* Ví VNĐ */}
+          <div className="mt-4 p-3 bg-[#1a1a1a] rounded-lg border border-white/5 flex justify-between items-center">
+            <span className="text-xs text-[#a09a8e] uppercase tracking-wider">Số dư:</span>
+            <span className="font-mono font-bold text-[#f2ca50]">{balance.toLocaleString('vi-VN')} đ</span>
+          </div>
         </div>
         
         <div className="flex-1 overflow-y-auto p-4 space-y-2 custom-scrollbar">
@@ -98,13 +108,13 @@ export default function SeeWorkspace() {
         </div>
 
         {/* Messages List */}
-        <div className="flex-1 overflow-y-auto p-6 pt-24 space-y-6 custom-scrollbar pb-32">
+        <div className="flex-1 overflow-y-auto p-6 pt-24 space-y-6 custom-scrollbar pb-40">
           {messages.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-center opacity-50">
               <MagicWand size={48} className="text-[#f2ca50] mb-4" />
               <p className="text-lg font-bold text-white mb-2">Hệ thống đã sẵn sàng</p>
               <p className="text-sm text-[#a09a8e] max-w-md">
-                Tải ảnh tham khảo lên hoặc nhập mô tả của bạn để SEE Engine bóc tách không gian và tạo Prompt.
+                Chọn chế độ suy luận, tải ảnh tham khảo lên hoặc nhập mô tả của bạn để SEE Engine xử lý.
               </p>
             </div>
           ) : (
@@ -122,14 +132,14 @@ export default function SeeWorkspace() {
                     </div>
                   )}
                   
-                  {/* Nội dung tin nhắn (Xử lý xuống dòng) */}
+                  {/* Nội dung tin nhắn */}
                   <div className="whitespace-pre-wrap text-sm leading-relaxed text-[#c0bcb5]">
                     {m.content}
                   </div>
 
                   {/* Nhận diện Block Prompt để hiển thị nút Tạo Ảnh */}
                   {m.role === "assistant" && m.content.includes("PROMPT") && m.content.includes("EXPLAIN") && (
-                    <div className="mt-4 pt-4 border-t border-white/10">
+                    <div className="mt-4 pt-4 border-t border-white/10 flex justify-between items-center">
                       <button 
                         onClick={() => handleGenerateImage(m.content)}
                         className="flex items-center gap-2 bg-[#f2ca50] hover:bg-[#ffe088] text-[#050505] font-bold text-xs uppercase tracking-wider px-4 py-2 rounded-sm transition-all duration-200"
@@ -157,9 +167,31 @@ export default function SeeWorkspace() {
 
         {/* Input Area */}
         <div className="absolute bottom-0 w-full p-6 bg-gradient-to-t from-[#050505] via-[#050505] to-transparent">
+          
+          {/* Tier Selector */}
+          <div className="max-w-4xl mx-auto mb-2 flex gap-2">
+            <button 
+              onClick={() => setActiveTier("basic")}
+              className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold transition-all ${activeTier === "basic" ? "bg-white text-black" : "bg-[#1a1a1a] text-[#a09a8e] hover:bg-white/10 hover:text-white border border-white/10"}`}
+            >
+              <Lightning size={14} weight={activeTier === "basic" ? "fill" : "regular"} /> Cơ bản
+            </button>
+            <button 
+              onClick={() => setActiveTier("medium")}
+              className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold transition-all ${activeTier === "medium" ? "bg-[#f2ca50] text-black" : "bg-[#1a1a1a] text-[#a09a8e] hover:bg-white/10 hover:text-white border border-white/10"}`}
+            >
+              <Brain size={14} weight={activeTier === "medium" ? "fill" : "regular"} /> Trung bình
+            </button>
+            <button 
+              onClick={() => setActiveTier("accurate")}
+              className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold transition-all ${activeTier === "accurate" ? "bg-purple-500 text-white" : "bg-[#1a1a1a] text-[#a09a8e] hover:bg-white/10 hover:text-white border border-white/10"}`}
+            >
+              <Gem size={14} weight={activeTier === "accurate" ? "fill" : "regular"} /> Chính xác
+            </button>
+          </div>
+
           <form 
             onSubmit={(e) => {
-              // Gửi tin nhắn và đính kèm (nếu API có hỗ trợ experimental_attachments)
               handleSubmit(e, { experimental_attachments: attachments });
               setAttachments(null);
               if (fileInputRef.current) fileInputRef.current.value = "";
@@ -176,7 +208,7 @@ export default function SeeWorkspace() {
               accept="image/*"
             />
 
-            <div className="flex-1 bg-[#1a1a1a] border border-white/20 rounded-xl overflow-hidden focus-within:border-[#f2ca50] transition-colors">
+            <div className="flex-1 bg-[#1a1a1a] border border-white/20 rounded-xl overflow-hidden focus-within:border-[#f2ca50] transition-colors shadow-2xl">
               {/* Preview Ảnh Đã Chọn */}
               {attachments && attachments.length > 0 && (
                 <div className="flex gap-2 p-3 pb-0 overflow-x-auto">
@@ -220,7 +252,7 @@ export default function SeeWorkspace() {
             <button
               type="submit"
               disabled={isLoading || (!input.trim() && !attachments)}
-              className="w-14 h-14 flex items-center justify-center bg-[#f2ca50] hover:bg-[#ffe088] disabled:bg-[#f2ca50]/20 disabled:text-black/20 text-[#050505] rounded-xl transition-colors shrink-0"
+              className="w-14 h-14 flex items-center justify-center bg-[#f2ca50] hover:bg-[#ffe088] disabled:bg-[#f2ca50]/20 disabled:text-black/20 text-[#050505] rounded-xl transition-colors shrink-0 shadow-lg"
             >
               <PaperPlaneRight size={24} weight="fill" />
             </button>
