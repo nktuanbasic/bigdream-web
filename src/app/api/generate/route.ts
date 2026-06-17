@@ -61,21 +61,55 @@ export async function POST(req: Request) {
 
     console.log(`[IMAGE GEN] Bắt đầu render ảnh với Model: ${modelToUse}`);
     
-    // --- GẮN SDK TẠO ẢNH THỰC TẾ Ở ĐÂY ---
-    // Ví dụ (AI SDK / Google Vertex):
-    // const { image } = await generateImage({
-    //   model: google.image(modelToUse),
-    //   prompt: prompt,
-    // });
-    
-    // GIẢ LẬP ĐỢI API XỬ LÝ (2 giây)
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    // Ảnh kết quả (Tạm thời trả về ảnh Demo từ Picsum)
-    const fakeGeneratedImageUrl = `https://picsum.photos/seed/${Math.floor(Math.random()*1000)}/800/450`;
-    
-    // Tương lai khi tích hợp SDK thật, upload ảnh Base64 lên Supabase Storage và lấy link vĩnh viễn ở đây
-    let finalImageUrl = fakeGeneratedImageUrl;
+    // --- GỌI GOOGLE API TẠO ẢNH ---
+    const rawKeys = process.env.GEMINI_API_KEYS || "";
+    const keysArray = rawKeys.split(',').map(k => k.trim()).filter(k => k.length > 0);
+    const apiKey = keysArray.length > 0 ? keysArray[Math.floor(Math.random() * keysArray.length)] : "";
+
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelToUse}:predict?key=${apiKey}`;
+    const reqBody = {
+      instances: [ { prompt: prompt } ],
+      parameters: { sampleCount: 1 }
+    };
+
+    const apiRes = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(reqBody)
+    });
+
+    if (!apiRes.ok) {
+      const errText = await apiRes.text();
+      console.error("[IMAGE GEN ERROR]", errText);
+      try {
+        const errJson = JSON.parse(errText);
+        return NextResponse.json({ error: errJson.error?.message || "Lỗi từ Google Image API" }, { status: 400 });
+      } catch (e) {
+        return NextResponse.json({ error: "Lỗi từ Google Image API: " + errText }, { status: 400 });
+      }
+    }
+
+    const data = await apiRes.json();
+    if (!data.predictions || data.predictions.length === 0) {
+      return NextResponse.json({ error: "Google API không trả về ảnh nào." }, { status: 400 });
+    }
+
+    const base64Data = data.predictions[0].bytesBase64Encoded;
+    const imageBuffer = Buffer.from(base64Data, 'base64');
+
+    // Upload lên Supabase Storage
+    const fileName = `generated/${Date.now()}_${Math.floor(Math.random()*1000)}.png`;
+    const { error: uploadErr } = await supabase.storage.from('workspace_media').upload(fileName, imageBuffer, {
+      contentType: 'image/png'
+    });
+
+    if (uploadErr) {
+      console.error("[STORAGE UPLOAD ERROR]", uploadErr);
+      return NextResponse.json({ error: "Lỗi khi lưu ảnh vào Supabase." }, { status: 500 });
+    }
+
+    const { data: publicUrlData } = supabase.storage.from('workspace_media').getPublicUrl(fileName);
+    let finalImageUrl = publicUrlData.publicUrl;
 
     // Lưu thông tin ảnh tạo ra vào Database
     if (messageId) {
