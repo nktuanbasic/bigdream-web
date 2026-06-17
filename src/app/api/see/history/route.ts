@@ -79,7 +79,7 @@ export async function GET(req: Request) {
     else {
       const { data: chats, error: chatsError } = await supabase
         .from('chats')
-        .select('id, title, branch_id, created_at')
+        .select('id, title, branch_id, project_id, created_at')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 

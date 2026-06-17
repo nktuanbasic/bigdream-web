@@ -93,20 +93,30 @@ export async function POST(req: Request) {
       return new Response(JSON.stringify({ error: 'Phiên đăng nhập không hợp lệ.' }), { status: 401 });
     }
 
-    const { messages, branchId, tier, chatId } = await req.json();
+    const { messages, branchId, tier, chatId, projectId } = await req.json();
+
+    if (!messages || messages.length === 0) {
+      return NextResponse.json({ error: 'Messages are required' }, { status: 400 });
+    }
 
     let currentChatId = chatId;
-    
+
     // 1. Tạo Chat mới nếu chưa có
     if (!currentChatId) {
-      const title = getMessageText(messages[0])?.substring(0, 50) || 'Dự án mới';
+      if (!projectId) {
+         return NextResponse.json({ error: 'Project ID is required to create a new chat' }, { status: 400 });
+      }
+      const title = getMessageText(messages[0])?.substring(0, 50) || 'Đoạn chat mới';
       const { data: newChat, error: chatErr } = await supabase
         .from('chats')
-        .insert({ user_id: user.id, branch_id: branchId, title })
+        .insert({ user_id: user.id, branch_id: branchId, project_id: projectId, title })
         .select('id').single();
       
       if (!chatErr && newChat) {
         currentChatId = newChat.id;
+      } else {
+        console.error("Lỗi tạo chat:", chatErr);
+        return NextResponse.json({ error: 'Failed to create chat' }, { status: 500 });
       }
     }
 
