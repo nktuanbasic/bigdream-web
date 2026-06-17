@@ -35,7 +35,7 @@ export default function BigClassPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-obsidian-deep text-on-surface selection:bg-primary/30 selection:text-primary">
-      <main className="flex-grow pt-[80px]">
+      <main className="flex-grow pt-[var(--nav-height)]">
         {/* Cinematic Hero */}
         <section className="relative w-full h-[90vh] min-h-[700px] flex items-center justify-center overflow-hidden border-b border-glass-border">
           <div className="absolute inset-0 z-0">

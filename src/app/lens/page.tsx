@@ -48,23 +48,23 @@ export default function LensPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#050505] text-[#e5e2e1] overflow-hidden relative selection:bg-[#f2ca50]/30 flex flex-col">
+    <div className="min-h-screen bg-obsidian-deep text-on-surface overflow-hidden relative flex flex-col pt-[var(--nav-height)]">
       {/* Cinematic Lighting */}
-      <div className="absolute top-1/4 left-1/4 w-[40%] h-[40%] bg-[#f2ca50] opacity-[0.02] blur-[180px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-[50%] h-[50%] bg-[#f2ca50] opacity-[0.015] blur-[200px] rounded-full pointer-events-none" />
+      <div className="absolute top-1/4 left-1/4 w-[40%] h-[40%] bg-primary opacity-[0.02] blur-[180px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 w-[50%] h-[50%] bg-primary opacity-[0.015] blur-[200px] rounded-full pointer-events-none" />
 
       <main className="relative z-10 w-full max-w-[1400px] mx-auto px-4 sm:px-8 py-16 flex-1 flex flex-col items-center justify-center">
         
         {/* Header Section */}
         <div className="text-center mb-12 space-y-4 relative w-full max-w-3xl">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-panel border-[#f2ca50]/30 text-[#f2ca50] text-sm uppercase tracking-[0.2em] mb-4">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-panel border-primary/30 text-primary text-sm uppercase tracking-[0.2em] mb-4">
             <Scan className="animate-[spin_4s_linear_infinite]" />
             <span>Lens Core v2.0</span>
           </div>
-          <h1 className="text-5xl sm:text-7xl font-bold tracking-tight text-white drop-shadow-lg" style={{ fontFamily: 'var(--font-bodoni)' }}>
-            Deconstruct <span className="text-[#f2ca50] font-light">Reality</span>
+          <h1 className="font-display-lg text-5xl sm:text-7xl font-bold tracking-tight text-on-surface drop-shadow-lg text-balance">
+            Deconstruct <span className="text-primary font-light">Reality</span>
           </h1>
-          <p className="text-[#a09a8e] text-lg sm:text-xl font-light max-w-2xl mx-auto leading-relaxed">
+          <p className="text-on-surface-variant text-lg sm:text-xl font-light max-w-2xl mx-auto leading-relaxed text-pretty">
             Upload any architectural image. Our neural engine will instantly extract materials, styles, and structural prompt vectors.
           </p>
         </div>

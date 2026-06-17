@@ -12,7 +12,7 @@ export default function BigWorkPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-obsidian-deep text-on-surface selection:bg-primary/30 selection:text-primary">
-      <main className="flex-grow pt-[100px] pb-32 px-4 md:px-8">
+      <main className="flex-grow pt-[calc(var(--nav-height)+2rem)] pb-32 px-4 md:px-8">
         
         {/* Header */}
         <header className="max-w-[1920px] mx-auto mb-16 md:mb-24 flex flex-col md:flex-row justify-between items-end gap-8 border-b border-glass-border pb-12">

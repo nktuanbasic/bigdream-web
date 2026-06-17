@@ -89,26 +89,32 @@ export default function GlobalAuthNav() {
   };
 
   return (
-    <nav className="fixed top-0 w-full bg-surface/60 backdrop-blur-3xl border-b border-glass-border flex justify-between items-center px-4 md:px-margin-desktop py-4 z-50">
-      <Link href="/" className="font-headline-lg text-2xl md:text-3xl font-extrabold text-primary tracking-tight">
+    <nav className="fixed top-0 w-full h-[var(--nav-height)] bg-obsidian-deep/70 backdrop-blur-2xl border-b border-glass-border flex justify-between items-center px-4 md:px-margin-desktop z-50">
+      <Link href="/" className="font-headline-lg text-2xl md:text-3xl font-extrabold text-primary tracking-tight transition-opacity hover:opacity-80">
         BIG DREAM
       </Link>
 
       <div className="flex items-center gap-6 xl:gap-8">
-        <div className="hidden lg:flex items-center gap-4 xl:gap-6">
+        <div className="hidden lg:flex items-center gap-1 xl:gap-2">
           {NAV_LINKS.map((link) => {
             const isActive = pathname === link.href || pathname.startsWith(link.href + '/');
             return (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`font-body-md text-sm xl:text-base px-2 py-1 transition-colors ${
+                aria-current={isActive ? 'page' : undefined}
+                className={`relative font-body-md text-sm xl:text-[15px] tracking-wide px-3 py-2 rounded-md transition-colors duration-300 ${
                   isActive
-                    ? 'text-primary font-bold border-b-2 border-primary pb-1'
-                    : 'text-on-surface-variant hover:text-white rounded-sm'
+                    ? 'text-primary font-bold'
+                    : 'text-on-surface-variant hover:text-on-surface'
                 }`}
               >
                 {link.label}
+                <span
+                  className={`absolute left-3 right-3 -bottom-px h-0.5 rounded-full bg-primary transition-all duration-300 ${
+                    isActive ? 'opacity-100 scale-x-100' : 'opacity-0 scale-x-0'
+                  }`}
+                />
               </Link>
             );
           })}

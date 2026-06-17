@@ -18,7 +18,10 @@
   --color-surface-container-high: #2a2a2a;
   --color-surface-container-highest: #353534;
   --color-on-surface: #e5e2e1;
-  --color-on-surface-variant: #d0c5af;
+  --color-on-surface-variant: #b3a99a;
+  --color-on-surface-muted: #6b6560;
+  --color-error: #ff6b6b;
+  --color-error-container: #3a1212;
   --color-glass-border: rgba(255, 255, 255, 0.08);
 
   /* Fonts */
@@ -29,15 +32,21 @@
   --font-body-lg: var(--font-hanken);
   --font-body-md: var(--font-hanken);
   --font-label-sm: var(--font-hanken);
+  /* Bodoni was referenced but never defined — map to the display family so headings stay consistent */
+  --font-bodoni: var(--font-montserrat);
 
   /* Spacing */
   --spacing-margin-desktop: 64px;
   --spacing-margin-mobile: 20px;
+
+  /* Layout */
+  --nav-height: 72px;
 }
 
 :root {
   --background: #050505;
   --foreground: #e5e2e1;
+  --font-bodoni: var(--font-montserrat);
 }
 
 body {
@@ -47,27 +56,67 @@ body {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
+/* ─────────────────────────────────────────────
+   Reusable surfaces & utilities
+   ───────────────────────────────────────────── */
 .glass-panel {
-  background: rgba(26, 26, 26, 0.6);
+  background: rgba(26, 26, 26, 0.55);
   backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
   border: 1px solid var(--color-glass-border);
+  transition: border-color 0.4s ease, box-shadow 0.4s ease;
 }
 .glass-panel:hover {
-  border-color: var(--color-primary);
+  border-color: rgba(242, 202, 80, 0.5);
 }
 .inner-glow {
   box-shadow: inset 0 0 0 1px rgba(242, 202, 80, 0.2);
 }
 
-/* Custom scrollbar for dark theme */
-::-webkit-scrollbar { width: 6px; }
+/* Consistent offset for fixed-nav pages */
+.page-offset {
+  padding-top: var(--nav-height);
+}
+
+/* Gold gradient text accent for cinematic headings */
+.text-gold-gradient {
+  background-image: linear-gradient(120deg, #ffe088 0%, #f2ca50 45%, #e9c349 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Subtle film-grain-free divider */
+.hairline {
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--color-glass-border) 20%,
+    var(--color-glass-border) 80%,
+    transparent
+  );
+}
+
+/* ─────────────────────────────────────────────
+   Custom scrollbar for dark theme
+   ───────────────────────────────────────────── */
+::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-track { background: #050505; }
 ::-webkit-scrollbar-thumb { background: #353534; border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: #4d4635; }
 
-/* Hero animations */
+::selection {
+  background: rgba(242, 202, 80, 0.9);
+  color: #050505;
+}
+
+/* ─────────────────────────────────────────────
+   Animations
+   ───────────────────────────────────────────── */
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -79,3 +128,30 @@ body {
   }
 }
 
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scan {
+  0% { transform: translateY(-100px); }
+  50% { transform: translateY(100px); }
+  100% { transform: translateY(-100px); }
+}
+
+@keyframes slideDown {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+
+/* Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

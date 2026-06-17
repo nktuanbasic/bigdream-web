@@ -6,7 +6,7 @@ export default function BigModelPage() {
   return (
     <div className="flex flex-col min-h-screen bg-obsidian-deep text-on-surface selection:bg-primary/30 selection:text-primary">
       {/* Top Banner */}
-      <div className="w-full h-[400px] relative mt-[72px]">
+      <div className="w-full h-[400px] relative mt-[var(--nav-height)]">
         <Image 
           src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?q=80&w=2560&auto=format&fit=crop" 
           alt="Model Banner" 
