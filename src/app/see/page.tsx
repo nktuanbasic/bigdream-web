@@ -59,7 +59,7 @@ export default function SeeWorkspace() {
 
   useEffect(() => { currentChatIdRef.current = currentChatId; }, [currentChatId]);
 
-  const { messages, sendMessage, status, setMessages } = useChat({
+  const { messages, append, status, setMessages } = useChat({
     transport: new DefaultChatTransport({
       api: "/api/see",
       fetch: async (url, options) => {
@@ -247,8 +247,12 @@ export default function SeeWorkspace() {
     const files = attachments ?? undefined;
     if (!text && !files) return;
 
-    await sendMessage(
-      text ? { text, files } : { files: files! },
+    await append(
+      {
+        role: 'user',
+        content: text || '',
+        experimental_attachments: files ? Array.from(files) : undefined,
+      } as any,
       { body: { branchId: activeBranch, tier: activeTier, projectId: activeProjectId } }
     );
 
