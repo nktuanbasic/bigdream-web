@@ -180,7 +180,7 @@ export async function POST(req: Request) {
     
     // NẾU CHƯA CÓ VÍ -> TỰ ĐỘNG TẠO VÍ LUÔN TRONG DB
     if (walletError && walletError.code === 'PGRST116') {
-      const { data: newDoc } = await supabase.from('users').insert({
+      const { data: newDoc } = await supabaseWithAuth.from('users').insert({
         id: user.id,
         email: user.email,
         purchased_coins: 0
