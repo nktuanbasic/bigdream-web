@@ -26,6 +26,10 @@ export default function SeeWorkspace() {
   const [balance, setBalance] = useState(500000); // 500,000 VND giả lập
   
   const [attachments, setAttachments] = useState<FileList | null>(null);
+  const [lastUploadedBase64, setLastUploadedBase64] = useState<string | null>(null); // Lưu ảnh gốc cho inpainting
+  const [generatingForMsg, setGeneratingForMsg] = useState<string | null>(null);
+  const [renderedImages, setRenderedImages] = useState<Record<string, { url: string, model: string }>>({});
+  
   const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -57,9 +61,37 @@ export default function SeeWorkspace() {
     setAttachments(null);
   };
 
-  // Nút giả lập tính năng tạo ảnh
-  const handleGenerateImage = (promptText: string) => {
-    alert("Đang gửi lệnh tạo ảnh với Prompt: \n" + promptText.substring(0, 100) + "...");
+  // Thực thi gọi API Tạo Ảnh
+  const handleGenerateImage = async (promptText: string, messageId: string) => {
+    setGeneratingForMsg(messageId);
+    try {
+      const res = await fetch("/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          prompt: promptText,
+          imageBase64: lastUploadedBase64 // Có ảnh thì Nano Banana, không ảnh thì Imagen 4
+        })
+      });
+      const data = await res.json();
+      
+      if (data.success) {
+        // Hiển thị ảnh vừa render
+        setRenderedImages(prev => ({
+          ...prev,
+          [messageId]: { url: data.imageUrl, model: data.modelUsed }
+        }));
+        // Trừ tiền render ảnh
+        setBalance(prev => Math.max(0, prev - data.costVnd));
+      } else {
+        alert("Lỗi: " + data.error);
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Lỗi kết nối tới Server Tạo Ảnh");
+    } finally {
+      setGeneratingForMsg(null);
+    }
   };
 
   return (
@@ -157,14 +189,27 @@ export default function SeeWorkspace() {
 
                   {/* Nhận diện Block Prompt để hiển thị nút Tạo Ảnh */}
                   {m.role === "assistant" && m.content.includes("PROMPT") && m.content.includes("EXPLAIN") && (
-                    <div className="mt-4 pt-4 border-t border-white/10 flex justify-between items-center">
-                      <button 
-                        onClick={() => handleGenerateImage(m.content)}
-                        className="flex items-center gap-2 bg-[#f2ca50] hover:bg-[#ffe088] text-[#050505] font-bold text-xs uppercase tracking-wider px-4 py-2 rounded-sm transition-all duration-200"
-                      >
-                        <ImageIcon size={16} weight="bold" />
-                        Tạo ảnh với Prompt vừa tạo
-                      </button>
+                    <div className="mt-4 pt-4 border-t border-white/10 flex flex-col gap-3">
+                      {!renderedImages[m.id] ? (
+                        <button 
+                          onClick={() => handleGenerateImage(m.content, m.id)}
+                          disabled={generatingForMsg === m.id}
+                          className="flex w-fit items-center gap-2 bg-[#f2ca50] hover:bg-[#ffe088] disabled:bg-[#f2ca50]/50 disabled:cursor-wait text-[#050505] font-bold text-xs uppercase tracking-wider px-4 py-2 rounded-sm transition-all duration-200"
+                        >
+                          <ImageIcon size={16} weight="bold" />
+                          {generatingForMsg === m.id ? "Đang xử lý Render..." : "Tạo ảnh với Prompt vừa tạo"}
+                        </button>
+                      ) : (
+                        <div className="flex flex-col gap-2 mt-2">
+                          <div className="relative w-full max-w-lg aspect-video rounded-md overflow-hidden border border-white/20">
+                            <img src={renderedImages[m.id].url} alt="Generated Design" className="object-cover w-full h-full" />
+                          </div>
+                          <div className="flex justify-between items-center max-w-lg text-[10px] text-[#a09a8e]">
+                            <span className="text-green-500 font-bold">✅ Render thành công</span>
+                            <span className="uppercase tracking-wider border border-white/10 px-2 py-0.5 rounded-sm">Model: {renderedImages[m.id].model}</span>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -220,7 +265,16 @@ export default function SeeWorkspace() {
             <input 
               type="file" 
               ref={fileInputRef}
-              onChange={(e) => setAttachments(e.target.files)}
+              onChange={(e) => {
+                setAttachments(e.target.files);
+                if (e.target.files && e.target.files.length > 0) {
+                  const reader = new FileReader();
+                  reader.onload = (ev) => {
+                    setLastUploadedBase64(ev.target?.result as string);
+                  };
+                  reader.readAsDataURL(e.target.files[0]);
+                }
+              }}
               className="hidden"
               multiple 
               accept="image/*"
