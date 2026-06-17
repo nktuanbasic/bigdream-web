@@ -46,6 +46,7 @@ export default function SeeWorkspace() {
   // History & Projects State
   const [projectsList, setProjectsList] = useState<any[]>([]);
   const [activeProjectId, setActiveProjectId] = useState<string | null>(null);
+  const activeProjectIdRef = useRef<string | null>(null);
   const [expandedProjects, setExpandedProjects] = useState<Record<string, boolean>>({});
   const [isCreatingProject, setIsCreatingProject] = useState(false);
   const [newProjectName, setNewProjectName] = useState("");
@@ -58,8 +59,9 @@ export default function SeeWorkspace() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => { currentChatIdRef.current = currentChatId; }, [currentChatId]);
+  useEffect(() => { activeProjectIdRef.current = activeProjectId; }, [activeProjectId]);
 
-  const { messages, append, status, setMessages } = useChat({
+  const { messages, sendMessage, status, setMessages } = useChat({
     transport: new DefaultChatTransport({
       api: "/api/see",
       fetch: async (url, options) => {
@@ -68,7 +70,7 @@ export default function SeeWorkspace() {
 
         const body = typeof options?.body === "string" ? JSON.parse(options.body) : {};
         body.chatId = currentChatIdRef.current;
-        body.projectId = activeProjectId; 
+        body.projectId = body.projectId ?? activeProjectIdRef.current;
 
         const headers = new Headers(options?.headers);
         if (token) headers.set("Authorization", `Bearer ${token}`);
@@ -247,12 +249,8 @@ export default function SeeWorkspace() {
     const files = attachments ?? undefined;
     if (!text && !files) return;
 
-    await append(
-      {
-        role: 'user',
-        content: text || '',
-        experimental_attachments: files ? Array.from(files) : undefined,
-      } as any,
+    await sendMessage(
+      text ? { text, files } : { files: files! },
       { body: { branchId: activeBranch, tier: activeTier, projectId: activeProjectId } }
     );
 
