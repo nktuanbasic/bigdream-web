@@ -72,14 +72,14 @@ Luôn giao tiếp bằng Tiếng Việt thân thiện, chuyên nghiệp, trừ p
           // Cộng 30% lợi nhuận
           const finalPriceUSD = rawCostUSD * 1.3;
           
-          // Quy đổi ra VNĐ (Tỷ giá tạm tính: 25,000đ)
+          // Quy đổi ra Gem (Tỷ giá tạm tính: 25,000 Gem)
           const finalPriceVND = Math.ceil(finalPriceUSD * 25000);
 
           // In ra Log Hệ Thống (Sẽ thay bằng code trừ tiền trên Supabase)
           console.log(`[BILLING] Nhánh: ${branchId} | Tier: ${tier} | Model: ${modelName}`);
           console.log(`[BILLING] Input: ${promptTokens} | Output: ${completionTokens}`);
           console.log(`[BILLING] Giá gốc: $${rawCostUSD.toFixed(6)} | Giá thu khách (+30%): $${finalPriceUSD.toFixed(6)}`);
-          console.log(`[BILLING] SỐ TIỀN TRỪ VÀO VÍ KHÁCH: -${finalPriceVND} VNĐ`);
+          console.log(`[BILLING] SỐ TIỀN TRỪ VÀO VÍ KHÁCH: -${finalPriceVND} GEM`);
         }
       });
     };

@@ -40,7 +40,7 @@ export async function POST(req: Request) {
     const finalPriceVND = Math.ceil(finalPriceUSD * 25000);
 
     console.log(`[BILLING IMAGE] Giá gốc: $${baseCostUSD} | Giá bán (+30%): $${finalPriceUSD}`);
-    console.log(`[BILLING IMAGE] SỐ TIỀN TRỪ VÀO VÍ KHÁCH: -${finalPriceVND} VNĐ`);
+    console.log(`[BILLING IMAGE] SỐ TIỀN TRỪ VÀO VÍ KHÁCH: -${finalPriceVND} GEM`);
 
     return NextResponse.json({ 
       success: true, 

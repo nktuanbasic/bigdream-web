@@ -154,11 +154,12 @@ export default function SeeWorkspace() {
           <h2 className="font-black text-xl text-white tracking-widest uppercase">SEE WORKSPACE</h2>
           <p className="text-xs text-[#a09a8e] mt-1">Core Prompt Engine</p>
           
-          {/* Ví VNĐ */}
+          {/* Ví Gem */}
           <div className="mt-4 p-3 bg-[#1a1a1a] rounded-lg border border-white/5 flex justify-between items-center">
             <span className="text-xs text-[#a09a8e] uppercase tracking-wider">Số dư:</span>
-            <span className="font-mono font-bold text-[#f2ca50] cursor-default">
-              {!isWalletLoaded ? "..." : balance.toLocaleString('vi-VN')} đ
+            <span className="font-mono font-bold text-[#f2ca50] cursor-default flex items-center gap-1">
+              <Gem size={14} weight="fill" />
+              {!isWalletLoaded ? "..." : balance.toLocaleString('vi-VN')}
             </span>
           </div>
         </div>
