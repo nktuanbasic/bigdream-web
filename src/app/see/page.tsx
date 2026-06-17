@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { useChat } from "@ai-sdk/react";
-import type { UIMessage } from "ai";
+import { DefaultChatTransport, type FileUIPart, type UIMessage } from "ai";
 import { Paperclip, PaperPlaneRight, Image as ImageIcon, MagicWand, Lightning, Brain, Diamond, Plus, ChatCircle, Trash } from "@phosphor-icons/react";
 import Image from "next/image";
 import { supabase } from "@/lib/supabase/client";
@@ -27,6 +27,9 @@ const getMessageText = (message: UIMessage) =>
     .filter((part) => part.type === "text")
     .map((part) => part.text)
     .join("");
+
+const getMessageFiles = (message: UIMessage) =>
+  message.parts.filter((part): part is FileUIPart => part.type === "file");
 
 const Gem = Diamond;
 
@@ -55,30 +58,32 @@ export default function SeeWorkspace() {
 
   // Khởi tạo Chat Hook từ AI SDK
   const { messages, sendMessage, status, setMessages } = useChat({
-    api: "/api/see",
-    fetch: async (url, options) => {
-      const { data: { session } } = await supabase.auth.getSession();
-      const token = session?.access_token;
-      
-      const body = JSON.parse(options?.body as string);
-      body.chatId = currentChatIdRef.current;
-      
-      const res = await fetch(url, {
-        ...options,
-        body: JSON.stringify(body),
-        headers: {
-          ...options?.headers,
-          Authorization: `Bearer ${token}`
+    transport: new DefaultChatTransport({
+      api: "/api/see",
+      fetch: async (url, options) => {
+        const { data: { session } } = await supabase.auth.getSession();
+        const token = session?.access_token;
+
+        const body = typeof options?.body === "string" ? JSON.parse(options.body) : {};
+        body.chatId = currentChatIdRef.current;
+
+        const headers = new Headers(options?.headers);
+        if (token) headers.set("Authorization", `Bearer ${token}`);
+
+        const res = await fetch(url, {
+          ...options,
+          body: JSON.stringify(body),
+          headers,
+        });
+
+        const newChatId = res.headers.get("X-Chat-Id");
+        if (newChatId && !currentChatIdRef.current) {
+           setCurrentChatId(newChatId);
+           if (token) fetchHistoryList(token);
         }
-      });
-      
-      const newChatId = res.headers.get('X-Chat-Id');
-      if (newChatId && !currentChatIdRef.current) {
-         setCurrentChatId(newChatId);
-         if (token) fetchHistoryList(token);
-      }
-      return res;
-    },
+        return res;
+      },
+    }),
     onFinish: () => {
       supabase.auth.getSession().then(({ data: { session } }) => {
         if (session) fetchWallet(session.access_token);
@@ -128,9 +133,11 @@ export default function SeeWorkspace() {
         
         const loadedMessages = data.messages.map((m: any) => ({
           id: m.id,
-          role: m.role as "user" | "assistant" | "system" | "data",
-          content: m.content,
-          experimental_attachments: m.attachments?.map((url: string) => ({ url, contentType: 'image/jpeg' }))
+          role: m.role as UIMessage["role"],
+          parts: [
+            ...(m.attachments || []).map((url: string) => ({ type: "file" as const, url, mediaType: "image/jpeg" })),
+            ...(m.content ? [{ type: "text" as const, text: m.content }] : []),
+          ],
         }));
         
         setMessages(loadedMessages);
@@ -207,9 +214,9 @@ export default function SeeWorkspace() {
       let baseImage = lastUploadedBase64;
       if (!baseImage) {
         // Try to find image in current chat history
-        const userMsgsWithImage = messages.filter(m => m.role === 'user' && m.experimental_attachments && m.experimental_attachments.length > 0);
+        const userMsgsWithImage = messages.filter(m => m.role === "user" && getMessageFiles(m).length > 0);
         if (userMsgsWithImage.length > 0) {
-           const lastImgAtt = userMsgsWithImage[userMsgsWithImage.length-1].experimental_attachments?.[0];
+           const lastImgAtt = getMessageFiles(userMsgsWithImage[userMsgsWithImage.length - 1])[0];
            if (lastImgAtt?.url) baseImage = lastImgAtt.url;
         }
       }
@@ -345,6 +352,7 @@ export default function SeeWorkspace() {
           ) : (
             messages.map((m) => {
               const messageText = getMessageText(m);
+              const fileParts = getMessageFiles(m);
 
               return (
               <div key={m.id} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
@@ -360,9 +368,9 @@ export default function SeeWorkspace() {
                     </div>
                   )}
 
-                  {m.role === "user" && m.experimental_attachments && m.experimental_attachments.length > 0 && (
+                  {m.role === "user" && fileParts.length > 0 && (
                      <div className="flex flex-wrap gap-2 mb-3">
-                        {m.experimental_attachments.map((att, idx) => (
+                        {fileParts.map((att, idx) => (
                            <div key={idx} className="relative w-32 h-32 rounded-md overflow-hidden border border-white/20">
                               <img src={att.url} alt="attachment" className="object-cover w-full h-full" />
                            </div>

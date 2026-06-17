@@ -3,6 +3,18 @@ import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { SEE_INSTRUCTIONS } from '@/lib/see/systemInstructions';
 import { createClient } from '@supabase/supabase-js';
 
+type AttachmentLike = {
+  url: string;
+  contentType?: string;
+  mediaType?: string;
+  filename?: string;
+};
+
+type IncomingMessage = UIMessage & {
+  content?: string;
+  experimental_attachments?: AttachmentLike[];
+};
+
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
@@ -27,6 +39,44 @@ function getRandomKey(): string {
   return keysArray[Math.floor(Math.random() * keysArray.length)];
 }
 
+function getMessageText(message?: Partial<IncomingMessage>): string {
+  if (!message) return "";
+  if (typeof message.content === "string") return message.content;
+
+  return message.parts
+    ?.filter((part) => part.type === "text")
+    .map((part) => part.text)
+    .join("") || "";
+}
+
+function getMessageAttachments(message?: Partial<IncomingMessage>): AttachmentLike[] {
+  if (!message) return [];
+
+  const fileParts = message.parts
+    ?.filter((part) => part.type === "file")
+    .map((part) => ({
+      url: part.url,
+      contentType: part.mediaType,
+      mediaType: part.mediaType,
+      filename: part.filename,
+    })) || [];
+
+  return [...fileParts, ...(message.experimental_attachments || [])];
+}
+
+function setMessageAttachments(message: IncomingMessage, attachments: AttachmentLike[]) {
+  const existingParts = (message.parts || []).filter((part) => part.type !== "file");
+  message.parts = [
+    ...attachments.map((att) => ({
+      type: "file" as const,
+      url: att.url,
+      mediaType: att.mediaType || att.contentType || "image/jpeg",
+      filename: att.filename,
+    })),
+    ...existingParts,
+  ];
+}
+
 export async function POST(req: Request) {
   try {
     const supabase = createClient(supabaseUrl, supabaseKey);
@@ -49,7 +99,7 @@ export async function POST(req: Request) {
     
     // 1. Tạo Chat mới nếu chưa có
     if (!currentChatId) {
-      const title = messages[0]?.content?.substring(0, 50) || 'Dự án mới';
+      const title = getMessageText(messages[0])?.substring(0, 50) || 'Dự án mới';
       const { data: newChat, error: chatErr } = await supabase
         .from('chats')
         .insert({ user_id: user.id, branch_id: branchId, title })
@@ -63,16 +113,17 @@ export async function POST(req: Request) {
     // 2. Lưu tin nhắn của User vào DB (Upload ảnh nếu có)
     const lastMessage = messages[messages.length - 1];
     if (currentChatId && lastMessage?.role === 'user') {
-      const attachmentsUrls: string[] = [];
+      const uploadedAttachments: AttachmentLike[] = [];
       
-      if (lastMessage.experimental_attachments && lastMessage.experimental_attachments.length > 0) {
-        for (const att of lastMessage.experimental_attachments) {
+      const messageAttachments = getMessageAttachments(lastMessage);
+      if (messageAttachments.length > 0) {
+        for (const att of messageAttachments) {
           if (att.url.startsWith('data:')) {
              try {
                 const base64Data = att.url.split(',')[1];
                 // Using standard Buffer instead of external library
                 const buffer = Buffer.from(base64Data, 'base64');
-                const contentType = att.contentType || 'image/jpeg';
+                const contentType = att.contentType || att.mediaType || 'image/jpeg';
                 const ext = contentType.split('/')[1] || 'jpg';
                 const fileName = `chat_${currentChatId}/${crypto.randomUUID()}.${ext}`;
                 
@@ -83,23 +134,27 @@ export async function POST(req: Request) {
                 
                 if (!uploadErr) {
                   const { data: publicUrlData } = supabase.storage.from('workspace_media').getPublicUrl(fileName);
-                  attachmentsUrls.push(publicUrlData.publicUrl);
+                  uploadedAttachments.push({ ...att, url: publicUrlData.publicUrl, contentType, mediaType: contentType });
                 }
              } catch (e) {
                 console.error("Lỗi upload ảnh đính kèm:", e);
              }
           } else {
-             attachmentsUrls.push(att.url);
+             uploadedAttachments.push(att);
           }
         }
+      }
+
+      if (uploadedAttachments.length > 0) {
+        setMessageAttachments(lastMessage, uploadedAttachments);
       }
 
       await supabase.from('messages').insert({
         id: lastMessage.id, // Dùng chung ID của AI SDK
         chat_id: currentChatId,
         role: 'user',
-        content: lastMessage.content,
-        attachments: attachmentsUrls
+        content: getMessageText(lastMessage),
+        attachments: uploadedAttachments.map((att) => att.url)
       });
     }
 
@@ -119,10 +174,10 @@ export async function POST(req: Request) {
       const discardedMessages = optimizedMessages.slice(0, -MAX_MESSAGES);
       
       // Giữ lại Anchor Images từ các tin nhắn bị loại bỏ
-      const anchorImages: any[] = [];
+      const anchorImages: AttachmentLike[] = [];
       discardedMessages.forEach(msg => {
-        if (msg.role === 'user' && msg.experimental_attachments) {
-          anchorImages.push(...msg.experimental_attachments);
+        if (msg.role === 'user') {
+          anchorImages.push(...getMessageAttachments(msg));
         }
       });
       
@@ -130,10 +185,10 @@ export async function POST(req: Request) {
          // Đính kèm ngầm ảnh vào tin nhắn User xa nhất trong kept window
          const firstUserMsgIdx = keptMessages.findIndex(m => m.role === 'user');
          if (firstUserMsgIdx !== -1) {
-            keptMessages[firstUserMsgIdx].experimental_attachments = [
-               ...(keptMessages[firstUserMsgIdx].experimental_attachments || []),
+            setMessageAttachments(keptMessages[firstUserMsgIdx], [
+               ...getMessageAttachments(keptMessages[firstUserMsgIdx]),
                ...anchorImages
-            ];
+            ]);
          }
       }
       optimizedMessages = keptMessages;
@@ -216,7 +271,7 @@ Luôn giao tiếp bằng Tiếng Việt thân thiện, chuyên nghiệp, trừ p
     try {
       // Gọi thử Model Chính trước
       const result = callAI(mainModel, getRandomKey());
-      return result.toDataStreamResponse({
+      return result.toUIMessageStreamResponse({
         headers: {
           'X-Chat-Id': currentChatId || ''
         }
@@ -226,7 +281,7 @@ Luôn giao tiếp bằng Tiếng Việt thân thiện, chuyên nghiệp, trừ p
       if ((error.statusCode === 429 || error.status === 429) && backupModel) {
         console.log(`[FALLBACK] Model chính ${mainModel} quá tải. Tự động chuyển sang ${backupModel} với Key mới!`);
         const fallbackResult = callAI(backupModel, getRandomKey());
-        return fallbackResult.toDataStreamResponse({
+        return fallbackResult.toUIMessageStreamResponse({
           headers: {
             'X-Chat-Id': currentChatId || ''
           }
