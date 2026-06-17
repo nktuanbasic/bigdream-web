@@ -173,7 +173,7 @@ Luôn giao tiếp bằng Tiếng Việt thân thiện, chuyên nghiệp, trừ p
         model: googleProvider(modelName),
         system: fullSystemPrompt,
         messages: modelMessages,
-        onFinish: async ({ usage }) => {
+        onFinish: async ({ text, usage }) => {
           // --- HỆ THỐNG TÍNH TIỀN (BILLING ENGINE) ---
           const promptTokens = usage.inputTokens ?? 0;
           const completionTokens = usage.outputTokens ?? 0;
