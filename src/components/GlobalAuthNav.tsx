@@ -4,7 +4,8 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { supabase } from '@/lib/supabase/client';
-import { User, SignOut, Coin, MagnifyingGlass } from '@phosphor-icons/react';
+import { User, SignOut, Coin, MagnifyingGlass, Translate } from '@phosphor-icons/react';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface WalletInfo {
   bas: number;
@@ -24,6 +25,7 @@ const NAV_LINKS = [
 
 export default function GlobalAuthNav() {
   const pathname = usePathname();
+  const { language, toggleLanguage } = useLanguage();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [walletInfo, setWalletInfo] = useState<WalletInfo>({ bas: 0, adv: 0, coin: 0 });
 
@@ -117,10 +119,26 @@ export default function GlobalAuthNav() {
           <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" size={20} />
           <input
             className="bg-charcoal-surface border border-glass-border rounded-md pl-10 pr-4 py-2 text-sm text-on-surface focus:outline-none focus:border-primary focus:bg-surface-container-high transition-all w-64"
-            placeholder="Search parameters..."
+            placeholder={language === 'vi' ? "Tìm kiếm thông số..." : "Search parameters..."}
             type="text"
           />
         </div>
+
+        {/* Language Switcher */}
+        <button
+          onClick={toggleLanguage}
+          className="flex items-center gap-2 px-3 py-1.5 rounded-md border border-glass-border bg-charcoal-surface hover:bg-surface-container-high hover:border-primary transition-all duration-300"
+          title={language === 'vi' ? "Switch to English" : "Chuyển sang Tiếng Việt"}
+        >
+          <Translate size={18} className={language === 'en' ? 'text-primary' : 'text-on-surface-variant'} />
+          <span className="text-xs font-bold tracking-widest text-on-surface-variant uppercase">
+            {language === 'vi' ? (
+              <><span className="text-primary">VI</span> / EN</>
+            ) : (
+              <>VI / <span className="text-primary">EN</span></>
+            )}
+          </span>
+        </button>
 
         {!isLoggedIn ? (
           <button

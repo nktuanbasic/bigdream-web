@@ -3,6 +3,7 @@ import { Montserrat, Hanken_Grotesk } from "next/font/google";
 import "./globals.css";
 import GlobalAuthNav from "@/components/GlobalAuthNav";
 import Footer from "@/components/Footer";
+import { LanguageProvider } from "@/context/LanguageContext";
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
@@ -30,11 +31,13 @@ export default function RootLayout({
       className={`dark ${montserrat.variable} ${hanken.variable} h-full antialiased`}
     >
       <body className="bg-obsidian-deep min-h-screen flex flex-col font-body-md text-body-md">
-        <GlobalAuthNav />
-        <div className="flex-1">
-          {children}
-        </div>
-        <Footer />
+        <LanguageProvider>
+          <GlobalAuthNav />
+          <div className="flex-1">
+            {children}
+          </div>
+          <Footer />
+        </LanguageProvider>
       </body>
     </html>
   );
