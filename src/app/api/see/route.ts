@@ -80,15 +80,21 @@ function setMessageAttachments(message: IncomingMessage, attachments: Attachment
 
 export async function POST(req: Request) {
   try {
-    const supabase = createClient(supabaseUrl, supabaseKey);
-
     // Xác thực người dùng
     const authHeader = req.headers.get('authorization');
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return new Response(JSON.stringify({ error: 'Quý khách vui lòng đăng nhập trước khi sử dụng tính năng này.' }), { status: 401 });
+      return new Response(JSON.stringify({ error: 'Không có quyền truy cập.' }), { status: 401 });
     }
     const token = authHeader.split('Bearer ')[1];
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+
+    // Khởi tạo Supabase client VỚI TOKEN để vượt qua RLS nếu có
+    const supabaseWithAuth = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      { global: { headers: { Authorization: `Bearer ${token}` } } }
+    );
+
+    const { data: { user }, error: authError } = await supabaseWithAuth.auth.getUser(token);
     
     if (authError || !user) {
       return new Response(JSON.stringify({ error: 'Phiên đăng nhập không hợp lệ.' }), { status: 401 });
@@ -108,7 +114,7 @@ export async function POST(req: Request) {
          return NextResponse.json({ error: 'Project ID is required to create a new chat' }, { status: 400 });
       }
       const title = getMessageText(messages[0])?.substring(0, 50) || 'Đoạn chat mới';
-      const { data: newChat, error: chatErr } = await supabase
+      const { data: newChat, error: chatErr } = await supabaseWithAuth
         .from('chats')
         .insert({ user_id: user.id, branch_id: branchId, project_id: projectId, title })
         .select('id').single();
@@ -138,13 +144,13 @@ export async function POST(req: Request) {
                 const ext = contentType.split('/')[1] || 'jpg';
                 const fileName = `chat_${currentChatId}/${crypto.randomUUID()}.${ext}`;
                 
-                const { error: uploadErr } = await supabase.storage.from('workspace_media').upload(fileName, buffer, {
+                const { error: uploadErr } = await supabaseWithAuth.storage.from('workspace_media').upload(fileName, buffer, {
                   contentType,
                   upsert: true
                 });
                 
                 if (!uploadErr) {
-                  const { data: publicUrlData } = supabase.storage.from('workspace_media').getPublicUrl(fileName);
+                  const { data: publicUrlData } = supabaseWithAuth.storage.from('workspace_media').getPublicUrl(fileName);
                   uploadedAttachments.push({ ...att, url: publicUrlData.publicUrl, contentType, mediaType: contentType });
                 }
              } catch (e) {
@@ -160,7 +166,7 @@ export async function POST(req: Request) {
         setMessageAttachments(lastMessage, uploadedAttachments);
       }
 
-      await supabase.from('messages').insert({
+      await supabaseWithAuth.from('messages').insert({
         id: lastMessage.id, // Dùng chung ID của AI SDK
         chat_id: currentChatId,
         role: 'user',
@@ -170,7 +176,7 @@ export async function POST(req: Request) {
     }
 
     // Kiểm tra số dư trước khi cho phép chat
-    let { data: userDoc, error: walletError } = await supabase.from('users').select('purchased_coins').eq('id', user.id).single();
+    let { data: userDoc, error: walletError } = await supabaseWithAuth.from('users').select('purchased_coins').eq('id', user.id).single();
     
     // NẾU CHƯA CÓ VÍ -> TỰ ĐỘNG TẠO VÍ LUÔN TRONG DB
     if (walletError && walletError.code === 'PGRST116') {
@@ -270,7 +276,7 @@ Luôn giao tiếp bằng Tiếng Việt thân thiện, chuyên nghiệp, trừ p
 
           // Lưu tin nhắn của AI vào DB
           if (currentChatId) {
-             await supabase.from('messages').insert({
+             await supabaseWithAuth.from('messages').insert({
                 chat_id: currentChatId,
                 role: 'assistant',
                 content: text, // 'text' variable is provided by streamText's onFinish
@@ -279,10 +285,10 @@ Luôn giao tiếp bằng Tiếng Việt thân thiện, chuyên nghiệp, trừ p
           }
 
           // Trừ tiền thật trên Database
-          const { data: currentUser } = await supabase.from('users').select('purchased_coins').eq('id', user.id).single();
+          const { data: currentUser } = await supabaseWithAuth.from('users').select('purchased_coins').eq('id', user.id).single();
           if (currentUser) {
             const newBalance = Math.max(0, currentUser.purchased_coins - finalPriceVND);
-            await supabase.from('users').update({ purchased_coins: newBalance }).eq('id', user.id);
+            await supabaseWithAuth.from('users').update({ purchased_coins: newBalance }).eq('id', user.id);
             console.log(`[BILLING] SỐ TIỀN TRỪ VÀO VÍ KHÁCH (${user.email}): -${finalPriceVND} GEM. Số dư mới: ${newBalance}`);
           }
         }

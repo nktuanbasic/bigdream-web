@@ -6,12 +6,17 @@ const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PU
 
 export async function GET(req: Request) {
   try {
-    const supabase = createClient(supabaseUrl, supabaseKey);
     const authHeader = req.headers.get('authorization');
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     const token = authHeader.split('Bearer ')[1];
+    
+    // Khởi tạo Supabase Client VỚI TOKEN của User để vượt qua RLS
+    const supabase = createClient(supabaseUrl, supabaseKey, {
+      global: { headers: { Authorization: `Bearer ${token}` } }
+    });
+    
     const { data: { user }, error: authError } = await supabase.auth.getUser(token);
     
     if (authError || !user) {
@@ -26,6 +31,7 @@ export async function GET(req: Request) {
       .order('created_at', { ascending: false });
 
     if (projectsError) {
+      console.error('Lỗi lấy danh sách dự án (có thể do RLS):', projectsError);
       return NextResponse.json({ error: 'Failed to fetch projects' }, { status: 500 });
     }
 
@@ -39,12 +45,17 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
-    const supabase = createClient(supabaseUrl, supabaseKey);
     const authHeader = req.headers.get('authorization');
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     const token = authHeader.split('Bearer ')[1];
+    
+    // Khởi tạo Supabase Client VỚI TOKEN của User để vượt qua RLS
+    const supabase = createClient(supabaseUrl, supabaseKey, {
+      global: { headers: { Authorization: `Bearer ${token}` } }
+    });
+    
     const { data: { user }, error: authError } = await supabase.auth.getUser(token);
     
     if (authError || !user) {
@@ -64,6 +75,7 @@ export async function POST(req: Request) {
       .single();
 
     if (projectError) {
+      console.error('Lỗi insert dự án (có thể do RLS):', projectError);
       return NextResponse.json({ error: 'Failed to create project' }, { status: 500 });
     }
 

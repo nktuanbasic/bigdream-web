@@ -6,14 +6,16 @@ const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PU
 
 export async function GET(req: Request) {
   try {
-    const supabase = createClient(supabaseUrl, supabaseKey);
-
-    // Xác thực người dùng
     const authHeader = req.headers.get('authorization');
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     const token = authHeader.split('Bearer ')[1];
+    
+    const supabase = createClient(supabaseUrl, supabaseKey, {
+      global: { headers: { Authorization: `Bearer ${token}` } }
+    });
+    
     const { data: { user }, error: authError } = await supabase.auth.getUser(token);
     
     if (authError || !user) {
