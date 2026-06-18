@@ -75,10 +75,10 @@ export default function Home() {
       {/* ═══════════════════════════════════════════════════════════════
           EXPLORE SECTION — Feature Cards
           ═══════════════════════════════════════════════════════════════ */}
-      <section id="explore" className="relative z-20 py-24 md:py-32 px-6 md:px-12 max-w-[1800px] mx-auto w-full">
+      <section id="explore" className="relative z-20 py-32 px-6 md:px-12 max-w-[1440px] mx-auto w-full">
         
         {/* Section Header */}
-        <div className="text-center mb-16 md:mb-24 flex flex-col items-center">
+        <div className="text-center mb-24 md:mb-32 flex flex-col items-center">
           <h2 className="font-headline-lg text-3xl md:text-4xl text-white mb-6">
             {language === 'vi' ? 'Tất cả trong một nền tảng' : 'All in one platform'}
           </h2>
@@ -86,7 +86,7 @@ export default function Home() {
         </div>
 
         {/* Cards Stack */}
-        <div className="flex flex-col gap-12 md:gap-16">
+        <div className="flex flex-col gap-20 md:gap-32">
           
           {/* Card: SEE */}
           <Link href="/see" className="group block w-full h-[400px] md:h-[500px] relative overflow-hidden glass-panel transform hover:-translate-y-2 transition-all duration-500 hover:shadow-[0_20px_40px_rgba(242,202,80,0.1)] rounded-none">
@@ -94,9 +94,9 @@ export default function Home() {
             <div className="absolute inset-0 bg-gradient-to-r from-obsidian-deep via-obsidian-deep/80 to-transparent" />
             <div className="absolute inset-0 ring-1 ring-primary/10 group-hover:ring-primary/50 transition-all z-10" />
             <div className="absolute inset-0 p-8 md:p-16 flex flex-col justify-center items-start text-left z-20 w-full md:w-1/2">
-              <span className="font-label-sm text-xs text-on-surface uppercase tracking-[0.2em] mb-4 opacity-0 group-hover:opacity-100 transition-all transform translate-y-4 group-hover:translate-y-0 duration-500">{language === 'vi' ? 'Không gian làm việc kiến trúc AI tối thượng.' : 'The Ultimate AI Architectural Workspace.'}</span>
+              <span className="font-label-caps text-xs text-on-surface mb-4">{language === 'vi' ? 'Không gian làm việc kiến trúc AI tối thượng.' : 'The Ultimate AI Architectural Workspace.'}</span>
               <h3 className="font-headline-lg text-6xl md:text-7xl text-primary font-bold mb-4 drop-shadow-md">SEE</h3>
-              <p className="font-body-md text-sm md:text-base text-on-surface-variant max-w-md opacity-0 group-hover:opacity-100 transition-all transform translate-y-4 group-hover:translate-y-0 duration-500 delay-75">{language === 'vi' ? 'Nền tảng tạo prompt, sinh ảnh và biên tập không gian kiến trúc thông minh. Biến ý tưởng thành hiện thực với sức mạnh của trí tuệ nhân tạo.' : 'Intelligent prompt generation, image synthesis, and architectural editing platform. Turn ideas into reality with AI.'}</p>
+              <p className="font-body-md text-sm md:text-base text-on-surface-variant max-w-md">{language === 'vi' ? 'Nền tảng tạo prompt, sinh ảnh và biên tập không gian kiến trúc thông minh. Biến ý tưởng thành hiện thực với sức mạnh của trí tuệ nhân tạo.' : 'Intelligent prompt generation, image synthesis, and architectural editing platform. Turn ideas into reality with AI.'}</p>
             </div>
           </Link>
 
@@ -106,9 +106,9 @@ export default function Home() {
             <div className="absolute inset-0 bg-gradient-to-l from-obsidian-deep via-obsidian-deep/80 to-transparent" />
             <div className="absolute inset-0 ring-1 ring-primary/10 group-hover:ring-primary/50 transition-all z-10" />
             <div className="absolute inset-0 p-8 md:p-16 flex flex-col justify-center items-end text-right z-20 ml-auto w-full md:w-1/2">
-              <span className="font-label-sm text-xs text-on-surface uppercase tracking-[0.2em] mb-4 opacity-0 group-hover:opacity-100 transition-all transform translate-y-4 group-hover:translate-y-0 duration-500">{language === 'vi' ? 'Quét' : 'Scan'}</span>
+              <span className="font-label-caps text-xs text-on-surface mb-4">{language === 'vi' ? 'Quét' : 'Scan'}</span>
               <h3 className="font-headline-lg text-6xl md:text-7xl text-primary font-bold mb-4 drop-shadow-md">LENS</h3>
-              <p className="font-body-md text-sm md:text-base text-on-surface-variant max-w-md opacity-0 group-hover:opacity-100 transition-all transform translate-y-4 group-hover:translate-y-0 duration-500 delay-75">{language === 'vi' ? 'Máy quét nội thất & vật liệu cao cấp. Số hóa thế giới thực với độ chính xác tuyệt đối.' : 'Luxury material & interior scanner. Digitize the real world with absolute precision.'}</p>
+              <p className="font-body-md text-sm md:text-base text-on-surface-variant max-w-md">{language === 'vi' ? 'Máy quét nội thất & vật liệu cao cấp. Số hóa thế giới thực với độ chính xác tuyệt đối.' : 'Luxury material & interior scanner. Digitize the real world with absolute precision.'}</p>
             </div>
           </Link>
 
@@ -118,9 +118,9 @@ export default function Home() {
             <div className="absolute inset-0 bg-gradient-to-r from-obsidian-deep via-obsidian-deep/80 to-transparent" />
             <div className="absolute inset-0 ring-1 ring-primary/10 group-hover:ring-primary/50 transition-all z-10" />
             <div className="absolute inset-0 p-8 md:p-16 flex flex-col justify-center items-start text-left z-20 w-full md:w-1/2">
-              <span className="font-label-sm text-xs text-on-surface uppercase tracking-[0.2em] mb-4 opacity-0 group-hover:opacity-100 transition-all transform translate-y-4 group-hover:translate-y-0 duration-500">{language === 'vi' ? 'Khám phá' : 'Discover'}</span>
+              <span className="font-label-caps text-xs text-on-surface mb-4">{language === 'vi' ? 'Khám phá' : 'Discover'}</span>
               <h3 className="font-headline-lg text-6xl md:text-7xl text-primary font-bold mb-4 drop-shadow-md">MODEL</h3>
-              <p className="font-body-md text-sm md:text-base text-on-surface-variant max-w-md opacity-0 group-hover:opacity-100 transition-all transform translate-y-4 group-hover:translate-y-0 duration-500 delay-75">{language === 'vi' ? 'Tài nguyên 3D cao cấp & hình học tinh xảo. Thư viện vật thể kiến trúc được chế tác bởi AI.' : 'Premium 3D assets & mastercrafted geometry. AI-crafted architectural object library.'}</p>
+              <p className="font-body-md text-sm md:text-base text-on-surface-variant max-w-md">{language === 'vi' ? 'Tài nguyên 3D cao cấp & hình học tinh xảo. Thư viện vật thể kiến trúc được chế tác bởi AI.' : 'Premium 3D assets & mastercrafted geometry. AI-crafted architectural object library.'}</p>
             </div>
           </Link>
 
@@ -130,9 +130,9 @@ export default function Home() {
             <div className="absolute inset-0 bg-gradient-to-l from-obsidian-deep via-obsidian-deep/80 to-transparent" />
             <div className="absolute inset-0 ring-1 ring-primary/10 group-hover:ring-primary/50 transition-all z-10" />
             <div className="absolute inset-0 p-8 md:p-16 flex flex-col justify-center items-end text-right z-20 ml-auto w-full md:w-1/2">
-              <span className="font-label-sm text-xs text-on-surface uppercase tracking-[0.2em] mb-4 opacity-0 group-hover:opacity-100 transition-all transform translate-y-4 group-hover:translate-y-0 duration-500">{language === 'vi' ? 'Học tập' : 'Learn'}</span>
+              <span className="font-label-caps text-xs text-on-surface mb-4">{language === 'vi' ? 'Học tập' : 'Learn'}</span>
               <h3 className="font-headline-lg text-6xl md:text-7xl text-primary font-bold mb-4 drop-shadow-md">CLASS</h3>
-              <p className="font-body-md text-sm md:text-base text-on-surface-variant max-w-md opacity-0 group-hover:opacity-100 transition-all transform translate-y-4 group-hover:translate-y-0 duration-500 delay-75">{language === 'vi' ? 'Khóa học chuyên sâu về kiến trúc AI. Làm chủ các công cụ thiết kế tương lai.' : 'Masterclasses in AI architecture. Master the design tools of the future.'}</p>
+              <p className="font-body-md text-sm md:text-base text-on-surface-variant max-w-md">{language === 'vi' ? 'Khóa học chuyên sâu về kiến trúc AI. Làm chủ các công cụ thiết kế tương lai.' : 'Masterclasses in AI architecture. Master the design tools of the future.'}</p>
             </div>
           </Link>
 
@@ -142,9 +142,9 @@ export default function Home() {
             <div className="absolute inset-0 bg-gradient-to-r from-obsidian-deep via-obsidian-deep/80 to-transparent" />
             <div className="absolute inset-0 ring-1 ring-primary/10 group-hover:ring-primary/50 transition-all z-10" />
             <div className="absolute inset-0 p-8 md:p-16 flex flex-col justify-center items-start text-left z-20 w-full md:w-1/2">
-              <span className="font-label-sm text-xs text-on-surface uppercase tracking-[0.2em] mb-4 opacity-0 group-hover:opacity-100 transition-all transform translate-y-4 group-hover:translate-y-0 duration-500">{language === 'vi' ? 'Đọc' : 'Read'}</span>
+              <span className="font-label-caps text-xs text-on-surface mb-4">{language === 'vi' ? 'Đọc' : 'Read'}</span>
               <h3 className="font-headline-lg text-6xl md:text-7xl text-primary font-bold mb-4 drop-shadow-md">THINK</h3>
-              <p className="font-body-md text-sm md:text-base text-on-surface-variant max-w-md opacity-0 group-hover:opacity-100 transition-all transform translate-y-4 group-hover:translate-y-0 duration-500 delay-75">{language === 'vi' ? 'Tạp chí thiết kế kiến trúc. Những góc nhìn mới về sự giao thoa giữa công nghệ và không gian.' : 'Architectural design journal. New perspectives on the intersection of tech and space.'}</p>
+              <p className="font-body-md text-sm md:text-base text-on-surface-variant max-w-md">{language === 'vi' ? 'Tạp chí thiết kế kiến trúc. Những góc nhìn mới về sự giao thoa giữa công nghệ và không gian.' : 'Architectural design journal. New perspectives on the intersection of tech and space.'}</p>
             </div>
           </Link>
 

@@ -11,8 +11,8 @@ export default function Footer() {
   };
 
   return (
-    <footer className="w-full bg-obsidian-deep border-t border-white/10 pt-16 pb-8 px-4 md:px-12 relative z-10">
-      <div className="max-w-[1800px] mx-auto">
+    <footer className="w-full bg-obsidian-deep border-t border-white/10 pt-24 pb-12 px-4 md:px-12 relative z-10">
+      <div className="max-w-[1440px] mx-auto">
         
         {/* Footer Top: Brand & Navigation Columns */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-16">
@@ -33,38 +33,38 @@ export default function Footer() {
 
           {/* Nav Cols */}
           <div>
-            <h4 className="text-white font-bold mb-4 uppercase tracking-wider text-sm">{language === 'vi' ? 'Hệ Sinh Thái' : 'Ecosystem'}</h4>
-            <ul className="space-y-3 text-sm text-on-surface-variant">
-              <li><Link href="/see" className="hover:text-primary transition-colors">SEE Engine</Link></li>
-              <li><Link href="/model" className="hover:text-primary transition-colors">{language === 'vi' ? 'Thư viện Model' : 'Model Library'}</Link></li>
-              <li><Link href="/lens" className="hover:text-primary transition-colors">{language === 'vi' ? 'Quét Vật Liệu (Lens)' : 'Material Scanner (Lens)'}</Link></li>
+            <h4 className="text-white font-bold mb-6 uppercase tracking-wider text-sm">{language === 'vi' ? 'Hệ Sinh Thái' : 'Ecosystem'}</h4>
+            <ul className="flex flex-col text-sm text-on-surface-variant">
+              <li className="py-4 border-b border-white/10"><Link href="/see" className="hover:text-primary transition-colors block">SEE Engine</Link></li>
+              <li className="py-4 border-b border-white/10"><Link href="/model" className="hover:text-primary transition-colors block">{language === 'vi' ? 'Thư viện Model' : 'Model Library'}</Link></li>
+              <li className="py-4 border-b border-white/10"><Link href="/lens" className="hover:text-primary transition-colors block">{language === 'vi' ? 'Quét Vật Liệu (Lens)' : 'Material Scanner (Lens)'}</Link></li>
             </ul>
           </div>
 
           <div>
-            <h4 className="text-white font-bold mb-4 uppercase tracking-wider text-sm">{language === 'vi' ? 'Cộng Đồng' : 'Community'}</h4>
-            <ul className="space-y-3 text-sm text-on-surface-variant">
-              <li><Link href="/think" className="hover:text-primary transition-colors">Blog (Think)</Link></li>
-              <li><Link href="/class" className="hover:text-primary transition-colors">Masterclass</Link></li>
-              <li><Link href="/about" className="hover:text-primary transition-colors">{language === 'vi' ? 'Về chúng tôi' : 'About us'}</Link></li>
+            <h4 className="text-white font-bold mb-6 uppercase tracking-wider text-sm">{language === 'vi' ? 'Cộng Đồng' : 'Community'}</h4>
+            <ul className="flex flex-col text-sm text-on-surface-variant">
+              <li className="py-4 border-b border-white/10"><Link href="/think" className="hover:text-primary transition-colors block">Blog (Think)</Link></li>
+              <li className="py-4 border-b border-white/10"><Link href="/class" className="hover:text-primary transition-colors block">Masterclass</Link></li>
+              <li className="py-4 border-b border-white/10"><Link href="/about" className="hover:text-primary transition-colors block">{language === 'vi' ? 'Về chúng tôi' : 'About us'}</Link></li>
             </ul>
           </div>
 
           <div>
-            <h4 className="text-white font-bold mb-4 uppercase tracking-wider text-sm">{language === 'vi' ? 'Công Ty' : 'Company'}</h4>
-            <ul className="space-y-3 text-sm text-on-surface-variant">
-              <li><a href="https://www.facebook.com/tuan.khanh.722968?locale=vi_VN" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">{language === 'vi' ? 'Liên hệ' : 'Contact'}</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">{language === 'vi' ? 'Tuyển dụng' : 'Careers'}</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">{language === 'vi' ? 'Đối tác' : 'Partners'}</a></li>
+            <h4 className="text-white font-bold mb-6 uppercase tracking-wider text-sm">{language === 'vi' ? 'Công Ty' : 'Company'}</h4>
+            <ul className="flex flex-col text-sm text-on-surface-variant">
+              <li className="py-4 border-b border-white/10"><a href="https://www.facebook.com/tuan.khanh.722968?locale=vi_VN" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors block">{language === 'vi' ? 'Liên hệ' : 'Contact'}</a></li>
+              <li className="py-4 border-b border-white/10"><a href="#" className="hover:text-primary transition-colors block">{language === 'vi' ? 'Tuyển dụng' : 'Careers'}</a></li>
+              <li className="py-4 border-b border-white/10"><a href="#" className="hover:text-primary transition-colors block">{language === 'vi' ? 'Đối tác' : 'Partners'}</a></li>
             </ul>
           </div>
 
           <div>
-            <h4 className="text-white font-bold mb-4 uppercase tracking-wider text-sm">{language === 'vi' ? 'Pháp Lý' : 'Legal'}</h4>
-            <ul className="space-y-3 text-sm text-on-surface-variant">
-              <li><a href="#" className="hover:text-primary transition-colors">{language === 'vi' ? 'Điều khoản dịch vụ' : 'Terms of Service'}</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">{language === 'vi' ? 'Chính sách bảo mật' : 'Privacy Policy'}</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">{language === 'vi' ? 'Quy định hoàn tiền' : 'Refund Policy'}</a></li>
+            <h4 className="text-white font-bold mb-6 uppercase tracking-wider text-sm">{language === 'vi' ? 'Pháp Lý' : 'Legal'}</h4>
+            <ul className="flex flex-col text-sm text-on-surface-variant">
+              <li className="py-4 border-b border-white/10"><a href="#" className="hover:text-primary transition-colors block">{language === 'vi' ? 'Điều khoản dịch vụ' : 'Terms of Service'}</a></li>
+              <li className="py-4 border-b border-white/10"><a href="#" className="hover:text-primary transition-colors block">{language === 'vi' ? 'Chính sách bảo mật' : 'Privacy Policy'}</a></li>
+              <li className="py-4 border-b border-white/10"><a href="#" className="hover:text-primary transition-colors block">{language === 'vi' ? 'Quy định hoàn tiền' : 'Refund Policy'}</a></li>
             </ul>
           </div>
 
