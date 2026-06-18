@@ -1,5 +1,6 @@
 "use client";
 
+import React from 'react';
 import Link from 'next/link';
 import { useLanguage } from '@/context/LanguageContext';
 
@@ -7,140 +8,134 @@ export default function BigAboutPage() {
   const { language } = useLanguage();
 
   return (
-    <div className="flex flex-col min-h-screen bg-obsidian-deep text-on-surface selection:bg-primary/30 selection:text-primary">
-      <main className="flex-grow">
-        {/* Studio Hero - Immersive Full Screen */}
-        <section className="relative w-full h-[80vh] min-h-[600px] flex items-center justify-center overflow-hidden border-b border-glass-border">
-          <div className="absolute inset-0 z-0">
-            <img src="https://images.unsplash.com/photo-1600585154526-990dced4ea07?q=80&w=800&auto=format&fit=crop" alt="Studio Background" className="w-full h-full object-cover opacity-30 scale-105" />
-            <div className="absolute inset-0 bg-gradient-to-b from-obsidian-deep via-transparent to-obsidian-deep"></div>
+    <div className="flex flex-col min-h-screen bg-[#050505] text-[#F5F2E8]" style={{ fontFamily: '"Hanken Grotesk", sans-serif' }}>
+      <main className="flex-grow pt-24 md:pt-32">
+        {/* Hero Section */}
+        <section className="relative min-h-[600px] flex items-center justify-center px-6 md:px-16 overflow-hidden">
+          {/* Background Image */}
+          <div className="absolute inset-0 z-0 opacity-30">
+            <div className="bg-cover bg-center w-full h-full mix-blend-luminosity" style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuAcL3-QZeYU5l6HBvLR8xeen7bIxqExEZYR88TUOKlFiR25zM-1sJp1bbU35Rx5N3YokMbYMmerRNXdNQYRfO08dWaCLs99go9uISyFPHmfrfQ0EJgsSl87Ik-1RWr4kMdby-IhG0Dl1Q7VzN4-vScMqJTN75wL1HEGh6VR0eb2L_sGAqcJbqPEeL11uw3OA97RvbJDYmpr4eitkR0puYlQvexoZ8XZQ1yAde-yof4OJz1EmgOU_-s7r5HGS0UdBR70Iccd2Gq6s7tn")' }}></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/80 to-transparent"></div>
           </div>
-          
-          <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-12 flex flex-col items-center text-center mt-20">
-            <h1 className="font-display-lg text-6xl md:text-[120px] text-on-surface leading-none tracking-tighter uppercase drop-shadow-2xl mb-8">
-              {language === 'vi' ? (
-                <>VỀ <span className="text-primary">CHÚNG TÔI</span></>
-              ) : (
-                <>ABOUT <span className="text-primary">US</span></>
-              )}
+          <div className="relative z-10 text-center max-w-4xl mx-auto flex flex-col items-center">
+            <span className="font-label-caps text-xs text-[#d4af37] tracking-[0.2em] mb-6 uppercase block font-bold">
+              {language === 'vi' ? 'Hồ Sơ Năng Lực' : 'Company Profile'}
+            </span>
+            <h1 className="font-display-lg text-5xl md:text-7xl text-white mb-8 uppercase tracking-tighter" style={{ fontFamily: '"Metrophobic", sans-serif', color: '#d4af37', textShadow: 'rgba(212, 175, 55, 0.2) 0px 0px 40px' }}>
+              {language === 'vi' ? 'VỀ CHÚNG TÔI' : 'ABOUT US'}
             </h1>
-            <p className="font-body-lg text-xl md:text-2xl text-on-surface-variant max-w-3xl font-light leading-relaxed">
+            <p className="font-body-lg text-lg text-[#F5F2E8] max-w-2xl font-light leading-relaxed">
               {language === 'vi' 
-                ? 'Hệ sinh thái đào tạo và nguồn cung cấp nhân lực chất lượng cao cho ngành Diễn họa Kiến trúc Việt Nam và Thế giới.' 
-                : 'A prestigious academy and source of high-quality talent for the global Architectural Visualization industry.'}
+                ? 'Khám phá câu chuyện đằng sau hệ sinh thái kiến trúc và diễn hoạ hàng đầu, nơi hội tụ giữa công nghệ AI và nghệ thuật điện ảnh.' 
+                : 'Discover the story behind the leading architectural visualization ecosystem, where AI technology meets cinematic art.'}
             </p>
           </div>
+        </section>
+
+        {/* Content Section (Bento Grid) */}
+        <section className="py-[120px] px-6 md:px-16 max-w-[1440px] mx-auto">
+          <div className="mb-16 text-center">
+            <h2 className="font-headline-lg text-3xl md:text-4xl text-white mb-4" style={{ fontFamily: '"Hanken Grotesk", sans-serif' }}>
+              {language === 'vi' ? 'Câu Chuyện & Triết Lý' : 'Story & Philosophy'}
+            </h2>
+            <div className="h-px w-24 bg-[#f2ca50] mx-auto opacity-50"></div>
+          </div>
           
-          <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 animate-bounce">
-            <span className="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">
-              {language === 'vi' ? 'Cuộn xuống để khám phá' : 'Scroll to Explore'}
-            </span>
-            <div className="w-[1px] h-12 bg-gradient-to-b from-primary to-transparent"></div>
-          </div>
-        </section>
-
-        {/* Philosophy & Mission */}
-        <section className="py-24 md:py-32 px-6 md:px-12 max-w-[1400px] mx-auto relative">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1px] h-16 bg-glass-border"></div>
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-16 md:gap-8 items-center">
-            <div className="md:col-span-5 md:col-start-2">
-              <span className="inline-block font-label-sm text-xs text-primary uppercase tracking-widest mb-6">
-                {language === 'vi' ? 'Sứ mệnh & Tầm nhìn' : 'Mission & Vision'}
-              </span>
-              <h2 className="font-headline-lg text-4xl md:text-6xl leading-tight text-on-surface mb-8">
-                {language === 'vi' ? (
-                  <>Nâng tầm <br/><span className="text-on-surface-variant">diễn họa kiến trúc.</span></>
-                ) : (
-                  <>Elevating <br/><span className="text-on-surface-variant">archviz standard.</span></>
-                )}
-              </h2>
+          <div className="flex flex-col gap-20 md:gap-32">
+            
+            {/* Card 1 - Founder (Left align) */}
+            <div className="group relative w-full h-[500px] overflow-hidden flex items-center px-6 md:px-16 border border-white/10 transition-all duration-500">
+              <div className="absolute inset-0 z-0">
+                <div className="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-105" style={{ backgroundImage: 'url("/assets/founder/founder_1.png")' }}></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-[#050505] via-[#050505]/80 to-transparent"></div>
+              </div>
+              <div className="relative z-10 max-w-2xl">
+                <span className="font-label-caps text-xs text-[#d4af37] tracking-[0.3em] mb-4 block uppercase font-bold">
+                  {language === 'vi' ? 'Người Sáng Lập' : 'Founder'}
+                </span>
+                <h3 className="font-display-lg text-4xl md:text-5xl mb-4 uppercase tracking-tighter text-[#d4af37] font-bold" style={{ fontFamily: '"Metrophobic", sans-serif' }}>
+                  Nguyễn Khánh Tuấn
+                </h3>
+                <p className="font-body-lg text-lg max-w-md text-[#F5F2E8] leading-relaxed mb-4">
+                  {language === 'vi'
+                    ? 'Sinh năm 2001. Kiến trúc sư nội thất và chuyên gia diễn hoạ tại S-Housing. Định hình không gian bằng tư duy nhiếp ảnh và nghệ thuật điện ảnh.'
+                    : 'Born in 2001. Interior architect and visualization expert at S-Housing. Shaping spaces with photographic and cinematic thinking.'}
+                </p>
+              </div>
             </div>
-            <div className="md:col-span-5">
-              <p className="font-body-lg text-xl text-on-surface-variant leading-relaxed font-light mb-8">
-                {language === 'vi'
-                  ? 'Tại Big Dream, chúng tôi không chỉ đào tạo công cụ mà còn khai phóng tư duy nghệ thuật. Sự kết hợp giữa quy chuẩn kiến trúc khắt khe và nghệ thuật điện ảnh tạo nên những khung hình kể chuyện (Visual Storytelling).'
-                  : 'At Big Dream, we do not just teach tools; we liberate artistic thinking. The combination of strict architectural standards and cinematic art creates compelling frames (Visual Storytelling).'}
-              </p>
-              <p className="font-body-lg text-xl text-on-surface-variant leading-relaxed font-light">
-                {language === 'vi'
-                  ? 'Trang bị sức mạnh của công nghệ AI tiên tiến, chúng tôi đồng hành cùng các học viên và kỹ sư trên hành trình bứt phá khỏi những giới hạn kỹ thuật để tập trung sáng tạo tinh hoa.'
-                  : 'Equipped with the power of advanced AI technology, we accompany students and engineers on their journey to break through technical limits and focus on creative excellence.'}
-              </p>
-            </div>
-          </div>
-        </section>
 
-        {/* Founder Spotlight */}
-        <section className="py-24 px-6 md:px-12 bg-charcoal-surface border-t border-b border-glass-border">
-          <div className="max-w-[1400px] mx-auto flex flex-col md:flex-row items-center gap-16 md:gap-24">
-            <div className="w-full md:w-5/12 flex-shrink-0 relative group">
-              <div className="absolute inset-0 bg-primary/10 rounded-sm transform translate-x-4 translate-y-4 transition-transform group-hover:translate-x-6 group-hover:translate-y-6 duration-500"></div>
-              <div className="relative aspect-[3/4] overflow-hidden rounded-sm border border-glass-border bg-obsidian-deep z-10">
-                <img 
-                  src="/assets/founder_avatar.png" 
-                  alt="Nguyễn Khánh Tuấn" 
-                  className="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105" 
-                />
+            {/* Card 2 - Philosophy (Right align) */}
+            <div className="group relative w-full h-[500px] overflow-hidden flex items-center justify-end px-6 md:px-16 border border-white/10 transition-all duration-500">
+              <div className="absolute inset-0 z-0">
+                <div className="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-105" style={{ backgroundImage: 'url("/assets/founder/founder_2.png")' }}></div>
+                <div className="absolute inset-0 bg-gradient-to-l from-[#050505] via-[#050505]/80 to-transparent"></div>
+              </div>
+              <div className="relative z-10 max-w-2xl text-right">
+                <span className="font-label-caps text-xs text-[#d4af37] tracking-[0.3em] mb-4 block uppercase font-bold">
+                  {language === 'vi' ? 'Triết Lý & Tư Duy' : 'Philosophy & Thinking'}
+                </span>
+                <h3 className="font-display-lg text-4xl md:text-5xl mb-4 uppercase tracking-tighter text-[#d4af37] font-bold" style={{ fontFamily: '"Metrophobic", sans-serif' }}>
+                  {language === 'vi' ? 'Bản Chất & Logic' : 'Essence & Logic'}
+                </h3>
+                <p className="font-body-lg text-lg max-w-md ml-auto text-[#F5F2E8] leading-relaxed">
+                  {language === 'vi'
+                    ? 'Thực hành khắc kỷ, thiền định và lối sống chay tịnh. Đào sâu vào bản chất vấn đề bằng góc nhìn đa chiều, triết học và khoa học phức tạp. Yêu thích các hệ số vàng: 3-6-9, Fibonacci, 142857.'
+                    : 'Practicing stoicism, meditation, and veganism. Delving into the essence of problems through multi-dimensional perspectives, philosophy, and complex science. Fascinated by golden ratios: 3-6-9, Fibonacci, 142857.'}
+                </p>
+              </div>
+            </div>
+
+            {/* Card 3 - Style (Left align) */}
+            <div className="group relative w-full h-[500px] overflow-hidden flex items-center px-6 md:px-16 border border-white/10 transition-all duration-500">
+              <div className="absolute inset-0 z-0">
+                <div className="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-105" style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1600585154526-990dced4ea07?q=80&w=1200&auto=format&fit=crop")' }}></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-[#050505] via-[#050505]/80 to-transparent"></div>
+              </div>
+              <div className="relative z-10 max-w-2xl">
+                <span className="font-label-caps text-xs text-[#d4af37] tracking-[0.3em] mb-4 block uppercase font-bold">
+                  {language === 'vi' ? 'Thẩm Mỹ Học' : 'Aesthetics'}
+                </span>
+                <h3 className="font-display-lg text-4xl md:text-5xl mb-4 uppercase tracking-tighter text-[#d4af37] font-bold" style={{ fontFamily: '"Metrophobic", sans-serif' }}>
+                  Modern Luxury
+                </h3>
+                <p className="font-body-lg text-lg max-w-md text-[#F5F2E8] leading-relaxed">
+                  {language === 'vi'
+                    ? 'Trọng tâm thiết kế hướng đến sự sang trọng, hiện đại. Ứng dụng khéo léo chất liệu mộc mạc kết hợp không gian xanh. Tone màu chủ đạo đặc trưng: Vàng - Trắng - Đen.'
+                    : 'Design focus on modern luxury. Masterfully applying rustic materials combined with green spaces. Signature color palette: Gold - White - Black.'}
+                </p>
               </div>
             </div>
             
-            <div className="w-full md:w-7/12">
-              <span className="inline-block font-label-sm text-xs text-primary uppercase tracking-widest mb-6">
-                {language === 'vi' ? 'Người Sáng Lập' : 'Founder'}
-              </span>
-              <h2 className="font-display-lg text-5xl md:text-7xl text-on-surface mb-2 uppercase tracking-tighter">
-                Nguyễn Khánh Tuấn
-              </h2>
-              <h3 className="font-label-sm text-lg text-on-surface-variant mb-8 uppercase tracking-widest font-bold">
-                {language === 'vi' ? 'Founder & Giám Đốc Sáng Tạo' : 'Founder & Creative Director'}
-              </h3>
-              
-              <div className="space-y-6 font-body-lg text-lg text-on-surface-variant font-light">
-                <p>
-                  {language === 'vi' 
-                    ? 'Là người đặt nền móng cho hệ sinh thái Big Dream, anh Nguyễn Khánh Tuấn đã có nhiều năm kinh nghiệm trong lĩnh vực diễn họa kiến trúc cao cấp và ứng dụng Trí tuệ Nhân tạo (AI) vào quy trình thiết kế.'
-                    : 'As the foundation builder of the Big Dream ecosystem, Tuan Khanh Nguyen has many years of experience in high-end architectural visualization and the application of Artificial Intelligence (AI) in design workflows.'}
-                </p>
-                <p>
-                  {language === 'vi'
-                    ? 'Với tầm nhìn chiến lược và đam mê nghệ thuật điện ảnh, anh luôn khao khát xây dựng một chuẩn mực thiết kế mang tính toàn cầu, không chỉ dừng lại ở Việt Nam. Khóa học tại Big Dream là nơi anh truyền tải triết lý "Form follows emotion" tới thế hệ kế cận.'
-                    : 'With a strategic vision and passion for cinematic art, he always desires to build a global design standard, not just within Vietnam. The masterclass at Big Dream is where he conveys the "Form follows emotion" philosophy to the next generation.'}
-                </p>
+            {/* Card 4 - Mission (Right align) */}
+            <div className="group relative w-full h-[500px] overflow-hidden flex items-center justify-end px-6 md:px-16 border border-white/10 transition-all duration-500">
+              <div className="absolute inset-0 z-0">
+                <div className="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-105" style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuAcL3-QZeYU5l6HBvLR8xeen7bIxqExEZYR88TUOKlFiR25zM-1sJp1bbU35Rx5N3YokMbYMmerRNXdNQYRfO08dWaCLs99go9uISyFPHmfrfQ0EJgsSl87Ik-1RWr4kMdby-IhG0Dl1Q7VzN4-vScMqJTN75wL1HEGh6VR0eb2L_sGAqcJbqPEeL11uw3OA97RvbJDYmpr4eitkR0puYlQvexoZ8XZQ1yAde-yof4OJz1EmgOU_-s7r5HGS0UdBR70Iccd2Gq6s7tn")' }}></div>
+                <div className="absolute inset-0 bg-gradient-to-l from-[#050505] via-[#050505]/80 to-transparent"></div>
               </div>
-
-              <div className="mt-12">
-                <a 
-                  href="https://www.facebook.com/tuan.khanh.722968?locale=vi_VN" 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="inline-block border border-on-surface text-on-surface font-label-sm text-sm uppercase tracking-widest px-8 py-4 rounded-sm hover:text-primary hover:border-primary transition-colors hover:bg-primary/5"
-                >
-                  {language === 'vi' ? 'Kết nối trên Facebook' : 'Connect on Facebook'}
-                </a>
+              <div className="relative z-10 max-w-2xl text-right">
+                <span className="font-label-caps text-xs text-[#d4af37] tracking-[0.3em] mb-4 block uppercase font-bold">
+                  {language === 'vi' ? 'Sứ Mệnh' : 'Mission'}
+                </span>
+                <h3 className="font-display-lg text-4xl md:text-5xl mb-4 uppercase tracking-tighter text-[#d4af37] font-bold" style={{ fontFamily: '"Metrophobic", sans-serif' }}>
+                  Hệ Sinh Thái Big Dream
+                </h3>
+                <p className="font-body-lg text-lg max-w-md ml-auto text-[#F5F2E8] leading-relaxed">
+                  {language === 'vi'
+                    ? 'Xây dựng mạng lưới tư duy cá nhân và hệ sinh thái sáng tạo kiến trúc với Trí tuệ Nhân tạo làm cốt lõi. Nâng tầm nghệ thuật thị giác và kiến tạo không gian không giới hạn.'
+                    : 'Building a personal thinking network and architectural creative ecosystem with AI at its core. Elevating visual arts and creating boundless spaces.'}
+                </p>
+                <div className="mt-8 flex justify-end">
+                  <a href="https://www.facebook.com/tuan.khanh.722968?locale=vi_VN" target="_blank" rel="noopener noreferrer" className="border border-white/20 text-[#F5F2E8] font-label-caps text-xs px-8 py-4 hover:border-[#d4af37] hover:text-[#d4af37] transition-all duration-300 uppercase tracking-widest bg-black/50">
+                    {language === 'vi' ? 'Liên hệ công tác' : 'Get in touch'}
+                  </a>
+                </div>
               </div>
             </div>
-          </div>
-        </section>
 
-        {/* Contact CTA */}
-        <section className="w-full bg-surface-container-low py-32 px-6 md:px-12 text-center">
-          <h2 className="font-display-lg text-5xl md:text-7xl text-on-surface mb-8 uppercase tracking-tighter">
-            {language === 'vi' ? (
-              <>Hãy Xây Dựng <br/>Cùng Nhau</>
-            ) : (
-              <>Let&apos;s Build <br/>Together</>
-            )}
-          </h2>
-          <p className="font-body-lg text-xl text-on-surface-variant mb-12 font-light max-w-xl mx-auto">
-            {language === 'vi' 
-              ? 'Chúng tôi luôn chào đón những khách hàng có tầm nhìn và những tài năng xuất chúng.'
-              : 'We are always looking for visionary clients and exceptional talent.'}
-          </p>
-          <a href="https://www.facebook.com/tuan.khanh.722968?locale=vi_VN" target="_blank" rel="noopener noreferrer" className="inline-block bg-primary text-on-primary font-label-sm text-sm uppercase tracking-widest px-12 py-5 rounded-sm hover:bg-primary-fixed transition-colors duration-300 font-bold shadow-[0_0_30px_rgba(242,202,80,0.3)]">
-            {language === 'vi' ? 'Liên hệ chúng tôi' : 'Contact Studio'}
-          </a>
+          </div>
         </section>
       </main>
     </div>
   );
 }
+
