@@ -95,18 +95,22 @@ export default function WorkGridClient({ projects }: WorkGridClientProps) {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent group-hover:from-black/70 transition-colors duration-700 pointer-events-none"></div>
                 
                 {/* Typography đưa vào TRONG ảnh theo đúng sketch */}
-                <div className="absolute bottom-0 left-0 w-full p-6 md:p-10 flex flex-col xl:flex-row justify-between items-start xl:items-end gap-4 z-10 pointer-events-none">
-                  <div className="flex flex-col">
-                    <h3 className="font-display-lg text-3xl md:text-5xl text-white uppercase tracking-tighter drop-shadow-lg transition-transform duration-500 group-hover:-translate-y-2" style={{ fontFamily: '"Metrophobic", sans-serif' }}>
-                      {project.title}
-                    </h3>
-                  </div>
-                  <div className="flex items-center gap-4 text-xs tracking-[0.2em] text-white/90 uppercase font-bold shrink-0 drop-shadow-md">
+                <div className="absolute bottom-0 left-0 w-full p-6 md:p-10 flex flex-col justify-end gap-4 z-10 pointer-events-none">
+                  <div className="w-full flex items-center gap-4 text-xs tracking-[0.2em] text-white/90 uppercase font-bold drop-shadow-md">
                     <span>{project.rooms.length} Khu vực</span>
                     <div className="w-8 h-px bg-[#d4af37]/80 group-hover:bg-[#d4af37] group-hover:w-16 transition-all duration-500"></div>
                     <span className="text-[#d4af37] opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500">
                       Khám Phá
                     </span>
+                  </div>
+                  <div className="w-full">
+                    <h3 
+                      className="font-display-lg text-2xl md:text-3xl lg:text-4xl text-white uppercase tracking-tighter drop-shadow-lg transition-transform duration-500 group-hover:-translate-y-2 truncate" 
+                      style={{ fontFamily: '"Metrophobic", sans-serif' }}
+                      title={project.title}
+                    >
+                      {project.title}
+                    </h3>
                   </div>
                 </div>
                 
