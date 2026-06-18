@@ -19,9 +19,13 @@
   --color-surface-container-highest: #353534;
   --color-on-surface: #e5e2e1;
   --color-on-surface-variant: #d0c5af;
+  --color-on-surface-muted: #6b6560;
+  --color-error: #ef4444;
+  --color-error-container: rgba(239, 68, 68, 0.1);
   --color-glass-border: rgba(255, 255, 255, 0.08);
 
   /* Fonts */
+  --font-bodoni: var(--font-bodoni-moda);
   --font-headline-lg-mobile: var(--font-montserrat);
   --font-headline-lg: var(--font-montserrat);
   --font-display-lg: var(--font-montserrat);
@@ -33,6 +37,7 @@
   /* Spacing */
   --spacing-margin-desktop: 64px;
   --spacing-margin-mobile: 20px;
+  --nav-height: 90px;
 }
 
 :root {
@@ -68,14 +73,55 @@ body {
 ::-webkit-scrollbar-thumb:hover { background: #4d4635; }
 
 /* Hero animations */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes scan {
+    0% { transform: translateY(-100px); }
+    50% { transform: translateY(100px); }
+    100% { transform: translateY(-100px); }
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 }
 
+/* Utilities */
+.text-gold-gradient {
+  background: linear-gradient(135deg, #f2ca50 0%, #d9b136 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hairline {
+  border-width: 0.5px;
+}

@@ -89,7 +89,7 @@ export default function GlobalAuthNav() {
   };
 
   return (
-    <nav className="fixed top-0 w-full bg-surface/60 backdrop-blur-3xl border-b border-glass-border flex justify-between items-center px-4 md:px-margin-desktop py-4 z-50">
+    <nav className="fixed top-0 w-full bg-surface/60 backdrop-blur-3xl border-b border-glass-border flex justify-between items-center px-4 md:px-margin-desktop h-[var(--nav-height)] z-50">
       <Link href="/" className="font-headline-lg text-2xl md:text-3xl font-extrabold text-primary tracking-tight">
         BIG DREAM
       </Link>
@@ -102,13 +102,19 @@ export default function GlobalAuthNav() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`font-body-md text-sm xl:text-base px-2 py-1 transition-colors ${
+                className={`font-body-md text-sm xl:text-base px-2 py-1 transition-all relative group ${
                   isActive
-                    ? 'text-primary font-bold border-b-2 border-primary pb-1'
+                    ? 'text-primary font-bold'
                     : 'text-on-surface-variant hover:text-white rounded-sm'
                 }`}
               >
                 {link.label}
+                {isActive && (
+                  <span className="absolute left-0 bottom-[-4px] w-full h-[2px] bg-primary rounded-t-sm" />
+                )}
+                {!isActive && (
+                  <span className="absolute left-0 bottom-[-4px] w-0 h-[2px] bg-white/30 transition-all duration-300 group-hover:w-full rounded-t-sm" />
+                )}
               </Link>
             );
           })}

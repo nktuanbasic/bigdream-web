@@ -34,28 +34,31 @@ export default function Home() {
         </div>
 
         {/* Center Content */}
-        <div className="relative z-10 flex flex-col items-center justify-center h-full px-6 text-center">
+        <div className="relative z-10 flex flex-col items-center justify-center h-full px-6 text-center mt-12">
+          {/* Tagline */}
+          <p className="font-label-sm text-xs md:text-sm text-white/80 max-w-2xl mx-auto mb-4 uppercase tracking-[0.3em] font-bold opacity-0 animate-[fadeInUp_1s_0.4s_forwards]">
+            {language === 'vi' ? 'Hệ sinh thái kiến trúc & nghệ thuật điện ảnh' : 'The Cinematic Architecture & Art Ecosystem'}
+          </p>
+          
           {/* Title */}
-          <h1 className="font-display-lg text-7xl md:text-9xl lg:text-[180px] text-white leading-[0.85] tracking-tight mb-6 opacity-0 animate-[fadeInUp_1s_0.4s_forwards] drop-shadow-[0_4px_60px_rgba(0,0,0,0.5)] font-black">
-            BIG<span className="text-primary">DREAM</span>
+          <h1 className="font-display-lg text-6xl md:text-8xl lg:text-[140px] text-primary leading-[0.85] tracking-tight mb-12 opacity-0 animate-[fadeInUp_1s_0.6s_forwards] drop-shadow-[0_4px_60px_rgba(242,202,80,0.2)] font-black">
+            BIGDREAM
           </h1>
 
-          {/* Tagline */}
-          <p className="font-body-lg text-sm md:text-lg text-white/60 max-w-2xl mx-auto mb-12 uppercase tracking-[0.3em] font-light opacity-0 animate-[fadeInUp_1s_0.6s_forwards]">
-            {language === 'vi' ? 'Hệ sinh thái Kiến trúc & Nghệ thuật Điện ảnh' : 'The Cinematic Architecture & Art Ecosystem'}
-          </p>
-
-          {/* CTA Button */}
-          <div className="opacity-0 animate-[fadeInUp_1s_0.8s_forwards]">
+          {/* CTA Buttons */}
+          <div className="opacity-0 animate-[fadeInUp_1s_0.8s_forwards] flex flex-col sm:flex-row items-center gap-4">
             <Link
               href="#explore"
               id="hero-cta"
-              className="inline-flex items-center gap-3 px-10 py-4 rounded-md bg-primary hover:bg-primary-fixed text-[#050505] font-bold text-sm uppercase tracking-[0.15em] transition-all duration-300 hover:shadow-[0_0_40px_rgba(242,202,80,0.4)] hover:scale-105 active:scale-95"
+              className="inline-flex items-center justify-center min-w-[240px] px-8 py-4 rounded-sm bg-primary hover:bg-primary-fixed text-on-primary font-bold text-sm uppercase tracking-[0.15em] transition-all duration-300 hover:shadow-[0_0_30px_rgba(242,202,80,0.3)] hover:scale-105 active:scale-95"
+            >
+              {language === 'vi' ? 'Khám phá hệ sinh thái' : 'Explore ecosystem'}
+            </Link>
+            <Link
+              href="/about"
+              className="inline-flex items-center justify-center min-w-[200px] px-8 py-4 rounded-sm bg-transparent border border-white/30 hover:border-white text-white font-bold text-sm uppercase tracking-[0.15em] transition-all duration-300 hover:bg-white/5 hover:scale-105 active:scale-95"
             >
               {language === 'vi' ? 'Tìm hiểu thêm' : 'Learn more'}
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
             </Link>
           </div>
         </div>
@@ -75,75 +78,73 @@ export default function Home() {
       <section id="explore" className="relative z-20 py-24 md:py-32 px-6 md:px-12 max-w-[1800px] mx-auto w-full">
         
         {/* Section Header */}
-        <div className="text-center mb-16 md:mb-20">
-          <p className="font-label-sm text-xs text-primary uppercase tracking-[0.3em] mb-4">
-            {language === 'vi' ? 'Khám phá hệ sinh thái' : 'Explore the ecosystem'}
-          </p>
-          <h2 className="font-headline-lg text-4xl md:text-6xl text-white">
-            {language === 'vi' ? (
-              <>Tất cả trong <span className="text-primary">một nền tảng</span></>
-            ) : (
-              <>All in <span className="text-primary">one platform</span></>
-            )}
+        <div className="text-center mb-16 md:mb-24 flex flex-col items-center">
+          <h2 className="font-headline-lg text-3xl md:text-4xl text-white mb-6">
+            {language === 'vi' ? 'Tất cả trong một nền tảng' : 'All in one platform'}
           </h2>
+          <div className="w-24 h-px bg-white/20" />
         </div>
 
-        {/* Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+        {/* Cards Stack */}
+        <div className="flex flex-col gap-12 md:gap-16">
           
           {/* Card: SEE */}
-          <Link href="/see" className="group block h-[450px] relative rounded-md overflow-hidden glass-panel transform hover:-translate-y-4 transition-all duration-500 hover:shadow-[0_20px_40px_rgba(242,202,80,0.15)]">
-            <Image src="https://images.unsplash.com/photo-1600585154526-990dced4ea07?q=80&w=800&auto=format&fit=crop" alt="Big SEE" fill className="object-cover opacity-60 group-hover:opacity-80 transition-opacity group-hover:scale-110 duration-700" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/50 to-transparent" />
-            <div className="absolute inset-0 ring-1 ring-primary/30 group-hover:ring-primary/80 transition-all rounded-md z-10" />
-            <div className="absolute bottom-0 left-0 w-full p-8 flex flex-col justify-end h-full z-20">
-              <span className="font-label-sm text-xs text-primary uppercase tracking-[0.2em] mb-2 opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-4 group-hover:translate-y-0 duration-500">{language === 'vi' ? 'Cốt lõi' : 'Core'}</span>
-              <h3 className="font-headline-lg text-5xl text-on-surface mb-3 group-hover:text-primary transition-colors">SEE</h3>
-              <p className="font-body-md text-sm text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity duration-500">{language === 'vi' ? 'Không gian làm việc Kiến trúc AI Tối thượng.' : 'The Ultimate AI Architectural Workspace.'}</p>
+          <Link href="/see" className="group block w-full h-[400px] md:h-[500px] relative overflow-hidden glass-panel transform hover:-translate-y-2 transition-all duration-500 hover:shadow-[0_20px_40px_rgba(242,202,80,0.1)] rounded-none">
+            <Image src="https://images.unsplash.com/photo-1600585154526-990dced4ea07?q=80&w=1600&auto=format&fit=crop" alt="SEE" fill className="object-cover opacity-60 group-hover:opacity-80 transition-all group-hover:scale-105 duration-700" />
+            <div className="absolute inset-0 bg-gradient-to-r from-obsidian-deep via-obsidian-deep/80 to-transparent" />
+            <div className="absolute inset-0 ring-1 ring-primary/10 group-hover:ring-primary/50 transition-all z-10" />
+            <div className="absolute inset-0 p-8 md:p-16 flex flex-col justify-center items-start text-left z-20 w-full md:w-1/2">
+              <span className="font-label-sm text-xs text-on-surface uppercase tracking-[0.2em] mb-4 opacity-0 group-hover:opacity-100 transition-all transform translate-y-4 group-hover:translate-y-0 duration-500">{language === 'vi' ? 'Không gian làm việc kiến trúc AI tối thượng.' : 'The Ultimate AI Architectural Workspace.'}</span>
+              <h3 className="font-headline-lg text-6xl md:text-7xl text-primary font-bold mb-4 drop-shadow-md">SEE</h3>
+              <p className="font-body-md text-sm md:text-base text-on-surface-variant max-w-md opacity-0 group-hover:opacity-100 transition-all transform translate-y-4 group-hover:translate-y-0 duration-500 delay-75">{language === 'vi' ? 'Nền tảng tạo prompt, sinh ảnh và biên tập không gian kiến trúc thông minh. Biến ý tưởng thành hiện thực với sức mạnh của trí tuệ nhân tạo.' : 'Intelligent prompt generation, image synthesis, and architectural editing platform. Turn ideas into reality with AI.'}</p>
             </div>
           </Link>
 
           {/* Card: LENS */}
-          <Link href="/lens" className="group block h-[450px] relative rounded-md overflow-hidden glass-panel transform hover:-translate-y-4 transition-all duration-500 hover:shadow-[0_20px_40px_rgba(242,202,80,0.15)] md:mt-12">
-            <Image src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=800&auto=format&fit=crop" alt="Big Lens" fill className="object-cover opacity-60 group-hover:opacity-80 transition-opacity group-hover:scale-110 duration-700" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/50 to-transparent" />
-            <div className="absolute bottom-0 left-0 w-full p-8 flex flex-col justify-end h-full">
-              <span className="font-label-sm text-xs text-primary uppercase tracking-[0.2em] mb-2 opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-4 group-hover:translate-y-0 duration-500">{language === 'vi' ? 'Quét' : 'Scan'}</span>
-              <h3 className="font-headline-lg text-4xl text-on-surface mb-3 group-hover:text-primary transition-colors">LENS</h3>
-              <p className="font-body-md text-sm text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity duration-500">{language === 'vi' ? 'Máy quét nội thất & vật liệu cao cấp.' : 'Luxury material & interior scanner.'}</p>
+          <Link href="/lens" className="group block w-full h-[400px] md:h-[500px] relative overflow-hidden glass-panel transform hover:-translate-y-2 transition-all duration-500 hover:shadow-[0_20px_40px_rgba(242,202,80,0.1)] rounded-none">
+            <Image src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=1600&auto=format&fit=crop" alt="LENS" fill className="object-cover opacity-60 group-hover:opacity-80 transition-all group-hover:scale-105 duration-700" />
+            <div className="absolute inset-0 bg-gradient-to-l from-obsidian-deep via-obsidian-deep/80 to-transparent" />
+            <div className="absolute inset-0 ring-1 ring-primary/10 group-hover:ring-primary/50 transition-all z-10" />
+            <div className="absolute inset-0 p-8 md:p-16 flex flex-col justify-center items-end text-right z-20 ml-auto w-full md:w-1/2">
+              <span className="font-label-sm text-xs text-on-surface uppercase tracking-[0.2em] mb-4 opacity-0 group-hover:opacity-100 transition-all transform translate-y-4 group-hover:translate-y-0 duration-500">{language === 'vi' ? 'Quét' : 'Scan'}</span>
+              <h3 className="font-headline-lg text-6xl md:text-7xl text-primary font-bold mb-4 drop-shadow-md">LENS</h3>
+              <p className="font-body-md text-sm md:text-base text-on-surface-variant max-w-md opacity-0 group-hover:opacity-100 transition-all transform translate-y-4 group-hover:translate-y-0 duration-500 delay-75">{language === 'vi' ? 'Máy quét nội thất & vật liệu cao cấp. Số hóa thế giới thực với độ chính xác tuyệt đối.' : 'Luxury material & interior scanner. Digitize the real world with absolute precision.'}</p>
             </div>
           </Link>
 
           {/* Card: MODEL */}
-          <Link href="/model" className="group block h-[450px] relative rounded-md overflow-hidden glass-panel transform hover:-translate-y-4 transition-all duration-500 hover:shadow-[0_20px_40px_rgba(242,202,80,0.15)]">
-            <Image src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?q=80&w=800&auto=format&fit=crop" alt="Big Model" fill className="object-cover opacity-60 group-hover:opacity-80 transition-opacity group-hover:scale-110 duration-700" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/50 to-transparent" />
-            <div className="absolute bottom-0 left-0 w-full p-8 flex flex-col justify-end h-full">
-              <span className="font-label-sm text-xs text-primary uppercase tracking-[0.2em] mb-2 opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-4 group-hover:translate-y-0 duration-500">{language === 'vi' ? 'Khám phá' : 'Discover'}</span>
-              <h3 className="font-headline-lg text-4xl text-on-surface mb-3 group-hover:text-primary transition-colors">MODEL</h3>
-              <p className="font-body-md text-sm text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity duration-500">{language === 'vi' ? 'Tài nguyên 3D cao cấp & hình học tinh xảo.' : 'Premium 3D assets & mastercrafted geometry.'}</p>
+          <Link href="/model" className="group block w-full h-[400px] md:h-[500px] relative overflow-hidden glass-panel transform hover:-translate-y-2 transition-all duration-500 hover:shadow-[0_20px_40px_rgba(242,202,80,0.1)] rounded-none">
+            <Image src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?q=80&w=1600&auto=format&fit=crop" alt="MODEL" fill className="object-cover opacity-60 group-hover:opacity-80 transition-all group-hover:scale-105 duration-700" />
+            <div className="absolute inset-0 bg-gradient-to-r from-obsidian-deep via-obsidian-deep/80 to-transparent" />
+            <div className="absolute inset-0 ring-1 ring-primary/10 group-hover:ring-primary/50 transition-all z-10" />
+            <div className="absolute inset-0 p-8 md:p-16 flex flex-col justify-center items-start text-left z-20 w-full md:w-1/2">
+              <span className="font-label-sm text-xs text-on-surface uppercase tracking-[0.2em] mb-4 opacity-0 group-hover:opacity-100 transition-all transform translate-y-4 group-hover:translate-y-0 duration-500">{language === 'vi' ? 'Khám phá' : 'Discover'}</span>
+              <h3 className="font-headline-lg text-6xl md:text-7xl text-primary font-bold mb-4 drop-shadow-md">MODEL</h3>
+              <p className="font-body-md text-sm md:text-base text-on-surface-variant max-w-md opacity-0 group-hover:opacity-100 transition-all transform translate-y-4 group-hover:translate-y-0 duration-500 delay-75">{language === 'vi' ? 'Tài nguyên 3D cao cấp & hình học tinh xảo. Thư viện vật thể kiến trúc được chế tác bởi AI.' : 'Premium 3D assets & mastercrafted geometry. AI-crafted architectural object library.'}</p>
             </div>
           </Link>
 
           {/* Card: CLASS */}
-          <Link href="/class" className="group block h-[450px] relative rounded-md overflow-hidden glass-panel transform hover:-translate-y-4 transition-all duration-500 hover:shadow-[0_20px_40px_rgba(242,202,80,0.15)] md:mt-12">
-            <Image src="https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=800&auto=format&fit=crop" alt="Big Class" fill className="object-cover opacity-60 group-hover:opacity-80 transition-opacity group-hover:scale-110 duration-700" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/50 to-transparent" />
-            <div className="absolute bottom-0 left-0 w-full p-8 flex flex-col justify-end h-full">
-              <span className="font-label-sm text-xs text-primary uppercase tracking-[0.2em] mb-2 opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-4 group-hover:translate-y-0 duration-500">{language === 'vi' ? 'Học tập' : 'Learn'}</span>
-              <h3 className="font-headline-lg text-4xl text-on-surface mb-3 group-hover:text-primary transition-colors">CLASS</h3>
-              <p className="font-body-md text-sm text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity duration-500">{language === 'vi' ? 'Khóa học chuyên sâu về kiến trúc AI.' : 'Masterclasses in AI architecture.'}</p>
+          <Link href="/class" className="group block w-full h-[400px] md:h-[500px] relative overflow-hidden glass-panel transform hover:-translate-y-2 transition-all duration-500 hover:shadow-[0_20px_40px_rgba(242,202,80,0.1)] rounded-none">
+            <Image src="https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=1600&auto=format&fit=crop" alt="CLASS" fill className="object-cover opacity-60 group-hover:opacity-80 transition-all group-hover:scale-105 duration-700" />
+            <div className="absolute inset-0 bg-gradient-to-l from-obsidian-deep via-obsidian-deep/80 to-transparent" />
+            <div className="absolute inset-0 ring-1 ring-primary/10 group-hover:ring-primary/50 transition-all z-10" />
+            <div className="absolute inset-0 p-8 md:p-16 flex flex-col justify-center items-end text-right z-20 ml-auto w-full md:w-1/2">
+              <span className="font-label-sm text-xs text-on-surface uppercase tracking-[0.2em] mb-4 opacity-0 group-hover:opacity-100 transition-all transform translate-y-4 group-hover:translate-y-0 duration-500">{language === 'vi' ? 'Học tập' : 'Learn'}</span>
+              <h3 className="font-headline-lg text-6xl md:text-7xl text-primary font-bold mb-4 drop-shadow-md">CLASS</h3>
+              <p className="font-body-md text-sm md:text-base text-on-surface-variant max-w-md opacity-0 group-hover:opacity-100 transition-all transform translate-y-4 group-hover:translate-y-0 duration-500 delay-75">{language === 'vi' ? 'Khóa học chuyên sâu về kiến trúc AI. Làm chủ các công cụ thiết kế tương lai.' : 'Masterclasses in AI architecture. Master the design tools of the future.'}</p>
             </div>
           </Link>
 
           {/* Card: THINK */}
-          <Link href="/think" className="group block h-[450px] relative rounded-md overflow-hidden glass-panel transform hover:-translate-y-4 transition-all duration-500 hover:shadow-[0_20px_40px_rgba(242,202,80,0.15)]">
-            <Image src="https://images.unsplash.com/photo-1600607686527-6fb886090705?q=80&w=800&auto=format&fit=crop" alt="Big Think" fill className="object-cover opacity-60 group-hover:opacity-80 transition-opacity group-hover:scale-110 duration-700" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/50 to-transparent" />
-            <div className="absolute bottom-0 left-0 w-full p-8 flex flex-col justify-end h-full">
-              <span className="font-label-sm text-xs text-primary uppercase tracking-[0.2em] mb-2 opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-4 group-hover:translate-y-0 duration-500">{language === 'vi' ? 'Đọc' : 'Read'}</span>
-              <h3 className="font-headline-lg text-4xl text-on-surface mb-3 group-hover:text-primary transition-colors">THINK</h3>
-              <p className="font-body-md text-sm text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity duration-500">{language === 'vi' ? 'Tạp chí thiết kế kiến trúc.' : 'Architectural design journal.'}</p>
+          <Link href="/think" className="group block w-full h-[400px] md:h-[500px] relative overflow-hidden glass-panel transform hover:-translate-y-2 transition-all duration-500 hover:shadow-[0_20px_40px_rgba(242,202,80,0.1)] rounded-none">
+            <Image src="https://images.unsplash.com/photo-1600607686527-6fb886090705?q=80&w=1600&auto=format&fit=crop" alt="THINK" fill className="object-cover opacity-60 group-hover:opacity-80 transition-all group-hover:scale-105 duration-700" />
+            <div className="absolute inset-0 bg-gradient-to-r from-obsidian-deep via-obsidian-deep/80 to-transparent" />
+            <div className="absolute inset-0 ring-1 ring-primary/10 group-hover:ring-primary/50 transition-all z-10" />
+            <div className="absolute inset-0 p-8 md:p-16 flex flex-col justify-center items-start text-left z-20 w-full md:w-1/2">
+              <span className="font-label-sm text-xs text-on-surface uppercase tracking-[0.2em] mb-4 opacity-0 group-hover:opacity-100 transition-all transform translate-y-4 group-hover:translate-y-0 duration-500">{language === 'vi' ? 'Đọc' : 'Read'}</span>
+              <h3 className="font-headline-lg text-6xl md:text-7xl text-primary font-bold mb-4 drop-shadow-md">THINK</h3>
+              <p className="font-body-md text-sm md:text-base text-on-surface-variant max-w-md opacity-0 group-hover:opacity-100 transition-all transform translate-y-4 group-hover:translate-y-0 duration-500 delay-75">{language === 'vi' ? 'Tạp chí thiết kế kiến trúc. Những góc nhìn mới về sự giao thoa giữa công nghệ và không gian.' : 'Architectural design journal. New perspectives on the intersection of tech and space.'}</p>
             </div>
           </Link>
 

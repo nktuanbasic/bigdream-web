@@ -128,7 +128,7 @@ export default function BigAboutPage() {
             {language === 'vi' ? (
               <>Hãy Xây Dựng <br/>Cùng Nhau</>
             ) : (
-              <>Let's Build <br/>Together</>
+              <>Let&apos;s Build <br/>Together</>
             )}
           </h2>
           <p className="font-body-lg text-xl text-on-surface-variant mb-12 font-light max-w-xl mx-auto">
