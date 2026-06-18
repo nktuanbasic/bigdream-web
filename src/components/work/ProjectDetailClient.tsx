@@ -85,18 +85,14 @@ export default function ProjectDetailClient({ project }: ProjectDetailClientProp
               {room.images.map((img, i) => {
                 // Alternating layout sizes for editorial feel
                 let layoutClass = "w-full"; // default full width
-                let aspectClass = "aspect-[16/9]";
                 
                 const styleCycle = i % 4;
                 if (styleCycle === 1) {
                   layoutClass = "w-[90%] md:w-[75%] ml-auto"; // aligned right
-                  aspectClass = "aspect-[4/3]";
                 } else if (styleCycle === 2) {
                   layoutClass = "w-[80%] md:w-[60%] mr-auto"; // aligned left
-                  aspectClass = "aspect-[3/4]";
                 } else if (styleCycle === 3) {
                   layoutClass = "w-full"; // full width again
-                  aspectClass = "aspect-[21/9]";
                 }
 
                 return (
@@ -108,12 +104,12 @@ export default function ProjectDetailClient({ project }: ProjectDetailClientProp
                     transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
                     className={`${layoutClass}`}
                   >
-                    <div className={`relative overflow-hidden bg-[#111] ${aspectClass}`}>
+                    <div className={`relative overflow-hidden bg-[#050505]`}>
                       <img 
                         src={img} 
                         alt={`${project.title} - ${room.name} ${i + 1}`} 
                         loading="lazy"
-                        className="w-full h-full object-cover transition-transform duration-[2s] hover:scale-105"
+                        className="w-full h-auto block transition-transform duration-[2s] hover:scale-105"
                       />
                     </div>
                   </motion.div>
