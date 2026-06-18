@@ -27,22 +27,51 @@ export default function WorkGridClient({ projects }: WorkGridClientProps) {
     }
   };
 
+  const importantSlugs = [
+    "can-ho-nassim-thao-dien", 
+    "nha-mau-city-gate-quan-8", 
+    "can-ho-landmark", 
+    "nha-lo-pho-binh-duong-tan-uyen"
+  ];
+
+  // Tách thành 2 mảng Chính và Phụ
+  const importantProjects = projects.filter(p => importantSlugs.includes(p.id));
+  const normalProjects = projects.filter(p => !importantSlugs.includes(p.id));
+
+  // Ghép lại theo đúng thứ tự Layout để 4 dự án quan trọng luôn rơi vào ô LỚN
+  const orderedProjects: ProjectData[] = [];
+  if (importantProjects[0]) orderedProjects.push(importantProjects[0]); // Slot 0: Full width
+  if (normalProjects[0]) orderedProjects.push(normalProjects[0]); // Slot 1: Small
+  if (normalProjects[1]) orderedProjects.push(normalProjects[1]); // Slot 2: Small
+  if (normalProjects[2]) orderedProjects.push(normalProjects[2]); // Slot 3: Small
+  if (importantProjects[1]) orderedProjects.push(importantProjects[1]); // Slot 4: Large
+  if (normalProjects[3]) orderedProjects.push(normalProjects[3]); // Slot 5: Small
+  if (normalProjects[4]) orderedProjects.push(normalProjects[4]); // Slot 6: Small
+  if (importantProjects[2]) orderedProjects.push(importantProjects[2]); // Slot 7: Large
+  if (importantProjects[3]) orderedProjects.push(importantProjects[3]); // Slot 8: Large
+  if (normalProjects[5]) orderedProjects.push(normalProjects[5]); // Slot 9: Small
+
+  // Nhét nốt các dự án thừa (nếu có) vào cuối
+  const remaining = projects.filter(p => !orderedProjects.some(op => op.id === p.id));
+  orderedProjects.push(...remaining);
+
   // Pattern layout học từ the-designlab (Chu kỳ 10 dự án)
-  // Row 1: 2/3 (Left) + 1/3 (Right)
+  // Nhưng được tinh chỉnh để chứa được đúng 4 dự án lớn (thay vì 2 như web mẫu)
+  // Row 1: 3/3 (Full width)
   // Row 2: 1/3 + 1/3 + 1/3
-  // Row 3: 1/3 (Left) + 2/3 (Right)
-  // Row 4: 1/3 + 1/3 + 1/3
+  // Row 3: 2/3 (Left) + 1/3 (Right)
+  // Row 4: 1/3 (Left) + 2/3 (Right)
+  // Row 5: 2/3 (Left) + 1/3 (Right)
   const getLayoutClass = (index: number) => {
     const i = index % 10;
-    if (i === 0) return { cols: 'md:col-span-8', aspect: 'aspect-[3/2]' };
-    if (i === 1) return { cols: 'md:col-span-4', aspect: 'aspect-[3/4]' };
-    
-    if (i >= 2 && i <= 4) return { cols: 'md:col-span-4', aspect: 'aspect-[3/4]' };
-    
+    if (i === 0) return { cols: 'md:col-span-12', aspect: 'aspect-[21/9] lg:aspect-[2.5/1]' };
+    if (i === 1 || i === 2 || i === 3) return { cols: 'md:col-span-4', aspect: 'aspect-[3/4]' };
+    if (i === 4) return { cols: 'md:col-span-8', aspect: 'aspect-[3/2]' };
     if (i === 5) return { cols: 'md:col-span-4', aspect: 'aspect-[3/4]' };
-    if (i === 6) return { cols: 'md:col-span-8', aspect: 'aspect-[3/2]' };
-    
-    if (i >= 7 && i <= 9) return { cols: 'md:col-span-4', aspect: 'aspect-[3/4]' };
+    if (i === 6) return { cols: 'md:col-span-4', aspect: 'aspect-[3/4]' };
+    if (i === 7) return { cols: 'md:col-span-8', aspect: 'aspect-[3/2]' };
+    if (i === 8) return { cols: 'md:col-span-8', aspect: 'aspect-[3/2]' };
+    if (i === 9) return { cols: 'md:col-span-4', aspect: 'aspect-[3/4]' };
     
     return { cols: 'md:col-span-4', aspect: 'aspect-[3/4]' };
   };
@@ -54,7 +83,7 @@ export default function WorkGridClient({ projects }: WorkGridClientProps) {
       animate="visible"
       className="grid grid-cols-1 md:grid-cols-12 gap-x-8 gap-y-16 w-full"
     >
-      {projects.map((project, i) => {
+      {orderedProjects.map((project, i) => {
         const { cols, aspect } = getLayoutClass(i);
 
         return (
