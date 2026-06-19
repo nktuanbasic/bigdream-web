@@ -1,8 +1,10 @@
+import { supabase } from "@/lib/supabase/client";
+
 export type ThinkArticle = {
   slug: string;
   title: string;
   excerpt: string;
-  category: "Essay" | "Practice" | "AI Workflow" | "Materials" | "Light";
+  category: string;
   date: string;
   readTime: string;
   views: string;
@@ -13,6 +15,25 @@ export type ThinkArticle = {
   checklist: string[];
 };
 
+type ThinkArticleRow = {
+  slug: string;
+  title: string;
+  excerpt: string | null;
+  content_markdown: string;
+  category: string | null;
+  tags: string[] | null;
+  seo_description: string | null;
+  cover_image_url: string | null;
+  cover_image_prompt: string | null;
+  source_doc_url: string | null;
+  source: string | null;
+  status: string;
+  editor_notes: string | null;
+  review_notes: string | null;
+  published_at: string | null;
+  created_at: string | null;
+};
+
 export const THINK_CATEGORIES = [
   "All",
   "Essay",
@@ -21,6 +42,78 @@ export const THINK_CATEGORIES = [
   "Materials",
   "Light",
 ] as const;
+
+const THINK_SELECT = [
+  "slug",
+  "title",
+  "excerpt",
+  "content_markdown",
+  "category",
+  "tags",
+  "seo_description",
+  "cover_image_url",
+  "cover_image_prompt",
+  "source_doc_url",
+  "source",
+  "status",
+  "editor_notes",
+  "review_notes",
+  "published_at",
+  "created_at",
+].join(",");
+
+function normalizeMarkdown(text: string) {
+  return text.replace(/\r\n/g, "\n").replace(/\\n/g, "\n").trim();
+}
+
+function splitMarkdownBlocks(text: string) {
+  return normalizeMarkdown(text)
+    .split(/\n{2,}/)
+    .map((block) => block.trim())
+    .filter(Boolean);
+}
+
+function formatArticleDate(value: string | null) {
+  if (!value) return "";
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+
+  return new Intl.DateTimeFormat("vi-VN", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  })
+    .format(date)
+    .replace(/\//g, ".");
+}
+
+function estimateReadTime(text: string) {
+  const words = normalizeMarkdown(text).split(/\s+/).filter(Boolean).length;
+  return `${Math.max(1, Math.ceil(words / 220))} phút đọc`;
+}
+
+function mapThinkRow(row: ThinkArticleRow): ThinkArticle {
+  const body = splitMarkdownBlocks(row.content_markdown);
+  const excerpt = row.excerpt || row.seo_description || body[0] || "";
+
+  return {
+    slug: row.slug,
+    title: row.title,
+    excerpt,
+    category: row.category || "Essay",
+    date: formatArticleDate(row.published_at || row.created_at),
+    readTime: estimateReadTime(row.content_markdown),
+    views: "0",
+    cover:
+      row.cover_image_url ||
+      "/projects/C%C4%83n%20H%E1%BB%99%20Landmark/Ph%C3%B2ng%20%C4%82n/C_DR_04.jpg",
+    tags: row.tags || [],
+    dek: row.seo_description || excerpt,
+    body,
+    checklist: [],
+  };
+}
 
 export const thinkArticles: ThinkArticle[] = [
   {
@@ -132,10 +225,36 @@ export const thinkArticles: ThinkArticle[] = [
   },
 ];
 
-export function getThinkArticle(slug: string) {
+export async function getThinkArticles() {
+  const { data, error } = await supabase
+    .from("think_articles")
+    .select(THINK_SELECT)
+    .eq("status", "published")
+    .order("published_at", { ascending: false });
+
+  if (error || !data || data.length === 0) {
+    return thinkArticles;
+  }
+
+  return (data as unknown as ThinkArticleRow[]).map(mapThinkRow);
+}
+
+export async function getThinkArticle(slug: string) {
+  const { data, error } = await supabase
+    .from("think_articles")
+    .select(THINK_SELECT)
+    .eq("slug", slug)
+    .eq("status", "published")
+    .maybeSingle();
+
+  if (!error && data) {
+    return mapThinkRow(data as unknown as ThinkArticleRow);
+  }
+
   return thinkArticles.find((article) => article.slug === slug);
 }
 
-export function getFeaturedArticle() {
-  return thinkArticles[0];
+export async function getFeaturedArticle() {
+  const articles = await getThinkArticles();
+  return articles[0];
 }

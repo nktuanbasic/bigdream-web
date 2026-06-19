@@ -2,19 +2,50 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Clock, Eye } from "@phosphor-icons/react/dist/ssr";
-import { getThinkArticle, thinkArticles } from "@/lib/think";
+import { getThinkArticle, getThinkArticles } from "@/lib/think";
 
 export function generateStaticParams() {
-  return thinkArticles.map((article) => ({ slug: article.slug }));
+  return [];
 }
+
+export const dynamic = "force-dynamic";
 
 type ThinkArticlePageProps = {
   params: Promise<{ slug: string }>;
 };
 
+function cleanInlineMarkdown(text: string) {
+  return text
+    .replace(/\*\*(.*?)\*\*/g, "$1")
+    .replace(/\*(.*?)\*/g, "$1")
+    .trim();
+}
+
+function renderContentBlock(block: string, index: number) {
+  const text = block.trim();
+
+  if (text.startsWith("### ")) {
+    return (
+      <h2 key={index} className="pt-10 font-bodoni text-4xl font-light leading-tight text-white md:text-5xl">
+        {cleanInlineMarkdown(text.replace(/^###\s+/, ""))}
+      </h2>
+    );
+  }
+
+  if (/^\*\*.*\*\*$/.test(text)) {
+    return (
+      <h3 key={index} className="pt-6 text-2xl font-light leading-tight text-[#d4af37] md:text-3xl">
+        {cleanInlineMarkdown(text)}
+      </h3>
+    );
+  }
+
+  return <p key={index}>{cleanInlineMarkdown(text)}</p>;
+}
+
 export async function generateMetadata({ params }: ThinkArticlePageProps) {
   const { slug } = await params;
-  const article = getThinkArticle(slug);
+  const article = await getThinkArticle(slug);
 
   if (!article) {
     return {
@@ -30,11 +61,12 @@ export async function generateMetadata({ params }: ThinkArticlePageProps) {
 
 export default async function ThinkArticlePage({ params }: ThinkArticlePageProps) {
   const { slug } = await params;
-  const article = getThinkArticle(slug);
+  const article = await getThinkArticle(slug);
 
   if (!article) notFound();
 
-  const related = thinkArticles
+  const allArticles = await getThinkArticles();
+  const related = allArticles
     .filter((item) => item.slug !== article.slug)
     .slice(0, 3);
 
@@ -98,26 +130,26 @@ export default async function ThinkArticlePage({ params }: ThinkArticlePageProps
             </p>
 
             <div className="mt-20 space-y-12 text-[18px] leading-[2.2] text-white/70 font-light tracking-wide md:text-[20px]">
-              {article.body.map((paragraph, idx) => (
-                <p key={idx}>{paragraph}</p>
-              ))}
+              {article.body.map((paragraph, idx) => renderContentBlock(paragraph, idx))}
             </div>
 
-            <div className="mt-32 border border-white/5 bg-white/[0.02] p-12 md:p-16 backdrop-blur-md relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-[#d4af37]/10 blur-[80px] rounded-full pointer-events-none" />
-              <h2 className="mb-12 text-[11px] font-bold uppercase tracking-[0.25em] text-[#d4af37] flex items-center gap-4">
-                <span className="w-12 h-px bg-[#d4af37]/50" />
-                Checklist thực dụng
-              </h2>
-              <ul className="space-y-8 text-[16px] leading-[1.8] text-white/80 font-light">
-                {article.checklist.map((item, idx) => (
-                  <li key={idx} className="flex gap-6 items-start">
-                    <span className="text-[#d4af37]/40 font-bodoni text-2xl leading-none mt-1">{(idx + 1).toString().padStart(2, '0')}</span>
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {article.checklist.length > 0 && (
+              <div className="mt-32 border border-white/5 bg-white/[0.02] p-12 md:p-16 backdrop-blur-md relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-[#d4af37]/10 blur-[80px] rounded-full pointer-events-none" />
+                <h2 className="mb-12 text-[11px] font-bold uppercase tracking-[0.25em] text-[#d4af37] flex items-center gap-4">
+                  <span className="w-12 h-px bg-[#d4af37]/50" />
+                  Checklist thực dụng
+                </h2>
+                <ul className="space-y-8 text-[16px] leading-[1.8] text-white/80 font-light">
+                  {article.checklist.map((item, idx) => (
+                    <li key={idx} className="flex gap-6 items-start">
+                      <span className="text-[#d4af37]/40 font-bodoni text-2xl leading-none mt-1">{(idx + 1).toString().padStart(2, '0')}</span>
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
 
           <aside className="space-y-16 lg:sticky lg:top-32 lg:self-start animate-fade-in-up" style={{ animationDelay: '0.4s', animationFillMode: 'both' }}>

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import {
   ArrowRight,
@@ -13,7 +13,7 @@ import {
 } from "@phosphor-icons/react";
 import {
   THINK_CATEGORIES,
-  getFeaturedArticle,
+  getThinkArticles,
   thinkArticles,
   type ThinkArticle,
 } from "@/lib/think";
@@ -89,11 +89,25 @@ function ArticleCard({ article, index }: { article: ThinkArticle; index: number 
 export default function ThinkPage() {
   const [activeCategory, setActiveCategory] = useState<(typeof THINK_CATEGORIES)[number]>("All");
   const [query, setQuery] = useState("");
-  const featured = getFeaturedArticle();
+  const [allArticles, setAllArticles] = useState<ThinkArticle[]>(thinkArticles);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    getThinkArticles().then((articles) => {
+      if (isMounted) setAllArticles(articles);
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const featured = allArticles[0];
 
   const articles = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
-    return thinkArticles.filter((article) => {
+    return allArticles.filter((article) => {
       const matchesCategory = activeCategory === "All" || article.category === activeCategory;
       const matchesQuery =
         normalizedQuery.length === 0 ||
@@ -103,9 +117,11 @@ export default function ThinkPage() {
           .includes(normalizedQuery);
       return matchesCategory && matchesQuery;
     });
-  }, [activeCategory, query]);
+  }, [activeCategory, allArticles, query]);
 
-  const latest = thinkArticles.slice(1, 4);
+  const latest = allArticles.slice(1, 4);
+
+  if (!featured) return null;
 
   return (
     <main className="min-h-screen bg-[#050505] text-white pt-[var(--nav-height)] selection:bg-[#d4af37] selection:text-black">
@@ -140,7 +156,7 @@ export default function ThinkPage() {
               {/* Stats Block */}
               <div className="grid grid-cols-3 gap-8 border-t border-white/10 pt-10 pb-4">
                 <div>
-                  <p className="font-bodoni text-5xl text-[#d4af37] mb-3">{thinkArticles.length}</p>
+                  <p className="font-bodoni text-5xl text-[#d4af37] mb-3">{allArticles.length}</p>
                   <p className="text-[9px] uppercase tracking-[0.25em] text-white/40">Bài chọn lọc</p>
                 </div>
                 <div className="border-l border-white/10 pl-8">
@@ -294,7 +310,7 @@ export default function ThinkPage() {
           <div className="border border-white/5 bg-white/[0.02] backdrop-blur-xl p-10">
             <h3 className="mb-8 text-[10px] font-bold uppercase tracking-[0.25em] text-white/40">Từ khóa</h3>
             <div className="flex flex-wrap gap-2.5">
-              {Array.from(new Set(thinkArticles.flatMap((article) => article.tags))).map((tag) => (
+              {Array.from(new Set(allArticles.flatMap((article) => article.tags))).map((tag) => (
                 <button
                   key={tag}
                   onClick={() => setQuery(tag)}
