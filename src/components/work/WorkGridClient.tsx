@@ -87,9 +87,9 @@ export default function WorkGridClient({ projects }: WorkGridClientProps) {
         const { cols, aspect } = getLayoutClass(i);
 
         return (
-          <motion.div key={project.id} variants={itemVariants} className={`flex flex-col group ${cols}`}>
-            <Link href={`/work/${project.id}`} className="relative block w-full overflow-hidden">
-              <div className={`${aspect} relative w-full overflow-hidden bg-[#050505]`}>
+          <motion.div key={project.id} variants={itemVariants} className={`flex flex-col group h-full ${cols}`}>
+            <Link href={`/work/${project.id}`} className={`relative block w-full flex-grow overflow-hidden ${aspect}`}>
+              <div className="absolute inset-0 w-full h-full bg-[#050505]">
                 <img 
                   src={project.thumbnail}
                   alt={project.title}
@@ -99,7 +99,7 @@ export default function WorkGridClient({ projects }: WorkGridClientProps) {
             </Link>
             
             {/* Chữ nằm bên dưới ảnh theo chuẩn editorial của the-designlab */}
-            <div className="mt-6 flex flex-col items-start px-2">
+            <div className="mt-6 flex flex-col items-start px-2 shrink-0">
               <Link href={`/work/${project.id}`}>
                 <h3 
                   className="text-xl md:text-2xl text-white tracking-wide transition-colors duration-300 group-hover:text-[#d4af37]" 
