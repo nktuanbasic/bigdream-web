@@ -73,6 +73,45 @@ function splitMarkdownBlocks(text: string) {
     .filter(Boolean);
 }
 
+function stripAutomationMetadata(text: string) {
+  return normalizeMarkdown(text)
+    .replace(
+      /(?:^|\n)\s*(?:TITLE|SLUG|EXCERPT|TAGS|SEO_DESCRIPTION|COVER_IMAGE_PROMPT|EDITOR_NOTES):[\s\S]*$/m,
+      "",
+    )
+    .trim();
+}
+
+function splitChecklistItems(text: string) {
+  return text
+    .replace(/\r\n/g, "\n")
+    .split(/\n\s*[-*]\s+|\s+\*\s+/)
+    .map((item) => item.replace(/^[-*]\s+/, "").trim())
+    .filter(Boolean);
+}
+
+function parseArticleMarkdown(text: string) {
+  const withoutMetadata = stripAutomationMetadata(text);
+  const checklistMatch = withoutMetadata.match(
+    /(?:^|\n)\s*(?:#{2,3}\s*)?Checklist[^:\n]*:?\s*\n?([\s\S]*)$/i,
+  );
+
+  if (!checklistMatch || checklistMatch.index === undefined) {
+    return {
+      body: splitMarkdownBlocks(withoutMetadata),
+      checklist: [],
+    };
+  }
+
+  const bodyText = withoutMetadata.slice(0, checklistMatch.index).trim();
+  const checklistText = checklistMatch[1] || "";
+
+  return {
+    body: splitMarkdownBlocks(bodyText),
+    checklist: splitChecklistItems(checklistText),
+  };
+}
+
 function formatArticleDate(value: string | null) {
   if (!value) return "";
 
@@ -94,8 +133,8 @@ function estimateReadTime(text: string) {
 }
 
 function mapThinkRow(row: ThinkArticleRow): ThinkArticle {
-  const body = splitMarkdownBlocks(row.content_markdown);
-  const excerpt = row.excerpt || row.seo_description || body[0] || "";
+  const parsedContent = parseArticleMarkdown(row.content_markdown);
+  const excerpt = row.excerpt || row.seo_description || parsedContent.body[0] || "";
 
   return {
     slug: row.slug,
@@ -103,15 +142,15 @@ function mapThinkRow(row: ThinkArticleRow): ThinkArticle {
     excerpt,
     category: row.category || "Essay",
     date: formatArticleDate(row.published_at || row.created_at),
-    readTime: estimateReadTime(row.content_markdown),
+    readTime: estimateReadTime(stripAutomationMetadata(row.content_markdown)),
     views: "0",
     cover:
       row.cover_image_url ||
       "/projects/C%C4%83n%20H%E1%BB%99%20Landmark/Ph%C3%B2ng%20%C4%82n/C_DR_04.jpg",
     tags: row.tags || [],
     dek: row.seo_description || excerpt,
-    body,
-    checklist: [],
+    body: parsedContent.body,
+    checklist: parsedContent.checklist,
   };
 }
 

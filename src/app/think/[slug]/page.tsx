@@ -157,9 +157,9 @@ export default async function ThinkArticlePage({ params }: ThinkArticlePageProps
               <h2 className="mb-10 text-[10px] font-bold uppercase tracking-[0.25em] text-white/40">Từ khóa</h2>
               <div className="flex flex-wrap gap-2.5">
                 {article.tags.map((tag) => (
-                  <span key={tag} className="border border-white/10 bg-[#050505]/50 px-4 py-2.5 text-[11px] text-white/60">
+                  <Link key={tag} href={`/think?tag=${encodeURIComponent(tag)}`} className="border border-white/10 bg-[#050505]/50 px-4 py-2.5 text-[11px] text-white/60 transition-all hover:border-[#d4af37] hover:text-[#d4af37]">
                     {tag}
-                  </span>
+                  </Link>
                 ))}
               </div>
             </div>

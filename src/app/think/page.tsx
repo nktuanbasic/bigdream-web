@@ -92,6 +92,13 @@ export default function ThinkPage() {
   const [allArticles, setAllArticles] = useState<ThinkArticle[]>(thinkArticles);
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const tag = params.get("tag");
+
+    if (tag) setQuery(tag);
+  }, []);
+
+  useEffect(() => {
     let isMounted = true;
 
     getThinkArticles().then((articles) => {
@@ -313,7 +320,10 @@ export default function ThinkPage() {
               {Array.from(new Set(allArticles.flatMap((article) => article.tags))).map((tag) => (
                 <button
                   key={tag}
-                  onClick={() => setQuery(tag)}
+                  onClick={() => {
+                    setQuery(tag);
+                    window.history.replaceState(null, "", `/think?tag=${encodeURIComponent(tag)}`);
+                  }}
                   className="border border-white/10 bg-[#050505]/50 px-4 py-2.5 text-[11px] text-white/50 transition-all hover:border-[#d4af37] hover:text-[#d4af37] hover:bg-[#d4af37]/5"
                 >
                   {tag}
