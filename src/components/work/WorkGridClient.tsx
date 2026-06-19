@@ -100,10 +100,11 @@ export default function WorkGridClient({ projects }: WorkGridClientProps) {
             
             {/* Chữ nằm bên dưới ảnh theo chuẩn editorial của the-designlab */}
             <div className="mt-6 flex flex-col items-start px-2 shrink-0">
-              <Link href={`/work/${project.id}`}>
+              <Link href={`/work/${project.id}`} className="w-full">
                 <h3 
-                  className="text-xl md:text-2xl text-white tracking-wide transition-colors duration-300 group-hover:text-[#d4af37]" 
+                  className="text-xl md:text-2xl text-white tracking-wide transition-colors duration-300 group-hover:text-[#d4af37] truncate" 
                   style={{ fontFamily: '"Bodoni Moda", serif' }}
+                  title={project.title}
                 >
                   {project.title}
                 </h3>

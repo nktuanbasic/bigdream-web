@@ -73,7 +73,7 @@ export default function ProjectDetailClient({ project }: ProjectDetailClientProp
         </div>
       </div>
 
-      <div className="max-w-[1920px] mx-auto px-6 md:px-12 lg:px-24">
+      <div className="w-full px-6 md:px-12 lg:px-16 xl:px-24 2xl:px-32">
         
         {/* 2. The Brief (Meta Data) */}
         <motion.div 
