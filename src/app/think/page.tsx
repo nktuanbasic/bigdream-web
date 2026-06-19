@@ -117,7 +117,7 @@ export default function ThinkPage() {
 
       {/* Hero Section */}
       <section className="relative z-10 border-b border-white/5">
-        <div className="mx-auto max-w-[1600px] px-5 py-12 md:px-10 md:py-24">
+        <div className="w-full px-5 py-12 md:px-10 lg:px-16 md:py-24">
           <motion.div 
             initial="hidden" animate="visible" variants={staggerContainer}
             className="grid gap-16 lg:grid-cols-[1fr_1.1fr] items-end"
@@ -185,7 +185,7 @@ export default function ThinkPage() {
       </section>
 
       {/* Main Content Grid */}
-      <section className="relative z-10 mx-auto max-w-[1600px] px-5 py-24 md:px-10 lg:grid lg:grid-cols-[1fr_380px] lg:gap-24">
+      <section className="relative z-10 w-full px-5 py-24 md:px-10 lg:px-16 lg:grid lg:grid-cols-[1fr_380px] lg:gap-24">
         
         {/* Left Col: Articles List */}
         <div>
@@ -224,6 +224,7 @@ export default function ThinkPage() {
           </motion.div>
 
           <motion.div 
+            key={activeCategory + query}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}

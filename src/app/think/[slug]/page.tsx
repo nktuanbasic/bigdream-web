@@ -58,7 +58,7 @@ export default async function ThinkArticlePage({ params }: ThinkArticlePageProps
           <div className="absolute inset-0 z-10 bg-gradient-to-t from-[#050505] via-[#050505]/60 to-[#050505]/10" />
           <div className="absolute inset-0 z-10 bg-gradient-to-r from-[#050505]/90 via-[#050505]/40 to-transparent" />
 
-          <div className="relative z-20 mx-auto w-full max-w-[1400px] px-5 pb-20 md:px-10 md:pb-32 animate-fade-in-up">
+          <div className="relative z-20 w-full px-5 pb-20 md:px-10 lg:px-16 md:pb-32 animate-fade-in-up">
             <Link
               href="/think"
               className="group mb-16 inline-flex w-fit items-center gap-3 border border-white/10 bg-white/5 backdrop-blur-md px-5 py-3 text-[10px] font-bold uppercase tracking-[0.25em] text-white transition-all hover:border-[#d4af37] hover:text-[#d4af37]"
@@ -91,7 +91,7 @@ export default async function ThinkArticlePage({ params }: ThinkArticlePageProps
           </div>
         </header>
 
-        <section className="mx-auto grid max-w-[1400px] gap-24 px-5 py-24 md:px-10 md:py-32 lg:grid-cols-[1fr_360px]">
+        <section className="w-full grid gap-24 px-5 py-24 md:px-10 lg:px-16 md:py-32 lg:grid-cols-[1fr_360px]">
           <div className="max-w-[880px] animate-fade-in-up" style={{ animationDelay: '0.2s', animationFillMode: 'both' }}>
             <p className="border-l-[3px] border-[#d4af37] pl-10 text-[22px] leading-[1.8] text-white md:text-[28px] font-light italic opacity-90">
               {article.excerpt}
