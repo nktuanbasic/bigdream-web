@@ -1,275 +1,250 @@
 "use client";
 
-import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { MagnifyingGlass, Clock, Eye } from "@phosphor-icons/react";
+import { useMemo, useState } from "react";
+import {
+  ArrowRight,
+  Clock,
+  Eye,
+  MagnifyingGlass,
+  Sparkle,
+} from "@phosphor-icons/react";
+import {
+  THINK_CATEGORIES,
+  getFeaturedArticle,
+  thinkArticles,
+  type ThinkArticle,
+} from "@/lib/think";
 
-/* ═══════════════════════════════════════════════════════════
-   THINK PAGE (BLOG/JOURNAL)
-   Layout tham khảo: dangtiendung.com/category/noi-that/
-   ═══════════════════════════════════════════════════════════ */
+function ArticleCard({ article, index }: { article: ThinkArticle; index: number }) {
+  return (
+    <article className="group grid gap-6 border-t border-white/10 pt-8 md:grid-cols-[220px_1fr]">
+      <Link
+        href={`/think/${article.slug}`}
+        className="relative block aspect-[4/3] overflow-hidden bg-surface-container-low"
+      >
+        <Image
+          src={article.cover}
+          alt={article.title}
+          fill
+          sizes="(max-width: 768px) 100vw, 220px"
+          className="object-cover transition duration-700 group-hover:scale-105"
+        />
+        <div className="absolute inset-0 bg-obsidian-deep/20 transition group-hover:bg-transparent" />
+      </Link>
 
-const CATEGORIES = ["Tất cả", "Kiến trúc", "Nội thất", "Đồ hoạ", "Phần mềm", "Tài liệu", "Giải trí", "Khác"];
+      <div className="flex min-w-0 flex-col">
+        <div className="mb-4 flex items-center gap-3 text-[11px] font-bold uppercase tracking-[0.18em] text-on-surface-muted">
+          <span className="text-primary">0{index + 1}</span>
+          <span>{article.category}</span>
+          <span className="h-px w-8 bg-white/20" />
+          <span>{article.date}</span>
+        </div>
 
-const MOCK_POSTS = [
-  {
-    id: 1,
-    title: "Sự phổ biến của màu trắng trong nội thất phương Tây: góc nhìn từ kinh tế",
-    excerpt: "Trong quá trình tìm hiểu về kiến trúc nội thất trên các tạp chí nước ngoài, tôi nhận ra rằng người phương Tây sử dụng màu trắng cực kỳ nhiều. Họ dường như sơn trắng mọi thứ...",
-    date: "15/05/2024",
-    views: "379",
-    category: "Nội thất",
-    thumbnail: "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?q=80&w=800&auto=format&fit=crop",
-  },
-  {
-    id: 2,
-    title: "3 vấn đề khi thiết kế giá sách",
-    excerpt: "Sự thật, tôi không phải là người hay mua sách. Mỗi năm, tôi chỉ thường mua vài cuốn, chủ yếu là sách kỹ thuật và chuyên ngành. Phần lớn thời gian tôi đọc ebook trên...",
-    date: "13/03/2024",
-    views: "429",
-    category: "Kiến trúc",
-    thumbnail: "https://images.unsplash.com/photo-1507842217343-583bb7270b66?q=80&w=800&auto=format&fit=crop",
-  },
-  {
-    id: 3,
-    title: "Tỷ lệ vàng – cú lừa thế kỷ",
-    excerpt: "Tỷ lệ vàng là một con số nổi tiếng. Mỗi năm, chúng ta lại đều đặn có thêm những bằng chứng mới về sự xuất hiện của tỷ lệ vàng trong tự nhiên hay trong nghệ thuật...",
-    date: "24/02/2024",
-    views: "1K",
-    category: "Kiến trúc",
-    thumbnail: "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?q=80&w=800&auto=format&fit=crop",
-  },
-  {
-    id: 4,
-    title: "Hiểu đúng về ánh sáng tự nhiên trong không gian",
-    excerpt: "Ánh sáng tự nhiên không chỉ là để chiếu sáng, nó định hình cảm xúc và nhịp điệu của một công trình. Khi đặt một cửa sổ, bạn đang vẽ một vệt sáng lên tường...",
-    date: "10/01/2024",
-    views: "852",
-    category: "Kiến trúc",
-    thumbnail: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=800&auto=format&fit=crop",
-  },
-  {
-    id: 5,
-    title: "Khái niệm 'Negative Space' trong thiết kế hiện đại",
-    excerpt: "Khoảng trống không phải là khoảng thừa. Trong thiết kế hiện đại, negative space (không gian âm) đóng vai trò định hướng thị giác và tạo sự nghỉ ngơi cho mắt...",
-    date: "05/12/2023",
-    views: "1.2K",
-    category: "Đồ hoạ",
-    thumbnail: "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=800&auto=format&fit=crop",
-  },
-  {
-    id: 6,
-    title: "Xu hướng vật liệu thô mộc năm 2024",
-    excerpt: "Sự lên ngôi của Wabi-Sabi kéo theo sự ưa chuộng các vật liệu giữ nguyên bản chất thô mộc: bê tông trần, gỗ không sơn, đá tự nhiên cắt xẻ...",
-    date: "20/11/2023",
-    views: "640",
-    category: "Nội thất",
-    thumbnail: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=800&auto=format&fit=crop",
-  },
-];
+        <Link href={`/think/${article.slug}`} className="block">
+          <h2 className="font-bodoni text-3xl leading-[1.05] text-white transition group-hover:text-primary md:text-5xl">
+            {article.title}
+          </h2>
+        </Link>
 
-const MOCK_SIDEBAR = [
-  {
-    id: 101,
-    title: "Có công mài sắt",
-    date: "20/01/2026",
-    views: "72",
-    thumbnail: "https://images.unsplash.com/photo-1600607686527-6fb886090705?q=80&w=400&auto=format&fit=crop",
-  },
-  {
-    id: 102,
-    title: "Hướng dẫn plugin Board Tools",
-    date: "17/10/2025",
-    views: "2.7K",
-    thumbnail: "https://images.unsplash.com/photo-1600585154526-990dced4ea07?q=80&w=400&auto=format&fit=crop",
-  },
-  {
-    id: 103,
-    title: "Phá Thiên Chùy",
-    date: "16/09/2025",
-    views: "157",
-    thumbnail: "https://images.unsplash.com/photo-1541888086925-920a0b411d33?q=80&w=400&auto=format&fit=crop",
-  },
-  {
-    id: 104,
-    title: "Thư viện SketchUp Trung Quốc",
-    date: "17/06/2025",
-    views: "1.5K",
-    thumbnail: "https://images.unsplash.com/photo-1604147706283-d7119b5b822c?q=80&w=400&auto=format&fit=crop",
-  },
-  {
-    id: 105,
-    title: "Phác thảo và vẽ tay",
-    date: "10/06/2025",
-    views: "318",
-    thumbnail: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?q=80&w=400&auto=format&fit=crop",
-  },
-];
+        <p className="mt-4 max-w-2xl text-sm leading-7 text-on-surface-variant md:text-base">
+          {article.excerpt}
+        </p>
+
+        <div className="mt-6 flex flex-wrap items-center gap-4 text-xs text-on-surface-muted">
+          <span className="flex items-center gap-2">
+            <Clock size={15} /> {article.readTime}
+          </span>
+          <span className="flex items-center gap-2">
+            <Eye size={15} /> {article.views}
+          </span>
+          <Link
+            href={`/think/${article.slug}`}
+            className="ml-auto inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-primary"
+          >
+            Đọc bài <ArrowRight size={16} />
+          </Link>
+        </div>
+      </div>
+    </article>
+  );
+}
 
 export default function ThinkPage() {
-  const [activeCategory, setActiveCategory] = useState("Tất cả");
+  const [activeCategory, setActiveCategory] = useState<(typeof THINK_CATEGORIES)[number]>("All");
+  const [query, setQuery] = useState("");
+  const featured = getFeaturedArticle();
+
+  const articles = useMemo(() => {
+    const normalizedQuery = query.trim().toLowerCase();
+
+    return thinkArticles.filter((article) => {
+      const matchesCategory = activeCategory === "All" || article.category === activeCategory;
+      const matchesQuery =
+        normalizedQuery.length === 0 ||
+        [article.title, article.excerpt, article.category, ...article.tags]
+          .join(" ")
+          .toLowerCase()
+          .includes(normalizedQuery);
+
+      return matchesCategory && matchesQuery;
+    });
+  }, [activeCategory, query]);
+
+  const latest = thinkArticles.slice(1, 4);
 
   return (
-    <div className="min-h-screen bg-obsidian-deep text-on-surface pt-[var(--nav-height)]">
-      <main className="w-full max-w-[1400px] mx-auto px-4 md:px-8 py-8 md:py-12">
-        
-        {/* ── Page Header & Categories ── */}
-        <div className="mb-12 border-b border-white/10 pb-6 flex flex-col md:flex-row md:items-end justify-between gap-6">
-          <div>
-            <h1 className="font-headline-lg text-4xl md:text-5xl font-black text-white tracking-tight">
-              THINK
-            </h1>
-            <p className="text-sm text-on-surface-variant mt-2 uppercase tracking-[0.2em]">
-              Nhật ký thiết kế kiến trúc
-            </p>
-          </div>
-          
-          <div className="flex flex-wrap items-center gap-4 md:gap-6">
-            {CATEGORIES.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setActiveCategory(cat)}
-                className={`text-sm font-bold uppercase tracking-wider transition-colors ${
-                  activeCategory === cat 
-                    ? "text-primary border-b-2 border-primary pb-1" 
-                    : "text-on-surface-variant hover:text-white pb-1"
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
-        </div>
+    <main className="min-h-screen bg-obsidian-deep text-on-surface pt-[var(--nav-height)]">
+      <section className="relative overflow-hidden border-b border-white/10">
+        <div className="absolute left-1/2 top-0 h-[420px] w-[420px] -translate-x-1/2 rounded-full bg-primary/10 blur-[120px]" />
 
-        {/* ── Two Column Layout ── */}
-        <div className="flex flex-col lg:flex-row gap-12">
-          
-          {/* ═══ LEFT: Blog Posts (70%) ═══ */}
-          <div className="w-full lg:w-[70%] space-y-12">
-            {MOCK_POSTS.map((post) => (
-              <article key={post.id} className="flex flex-col md:flex-row gap-8 group">
-                
-                {/* Thumbnail */}
-                <div className="w-full md:w-[320px] aspect-[4/3] relative rounded-md overflow-hidden flex-shrink-0 border border-white/5 group-hover:border-primary/30 transition-colors">
-                  <Image 
-                    src={post.thumbnail} 
-                    alt={post.title} 
-                    fill 
-                    className="object-cover group-hover:scale-105 transition-transform duration-700"
-                  />
-                  <div className="absolute inset-0 bg-obsidian-deep/10 group-hover:bg-transparent transition-colors" />
-                </div>
+        <div className="relative mx-auto grid max-w-[1500px] gap-10 px-5 py-12 md:px-10 md:py-20 lg:grid-cols-[0.92fr_1.08fr]">
+          <div className="flex flex-col justify-between gap-10">
+            <div>
+              <div className="mb-5 inline-flex items-center gap-2 border border-primary/25 bg-primary/10 px-3 py-2 text-[11px] font-bold uppercase tracking-[0.22em] text-primary">
+                <Sparkle size={14} weight="fill" />
+                BigDream Editorial
+              </div>
+              <h1 className="font-bodoni text-6xl leading-[0.9] text-white md:text-8xl lg:text-[120px]">
+                THINK
+              </h1>
+              <p className="mt-6 max-w-xl text-base leading-8 text-on-surface-variant md:text-lg">
+                Nhật ký quan sát kiến trúc, vật liệu, ánh sáng và cách AI thay đổi nhịp làm nghề thiết kế.
+              </p>
+            </div>
 
-                {/* Content */}
-                <div className="flex flex-col py-2">
-                  <Link href={`/think/${post.id}`} className="block">
-                    <h2 className="font-headline-lg text-2xl md:text-3xl font-bold text-white mb-3 group-hover:text-primary transition-colors leading-snug">
-                      {post.title}
-                    </h2>
-                  </Link>
-                  
-                  <div className="flex items-center gap-4 text-xs text-on-surface-muted mb-4 uppercase tracking-wider font-bold">
-                    <span className="flex items-center gap-1">
-                      <Clock size={14} weight="bold" /> {post.date}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Eye size={14} weight="bold" /> {post.views}
-                    </span>
-                  </div>
-                  
-                  <p className="text-sm md:text-base text-on-surface-variant leading-relaxed mb-6 flex-1">
-                    {post.excerpt}
-                  </p>
-                  
-                  <div>
-                    <Link 
-                      href={`/think/${post.id}`}
-                      className="inline-flex items-center justify-center px-6 py-2 text-xs font-bold uppercase tracking-wider text-white border border-white/20 rounded-md hover:border-primary hover:text-primary transition-all duration-300"
-                    >
-                      Read More
-                    </Link>
-                  </div>
-                </div>
-              </article>
-            ))}
-
-            {/* Pagination Placeholder */}
-            <div className="pt-8 border-t border-white/10 flex justify-center gap-2">
-              <button className="w-10 h-10 flex items-center justify-center rounded-md border border-primary text-primary font-bold">1</button>
-              <button className="w-10 h-10 flex items-center justify-center rounded-md border border-white/10 text-on-surface-variant hover:border-white/30 hover:text-white transition-colors">2</button>
-              <button className="w-10 h-10 flex items-center justify-center rounded-md border border-white/10 text-on-surface-variant hover:border-white/30 hover:text-white transition-colors">3</button>
+            <div className="grid grid-cols-3 border-y border-white/10 py-5 text-center">
+              <div>
+                <p className="font-bodoni text-3xl text-primary">{thinkArticles.length}</p>
+                <p className="mt-1 text-[10px] uppercase tracking-[0.2em] text-on-surface-muted">Bài chọn lọc</p>
+              </div>
+              <div className="border-x border-white/10">
+                <p className="font-bodoni text-3xl text-primary">RAW</p>
+                <p className="mt-1 text-[10px] uppercase tracking-[0.2em] text-on-surface-muted">Editorial draft</p>
+              </div>
+              <div>
+                <p className="font-bodoni text-3xl text-primary">AI</p>
+                <p className="mt-1 text-[10px] uppercase tracking-[0.2em] text-on-surface-muted">Workflow</p>
+              </div>
             </div>
           </div>
 
-          {/* ═══ RIGHT: Sidebar (30%) ═══ */}
-          <aside className="w-full lg:w-[30%] space-y-10">
-            
-            {/* Search */}
-            <div className="relative">
-              <MagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant" size={20} />
-              <input 
-                type="text" 
-                placeholder="Search articles..." 
-                className="w-full bg-surface border border-white/10 rounded-md py-3 pl-12 pr-4 text-sm text-white focus:outline-none focus:border-primary focus:bg-charcoal-surface transition-all"
+          <Link href={`/think/${featured.slug}`} className="group relative min-h-[520px] overflow-hidden bg-surface-container-low">
+            <Image
+              src={featured.cover}
+              alt={featured.title}
+              fill
+              priority
+              sizes="(max-width: 1024px) 100vw, 55vw"
+              className="object-cover transition duration-700 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-obsidian-deep via-obsidian-deep/35 to-transparent" />
+            <div className="absolute inset-x-0 bottom-0 p-6 md:p-10">
+              <div className="mb-4 flex flex-wrap items-center gap-3 text-[11px] font-bold uppercase tracking-[0.2em] text-primary">
+                <span>Featured</span>
+                <span className="h-px w-10 bg-primary/60" />
+                <span>{featured.category}</span>
+              </div>
+              <h2 className="font-bodoni max-w-3xl text-4xl leading-[1] text-white md:text-6xl">
+                {featured.title}
+              </h2>
+              <p className="mt-5 max-w-2xl text-sm leading-7 text-on-surface-variant md:text-base">
+                {featured.dek}
+              </p>
+            </div>
+          </Link>
+        </div>
+      </section>
+
+      <section className="mx-auto grid max-w-[1500px] gap-12 px-5 py-12 md:px-10 md:py-16 lg:grid-cols-[1fr_360px]">
+        <div>
+          <div className="mb-10 flex flex-col gap-5 border-b border-white/10 pb-8 xl:flex-row xl:items-center xl:justify-between">
+            <div className="flex flex-wrap gap-2">
+              {THINK_CATEGORIES.map((category) => (
+                <button
+                  key={category}
+                  onClick={() => setActiveCategory(category)}
+                  className={`border px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] transition ${
+                    activeCategory === category
+                      ? "border-primary bg-primary text-on-primary"
+                      : "border-white/10 text-on-surface-variant hover:border-primary/50 hover:text-white"
+                  }`}
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
+
+            <label className="relative block w-full xl:w-[320px]">
+              <MagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-muted" size={18} />
+              <input
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder="Tìm theo chủ đề, tag..."
+                className="w-full border border-white/10 bg-surface px-4 py-3 pl-11 text-sm text-white outline-none transition placeholder:text-on-surface-muted focus:border-primary"
               />
-            </div>
+            </label>
+          </div>
 
-            {/* Popular Posts */}
-            <div className="bg-surface border border-white/10 rounded-md p-6">
-              <h3 className="text-sm font-bold text-white uppercase tracking-wider mb-6 pb-4 border-b border-white/10 relative">
-                Nhiều lượt xem
-                <span className="absolute bottom-0 left-0 w-12 h-0.5 bg-primary" />
-              </h3>
-              
-              <div className="space-y-6">
-                {MOCK_SIDEBAR.map((item) => (
-                  <Link href={`/think/${item.id}`} key={item.id} className="flex gap-4 group">
-                    <div className="w-20 h-16 relative rounded-sm overflow-hidden flex-shrink-0 border border-white/5">
-                      <Image 
-                        src={item.thumbnail} 
-                        alt={item.title} 
-                        fill 
-                        className="object-cover group-hover:scale-110 transition-transform duration-500"
-                      />
-                    </div>
-                    <div className="flex flex-col justify-between py-0.5">
-                      <h4 className="text-sm font-bold text-white leading-tight group-hover:text-primary transition-colors line-clamp-2">
-                        {item.title}
-                      </h4>
-                      <div className="flex items-center gap-3 text-[10px] text-on-surface-muted uppercase tracking-wider">
-                        <span className="flex items-center gap-1"><Clock size={12} /> {item.date}</span>
-                        <span className="flex items-center gap-1"><Eye size={12} /> {item.views}</span>
-                      </div>
-                    </div>
-                  </Link>
-                ))}
+          <div className="space-y-10">
+            {articles.length > 0 ? (
+              articles.map((article, index) => <ArticleCard key={article.slug} article={article} index={index} />)
+            ) : (
+              <div className="border border-white/10 bg-surface p-10 text-center text-on-surface-variant">
+                Chưa có bài nào khớp với bộ lọc hiện tại.
               </div>
-            </div>
-
-            {/* Tags / Topics */}
-            <div className="bg-surface border border-white/10 rounded-md p-6">
-              <h3 className="text-sm font-bold text-white uppercase tracking-wider mb-6 pb-4 border-b border-white/10 relative">
-                Chủ đề phổ biến
-                <span className="absolute bottom-0 left-0 w-12 h-0.5 bg-primary" />
-              </h3>
-              <div className="flex flex-wrap gap-2">
-                {["3dsmax", "coronarenderer", "photoshop", "wabisabi", "midjourney", "comfyui", "ai-architecture"].map((tag) => (
-                  <Link 
-                    key={tag} 
-                    href={`/tag/${tag}`}
-                    className="px-3 py-1.5 text-xs text-on-surface-variant bg-charcoal-surface border border-white/5 rounded-sm hover:border-primary/50 hover:text-white transition-colors"
-                  >
-                    #{tag}
-                  </Link>
-                ))}
-              </div>
-            </div>
-
-          </aside>
-
+            )}
+          </div>
         </div>
-      </main>
-    </div>
+
+        <aside className="space-y-8 lg:sticky lg:top-28 lg:self-start">
+          <div className="border border-white/10 bg-surface p-6">
+            <h3 className="text-xs font-bold uppercase tracking-[0.22em] text-primary">Editorial Pipeline</h3>
+            <div className="mt-6 space-y-5 text-sm leading-7 text-on-surface-variant">
+              <p>Discord topic</p>
+              <p className="border-l border-primary/40 pl-4">Gemini research brief</p>
+              <p className="border-l border-primary/40 pl-4">RAW editorial draft</p>
+              <p className="border-l border-primary/40 pl-4">Human review</p>
+              <p className="text-white">Published on THINK</p>
+            </div>
+          </div>
+
+          <div className="border border-white/10 bg-surface p-6">
+            <h3 className="mb-6 text-xs font-bold uppercase tracking-[0.22em] text-white">Mới cập nhật</h3>
+            <div className="space-y-5">
+              {latest.map((article) => (
+                <Link key={article.slug} href={`/think/${article.slug}`} className="group grid grid-cols-[88px_1fr] gap-4">
+                  <div className="relative aspect-[4/3] overflow-hidden bg-surface-container-low">
+                    <Image src={article.cover} alt={article.title} fill sizes="88px" className="object-cover transition duration-500 group-hover:scale-110" />
+                  </div>
+                  <div>
+                    <p className="line-clamp-2 text-sm font-bold leading-5 text-white transition group-hover:text-primary">
+                      {article.title}
+                    </p>
+                    <p className="mt-2 text-[11px] uppercase tracking-[0.16em] text-on-surface-muted">{article.readTime}</p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          <div className="border border-white/10 bg-surface p-6">
+            <h3 className="mb-5 text-xs font-bold uppercase tracking-[0.22em] text-white">Tags</h3>
+            <div className="flex flex-wrap gap-2">
+              {Array.from(new Set(thinkArticles.flatMap((article) => article.tags))).map((tag) => (
+                <button
+                  key={tag}
+                  onClick={() => setQuery(tag)}
+                  className="border border-white/10 bg-charcoal-surface px-3 py-1.5 text-xs text-on-surface-variant transition hover:border-primary/50 hover:text-primary"
+                >
+                  #{tag}
+                </button>
+              ))}
+            </div>
+          </div>
+        </aside>
+      </section>
+    </main>
   );
 }
