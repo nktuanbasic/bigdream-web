@@ -44,7 +44,7 @@ export default function BigClassPage() {
             <div className="absolute inset-0 bg-black/40 mix-blend-overlay"></div>
           </div>
           
-          <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-12 flex flex-col items-center text-center mt-16">
+          <div className="relative z-10 w-full px-5 md:px-10 lg:px-16 flex flex-col items-center text-center mt-16">
             <div className="glass-panel px-6 py-2 rounded-full mb-8 flex items-center gap-3">
               <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
               <span className="font-label-sm text-xs text-primary uppercase tracking-widest">Masterclass Enrollment Open</span>
@@ -72,7 +72,7 @@ export default function BigClassPage() {
 
         {/* Stats / Info Bar */}
         <section className="border-b border-glass-border bg-charcoal-surface/30 backdrop-blur-md">
-          <div className="max-w-[1400px] mx-auto px-6 md:px-12 py-10">
+          <div className="w-full px-5 md:px-10 lg:px-16 py-10">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 divide-x divide-glass-border/50">
               <div className="flex flex-col items-center text-center px-4">
                 <Clock size={32} className="text-primary mb-4" weight="thin" />
@@ -99,7 +99,7 @@ export default function BigClassPage() {
         </section>
 
         {/* Curriculum List */}
-        <section className="py-32 px-6 md:px-12 max-w-[1400px] mx-auto">
+        <section className="py-32 px-5 md:px-10 lg:px-16 w-full">
           <div className="mb-20 text-center">
             <h2 className="font-display-lg text-5xl md:text-7xl text-on-surface mb-6 uppercase tracking-tighter">The Curriculum</h2>
             <p className="font-body-lg text-xl text-on-surface-variant max-w-2xl mx-auto font-light">

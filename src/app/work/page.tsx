@@ -9,7 +9,7 @@ export default function WorkPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-[#050505] text-[#F5F2E8]" style={{ fontFamily: '"Hanken Grotesk", sans-serif' }}>
-      <main className="flex-grow pt-32 pb-24 px-6 md:px-16 max-w-[1440px] mx-auto w-full">
+      <main className="flex-grow pt-32 pb-24 px-5 md:px-10 lg:px-16 w-full">
         
         {/* Cinematic Header */}
         <div className="mb-24 md:mb-40 text-left">

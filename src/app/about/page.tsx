@@ -33,7 +33,7 @@ export default function BigAboutPage() {
           initial="hidden"
           animate="visible"
           variants={staggerContainer}
-          className="relative z-10 w-full max-w-[1440px] mx-auto text-left"
+          className="relative z-10 w-full px-5 md:px-10 lg:px-16 text-left"
         >
           <motion.div variants={fadeUp} className="mb-6 overflow-hidden">
             <span className="font-label-caps text-xs md:text-sm text-[#d4af37] tracking-[0.4em] uppercase font-bold">
@@ -83,7 +83,7 @@ export default function BigAboutPage() {
       </section>
 
       {/* 2. THE FOUNDER SECTION (Editorial Layout) */}
-      <section className="relative py-32 px-6 md:px-16 w-full max-w-[1440px] mx-auto border-t border-white/5">
+      <section className="relative py-32 px-5 md:px-10 lg:px-16 w-full border-t border-white/5">
         <div className="flex flex-col md:flex-row gap-16 lg:gap-32">
           
           {/* Left: Image (4 columns equivalent) */}
@@ -167,8 +167,8 @@ export default function BigAboutPage() {
       </section>
 
       {/* 3. PHILOSOPHY & LOGIC (Manifesto Layout) */}
-      <section className="relative py-32 px-6 md:px-16 border-t border-white/5 bg-[#0a0a0a]">
-        <div className="max-w-[1440px] mx-auto">
+      <section className="relative py-32 px-5 md:px-10 lg:px-16 border-t border-white/5 bg-[#0a0a0a]">
+        <div className="w-full">
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -214,7 +214,7 @@ export default function BigAboutPage() {
 
       {/* 4. AESTHETICS (Ultra-wide Parallax) */}
       <section className="relative py-32 border-t border-white/5 overflow-hidden">
-        <div className="px-6 md:px-16 max-w-[1440px] mx-auto mb-12">
+        <div className="px-5 md:px-10 lg:px-16 w-full mb-12">
           <motion.div
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -241,8 +241,8 @@ export default function BigAboutPage() {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-[#050505]/50"></div>
           
-          <div className="absolute bottom-0 left-0 w-full px-6 md:px-16 pb-16">
-            <div className="max-w-[1440px] mx-auto flex flex-col md:flex-row justify-between items-end gap-6">
+          <div className="absolute bottom-0 left-0 w-full px-5 md:px-10 lg:px-16 pb-16">
+            <div className="w-full flex flex-col md:flex-row justify-between items-end gap-6">
               <p className="font-body-lg text-lg md:text-xl text-[#F5F2E8]/90 font-light leading-relaxed max-w-xl bg-[#050505]/60 p-6 backdrop-blur-sm border-l-2 border-[#d4af37]">
                 {language === 'vi'
                   ? 'Không gian sang trọng, hiện đại. Trọng tâm thiết kế hướng đến sự đẳng cấp nhưng vẫn giữ được nhịp thở tự nhiên thông qua việc ứng dụng khéo léo các chất liệu mộc mạc và mảng xanh.'
@@ -260,7 +260,7 @@ export default function BigAboutPage() {
       </section>
 
       {/* 5. ECOSYSTEM / CTA SECTION */}
-      <section className="py-40 px-6 md:px-16 text-center max-w-4xl mx-auto">
+      <section className="py-40 px-5 md:px-10 lg:px-16 text-center w-full">
         <motion.div
           initial="hidden"
           whileInView="visible"

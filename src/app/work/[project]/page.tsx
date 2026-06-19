@@ -21,7 +21,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
 
   return (
     <div className="flex flex-col min-h-screen bg-[#050505] text-[#F5F2E8]" style={{ fontFamily: '"Hanken Grotesk", sans-serif' }}>
-      <main className="flex-grow pt-32 pb-24 px-6 md:px-16 max-w-[1440px] mx-auto w-full overflow-hidden">
+      <main className="flex-grow pt-32 pb-24 w-full overflow-hidden">
         <ProjectDetailClient project={project} />
       </main>
     </div>
