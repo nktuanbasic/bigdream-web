@@ -4,13 +4,12 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { supabase } from '@/lib/supabase/client';
-import { User, SignOut, Coin, MagnifyingGlass, Translate } from '@phosphor-icons/react';
+import { User, SignOut, Diamond, MagnifyingGlass, Translate } from '@phosphor-icons/react';
 import { useLanguage } from '@/context/LanguageContext';
 
 interface WalletInfo {
-  bas: number;
-  adv: number;
-  coin: number;
+  gem: number;
+  is_vip: boolean;
 }
 
 const NAV_LINKS = [
@@ -27,7 +26,7 @@ export default function GlobalAuthNav() {
   const pathname = usePathname();
   const { language, toggleLanguage } = useLanguage();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [walletInfo, setWalletInfo] = useState<WalletInfo>({ bas: 0, adv: 0, coin: 0 });
+  const [walletInfo, setWalletInfo] = useState<WalletInfo>({ gem: 0, is_vip: false });
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -56,9 +55,8 @@ export default function GlobalAuthNav() {
       const data = await res.json();
       if (data.wallet) {
         setWalletInfo({
-          bas: data.wallet.free_basic_today,
-          adv: data.wallet.free_adv_today,
-          coin: data.wallet.purchased_coins
+          gem: data.wallet.purchased_coins || 0,
+          is_vip: data.wallet.is_vip || false
         });
       }
     } catch (err) {
@@ -156,12 +154,12 @@ export default function GlobalAuthNav() {
         ) : (
           <div className="flex items-center gap-4">
             <div className="hidden md:flex items-center gap-2 bg-charcoal-surface border border-glass-border rounded-md px-4 py-1.5 inner-glow">
-              <span className="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold">CB: {walletInfo.bas}</span>
-              <span className="w-1 h-1 rounded-full bg-glass-border"></span>
-              <span className="text-[10px] text-primary uppercase tracking-widest font-bold">VIP: {walletInfo.adv}</span>
+              <span className={`text-[10px] uppercase tracking-widest font-bold ${walletInfo.is_vip ? 'text-primary' : 'text-on-surface-variant'}`}>
+                {walletInfo.is_vip ? 'PRO MEMBER' : 'FREE MEMBER'}
+              </span>
               <span className="w-1 h-1 rounded-full bg-glass-border"></span>
               <span className="text-[11px] text-primary font-bold flex items-center gap-1">
-                <Coin weight="fill" /> {walletInfo.coin}
+                <Diamond weight="fill" /> {walletInfo.gem}
               </span>
             </div>
             

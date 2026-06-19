@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase/client';
-import { ClockCounterClockwise, DownloadSimple, CurrencyDollar, CheckCircle, Package, ArrowUpRight, Crown } from '@phosphor-icons/react';
+import { ClockCounterClockwise, DownloadSimple, Diamond, CheckCircle, Package, ArrowUpRight, Crown } from '@phosphor-icons/react';
 
 interface Transaction {
   id: string;
@@ -26,6 +26,7 @@ export default function AccountDashboardPage() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [activities, setActivities] = useState<Activity[]>([]);
   const [userEmail, setUserEmail] = useState('');
+  const [isVip, setIsVip] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -43,6 +44,7 @@ export default function AccountDashboardPage() {
         const data = await res.json();
         if (data.transactions) setTransactions(data.transactions);
         if (data.activities) setActivities(data.activities);
+        if (data.is_vip) setIsVip(data.is_vip);
       } catch (err) {
         console.error(err);
       } finally {
@@ -101,9 +103,9 @@ export default function AccountDashboardPage() {
             </div>
             
             <h2 className="font-headline-md text-2xl text-on-surface truncate w-full mb-2">{userEmail}</h2>
-            <div className="inline-flex items-center gap-2 text-primary font-label-sm text-[10px] uppercase tracking-[0.2em]">
-              <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-              Pro Member
+            <div className={`inline-flex items-center gap-2 font-label-sm text-[10px] uppercase tracking-[0.2em] ${isVip ? 'text-primary' : 'text-on-surface-variant'}`}>
+              <span className={`w-2 h-2 rounded-full animate-pulse ${isVip ? 'bg-primary' : 'bg-glass-border'}`}></span>
+              {isVip ? 'Pro Member' : 'Free Member'}
             </div>
           </div>
 
@@ -112,7 +114,7 @@ export default function AccountDashboardPage() {
               { id: 'overview', label: 'Command Center', icon: Package },
               { id: 'library', label: 'Asset Library', icon: DownloadSimple },
               { id: 'activity', label: 'Activity Logs', icon: ClockCounterClockwise },
-              { id: 'transactions', label: 'Treasury', icon: CurrencyDollar }
+              { id: 'transactions', label: 'Treasury', icon: Diamond }
             ].map(tab => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
@@ -163,13 +165,13 @@ export default function AccountDashboardPage() {
 
                 <div className="glass-panel rounded-2xl p-8 group hover:border-primary transition-all duration-500 relative overflow-hidden">
                   <div className="absolute -right-4 -top-4 text-primary/5 group-hover:text-primary/10 transition-colors duration-500 transform group-hover:scale-110">
-                    <CurrencyDollar size={120} weight="fill" />
+                    <Diamond size={120} weight="fill" />
                   </div>
                   <div className="relative z-10 flex flex-col h-full justify-between">
                     <span className="font-label-sm text-[10px] uppercase tracking-[0.2em] text-on-surface-variant mb-8 block">Treasury Balance</span>
                     <div className="flex items-baseline gap-2">
                       <div className="font-headline-lg text-6xl text-on-surface group-hover:text-primary transition-colors">{deposits.reduce((acc, curr) => acc + curr.amount, 0)}</div>
-                      <span className="font-label-sm text-xs text-on-surface-variant uppercase tracking-widest">CRD</span>
+                      <span className="font-label-sm text-xs text-on-surface-variant uppercase tracking-widest">GEM</span>
                     </div>
                   </div>
                 </div>

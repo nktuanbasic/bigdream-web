@@ -56,7 +56,7 @@ export async function POST(req: Request) {
     }
 
     if (!userDoc || userDoc.purchased_coins < finalPriceVND) {
-      return NextResponse.json({ error: `Bạn không đủ Gem. Cần ${finalPriceVND} Gem để tạo ảnh này.` }, { status: 402 });
+      return NextResponse.json({ error: `Bạn không đủ GEM. Cần ${finalPriceVND} GEM để tạo ảnh này.` }, { status: 402 });
     }
 
     console.log(`[IMAGE GEN] Bắt đầu render ảnh với Model: ${modelToUse}`);

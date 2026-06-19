@@ -29,9 +29,17 @@ export async function GET(req: Request) {
       .eq('user_id', user.id)
       .order('timestamp', { ascending: false });
 
+    // 4. Fetch User is_vip status
+    const { data: userData } = await supabase
+      .from('users')
+      .select('is_vip')
+      .eq('id', user.id)
+      .single();
+
     return NextResponse.json({
       transactions: txError ? [] : transactions,
-      activities: actError ? [] : activities
+      activities: actError ? [] : activities,
+      is_vip: userData?.is_vip || false
     });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

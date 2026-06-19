@@ -189,7 +189,7 @@ export async function POST(req: Request) {
     }
 
     if (!userDoc || userDoc.purchased_coins <= 0) {
-      return new Response(JSON.stringify({ error: 'Tài khoản của quý khách đã hết Gem. Vui lòng nạp thêm để tiếp tục!' }), { status: 402 });
+      return new Response(JSON.stringify({ error: 'Tài khoản của quý khách đã hết GEM. Vui lòng nạp thêm để tiếp tục!' }), { status: 402 });
     }
 
     // --- TỐI ƯU HÓA BỘ NHỚ AI (CONTEXT WINDOW OPTIMIZATION) ---
