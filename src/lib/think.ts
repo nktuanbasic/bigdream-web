@@ -83,17 +83,27 @@ function stripAutomationMetadata(text: string) {
 }
 
 function splitChecklistItems(text: string) {
-  return text
-    .replace(/\r\n/g, "\n")
-    .split(/\n\s*[-*]\s+|\s+\*\s+/)
-    .map((item) => item.replace(/^[-*]\s+/, "").trim())
+  const normalized = text.replace(/\r\n/g, "\n").trim();
+  const bulletLines = normalized
+    .split("\n")
+    .map((line) => line.replace(/^[-*]\s*/, "").trim())
+    .filter((line) => line && line !== "*" && line !== "-");
+
+  if (bulletLines.length > 1) {
+    return bulletLines;
+  }
+
+  return normalized
+    .split(/\s+[-*]\s+/)
+    .map((item) => item.replace(/^[-*]\s*/, "").trim())
+    .filter((item) => item !== "*" && item !== "-")
     .filter(Boolean);
 }
 
 function parseArticleMarkdown(text: string) {
   const withoutMetadata = stripAutomationMetadata(text);
   const checklistMatch = withoutMetadata.match(
-    /(?:^|\n)\s*(?:#{2,3}\s*)?Checklist[^:\n]*:?\s*\n?([\s\S]*)$/i,
+    /(?:^|\n)\s*(?:#{2,3}\s*|\*\*)?Checklist[^:\n*]*(?::)?(?:\*\*)?\s*\n?([\s\S]*)$/i,
   );
 
   if (!checklistMatch || checklistMatch.index === undefined) {
