@@ -63,7 +63,7 @@ const THINK_SELECT = [
 ].join(",");
 
 function normalizeMarkdown(text: string) {
-  return text.replace(/\r\n/g, "\n").replace(/\\n/g, "\n").trim();
+  return text.replace(/\r\n/g, "\n").replace(/\\n/g, "\n").replace(/\u000b/g, "\n").trim();
 }
 
 function splitMarkdownBlocks(text: string) {
@@ -76,7 +76,15 @@ function splitMarkdownBlocks(text: string) {
 function stripAutomationMetadata(text: string) {
   return normalizeMarkdown(text)
     .replace(
-      /(?:^|\n)\s*(?:TITLE|SLUG|EXCERPT|TAGS|SEO_DESCRIPTION|COVER_IMAGE_PROMPT|EDITOR_NOTES):[\s\S]*$/m,
+      /(?:^|\n)\s*(?:-{3,}|\*{3,})\s*\n\s*(?:#{1,6}\s*)?METADATA\b[\s\S]*$/im,
+      "",
+    )
+    .replace(
+      /(?:^|\n)\s*(?:#{1,6}\s*)?METADATA\b[\s\S]*$/im,
+      "",
+    )
+    .replace(
+      /(?:^|\n)\s*(?:\*{1,2})?\s*(?:TITLE|SLUG|EXCERPT|TAGS|SEO_DESCRIPTION|COVER_IMAGE_PROMPT|EDITOR_NOTES)\s*:?\s*(?:\*{1,2})?[\s\S]*$/im,
       "",
     )
     .trim();
@@ -86,8 +94,8 @@ function splitChecklistItems(text: string) {
   const normalized = text.replace(/\r\n/g, "\n").trim();
   const bulletLines = normalized
     .split("\n")
-    .map((line) => line.replace(/^[-*]\s*/, "").trim())
-    .filter((line) => line && line !== "*" && line !== "-");
+    .map((line) => line.replace(/^[-*]\s*/, "").replace(/^[☐□☑✓]\s*/, "").trim())
+    .filter((line) => line && line !== "*" && line !== "-" && line !== "***");
 
   if (bulletLines.length > 1) {
     return bulletLines;
@@ -95,7 +103,7 @@ function splitChecklistItems(text: string) {
 
   return normalized
     .split(/\s+[-*]\s+/)
-    .map((item) => item.replace(/^[-*]\s*/, "").trim())
+    .map((item) => item.replace(/^[-*]\s*/, "").replace(/^[☐□☑✓]\s*/, "").trim())
     .filter((item) => item !== "*" && item !== "-")
     .filter(Boolean);
 }
