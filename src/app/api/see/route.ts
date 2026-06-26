@@ -1,5 +1,6 @@
 import { convertToModelMessages, streamText, type UIMessage } from 'ai';
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
+import { createOpenAI } from '@ai-sdk/openai';
 import { SEE_INSTRUCTIONS } from '@/lib/see/systemInstructions';
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
@@ -16,9 +17,6 @@ type IncomingMessage = UIMessage & {
   experimental_attachments?: AttachmentLike[];
 };
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-
 export const maxDuration = 60;
 
 // Bảng giá nhập / 1 Triệu Token (Tính bằng USD)
@@ -28,16 +26,37 @@ const PRICING: Record<string, { in: number, out: number }> = {
   'gemini-2.5-flash':      { in: 0.075,  out: 0.30 },
   'gemini-2.5-pro':        { in: 1.25,   out: 5.00 },
   'gemini-3.5-flash-lite': { in: 1.25,   out: 5.00 },
+  'glm-4.7-flash':         { in: 0,      out: 0 },
+  'glm-4.5-flash':         { in: 0,      out: 0 },
 };
 
 // Hàm lấy Key ngẫu nhiên
+type SeeProvider = 'gemini' | 'zai';
+
+type SeeModelConfig = {
+  provider: SeeProvider;
+  modelName: string;
+  apiKey: string;
+};
+
+function parseKeys(rawKeys = ""): string[] {
+  return rawKeys.split(',').map(k => k.trim()).filter(k => k.length > 0);
+}
+
+function pickRandomKey(keysArray: string[]): string {
+  return keysArray[Math.floor(Math.random() * keysArray.length)];
+}
+
 function getRandomKey(): string {
-  const rawKeys = process.env.GEMINI_API_KEYS || "";
-  const keysArray = rawKeys.split(',').map(k => k.trim()).filter(k => k.length > 0);
+  const keysArray = parseKeys(process.env.GEMINI_API_KEYS);
   if (keysArray.length === 0) {
     throw new Error("Không tìm thấy GEMINI_API_KEYS");
   }
-  return keysArray[Math.floor(Math.random() * keysArray.length)];
+  return pickRandomKey(keysArray);
+}
+
+function getZaiKeys(): string[] {
+  return parseKeys(process.env.GLM_API_KEYS || process.env.ZAI_API_KEY || "");
 }
 
 function getMessageText(message?: Partial<IncomingMessage>): string {
@@ -63,6 +82,30 @@ function getMessageAttachments(message?: Partial<IncomingMessage>): AttachmentLi
     })) || [];
 
   return [...fileParts, ...(message.experimental_attachments || [])];
+}
+
+function hasAnyAttachments(messages: Partial<IncomingMessage>[]): boolean {
+  return messages.some((msg) => getMessageAttachments(msg).length > 0);
+}
+
+function shouldUseZai(tier: string, messages: Partial<IncomingMessage>[], zaiKeys: string[]): boolean {
+  return tier !== 'accurate' && zaiKeys.length > 0 && !hasAnyAttachments(messages);
+}
+
+function getZaiModelName(tier: string): string {
+  return tier === 'basic' ? 'glm-4.5-flash' : 'glm-4.7-flash';
+}
+
+function getZaiBackupModelName(tier: string): string {
+  return tier === 'basic' ? 'glm-4.7-flash' : 'glm-4.5-flash';
+}
+
+function getErrorStatus(error: unknown): number | undefined {
+  if (typeof error !== 'object' || error === null) return undefined;
+  const maybeError = error as { statusCode?: unknown; status?: unknown };
+  if (typeof maybeError.statusCode === 'number') return maybeError.statusCode;
+  if (typeof maybeError.status === 'number') return maybeError.status;
+  return undefined;
 }
 
 function setMessageAttachments(message: IncomingMessage, attachments: AttachmentLike[]) {
@@ -105,6 +148,9 @@ export async function POST(req: Request) {
     if (!messages || messages.length === 0) {
       return NextResponse.json({ error: 'Messages are required' }, { status: 400 });
     }
+
+    const zaiKeys = getZaiKeys();
+    const useFreeZai = shouldUseZai(tier, messages, zaiKeys);
 
     let currentChatId = chatId;
 
@@ -176,7 +222,9 @@ export async function POST(req: Request) {
     }
 
     // Kiểm tra số dư trước khi cho phép chat
-    let { data: userDoc, error: walletError } = await supabaseWithAuth.from('users').select('purchased_coins').eq('id', user.id).single();
+    const walletResult = await supabaseWithAuth.from('users').select('purchased_coins').eq('id', user.id).single();
+    let userDoc = walletResult.data;
+    const walletError = walletResult.error;
     
     // NẾU CHƯA CÓ VÍ -> TỰ ĐỘNG TẠO VÍ LUÔN TRONG DB
     if (walletError && walletError.code === 'PGRST116') {
@@ -188,7 +236,7 @@ export async function POST(req: Request) {
       userDoc = newDoc;
     }
 
-    if (!userDoc || userDoc.purchased_coins <= 0) {
+    if ((!userDoc || userDoc.purchased_coins <= 0) && !useFreeZai) {
       return new Response(JSON.stringify({ error: 'Tài khoản của quý khách đã hết GEM. Vui lòng nạp thêm để tiếp tục!' }), { status: 402 });
     }
 
@@ -235,6 +283,35 @@ export async function POST(req: Request) {
       backupModel = 'gemini-3.5-flash-lite';
     }
 
+    let mainModelConfig: SeeModelConfig;
+    let backupModelConfig: SeeModelConfig | null;
+
+    if (useFreeZai) {
+      mainModelConfig = {
+        provider: 'zai',
+        modelName: getZaiModelName(tier),
+        apiKey: pickRandomKey(zaiKeys),
+      };
+
+      backupModelConfig = {
+        provider: 'zai',
+        modelName: getZaiBackupModelName(tier),
+        apiKey: pickRandomKey(zaiKeys),
+      };
+    } else {
+      mainModelConfig = {
+        provider: 'gemini',
+        modelName: mainModel,
+        apiKey: getRandomKey(),
+      };
+
+      backupModelConfig = backupModel ? {
+        provider: 'gemini',
+        modelName: backupModel,
+        apiKey: getRandomKey(),
+      } : null;
+    }
+
     // Lấy câu lệnh gốc
     const systemPrompt = SEE_INSTRUCTIONS[branchId] || SEE_INSTRUCTIONS['raw'];
     const fullSystemPrompt = `
@@ -248,11 +325,17 @@ Luôn giao tiếp bằng Tiếng Việt thân thiện, chuyên nghiệp, trừ p
     `;
 
     // Hàm gọi AI và Tính Tiền
-    const callAI = (modelName: string, apiKey: string) => {
-      const googleProvider = createGoogleGenerativeAI({ apiKey });
+    const callAI = ({ provider, modelName, apiKey }: SeeModelConfig) => {
+      const model = provider === 'zai'
+        ? createOpenAI({
+            apiKey,
+            baseURL: process.env.ZAI_BASE_URL || process.env.GLM_BASE_URL || 'https://api.z.ai/api/paas/v4/',
+            name: 'zai',
+          }).chat(modelName)
+        : createGoogleGenerativeAI({ apiKey })(modelName);
       
       return streamText({
-        model: googleProvider(modelName),
+        model,
         system: fullSystemPrompt,
         messages: modelMessages,
         onFinish: async ({ text, usage }) => {
@@ -270,7 +353,7 @@ Luôn giao tiếp bằng Tiếng Việt thân thiện, chuyên nghiệp, trừ p
           // Quy đổi ra Gem (Tỷ giá tạm tính: 25,000 Gem)
           const finalPriceVND = Math.ceil(finalPriceUSD * 25000);
 
-          console.log(`[BILLING] Nhánh: ${branchId} | Tier: ${tier} | Model: ${modelName}`);
+          console.log(`[BILLING] Nhánh: ${branchId} | Tier: ${tier} | Provider: ${provider} | Model: ${modelName}`);
           console.log(`[BILLING] Input: ${promptTokens} | Output: ${completionTokens}`);
           console.log(`[BILLING] Giá gốc: $${rawCostUSD.toFixed(6)} | Giá thu khách (+30%): $${finalPriceUSD.toFixed(6)}`);
 
@@ -297,17 +380,17 @@ Luôn giao tiếp bằng Tiếng Việt thân thiện, chuyên nghiệp, trừ p
 
     try {
       // Gọi thử Model Chính trước
-      const result = callAI(mainModel, getRandomKey());
+      const result = callAI(mainModelConfig);
       return result.toUIMessageStreamResponse({
         headers: {
           'X-Chat-Id': currentChatId || ''
         }
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Nếu lỗi Rate Limit (429) và có Model Dự phòng
-      if ((error.statusCode === 429 || error.status === 429) && backupModel) {
-        console.log(`[FALLBACK] Model chính ${mainModel} quá tải. Tự động chuyển sang ${backupModel} với Key mới!`);
-        const fallbackResult = callAI(backupModel, getRandomKey());
+      if (getErrorStatus(error) === 429 && backupModelConfig) {
+        console.log(`[FALLBACK] Model chính ${mainModelConfig.modelName} quá tải. Tự động chuyển sang ${backupModelConfig.modelName} với Key mới!`);
+        const fallbackResult = callAI(backupModelConfig);
         return fallbackResult.toUIMessageStreamResponse({
           headers: {
             'X-Chat-Id': currentChatId || ''
