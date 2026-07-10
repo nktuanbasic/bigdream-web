@@ -38,8 +38,8 @@ export async function POST(req: Request) {
       baseCostUSD = 0.02;
     }
 
-    // 2. Logic Tính Tiền (+30% lợi nhuận)
-    const finalPriceUSD = baseCostUSD * 1.3;
+    // 2. Logic Tính Tiền (+15% lợi nhuận)
+    const finalPriceUSD = baseCostUSD * 1.15;
     const finalPriceVND = Math.ceil(finalPriceUSD * 25000);
 
     // 4. Kiểm tra số dư Gem
@@ -47,12 +47,21 @@ export async function POST(req: Request) {
     
     // NẾU CHƯA CÓ VÍ -> TỰ ĐỘNG TẠO VÍ LUÔN TRONG DB
     if (walletError && walletError.code === 'PGRST116') {
-      const { data: newDoc } = await supabase.from('users').insert({
+      const { data: newDoc, error: insertErr } = await supabase.from('users').insert({
         id: user.id,
         email: user.email,
         purchased_coins: 0
       }).select('purchased_coins').single();
+
+      if (insertErr || !newDoc) {
+        console.error('[WALLET CREATE ERROR]', insertErr);
+        return NextResponse.json({ error: 'Không thể khởi tạo ví. Vui lòng thử lại.' }, { status: 500 });
+      }
       userDoc = newDoc;
+    } else if (walletError) {
+      // Lỗi khác (network, RLS, etc) — không phải "chưa có ví" thì fail sạch
+      console.error('[WALLET FETCH ERROR]', walletError);
+      return NextResponse.json({ error: 'Không thể truy vấn ví. Vui lòng thử lại.' }, { status: 500 });
     }
 
     if (!userDoc || userDoc.purchased_coins < finalPriceVND) {
@@ -125,7 +134,7 @@ export async function POST(req: Request) {
     const newBalance = Math.max(0, userDoc.purchased_coins - finalPriceVND);
     await supabase.from('users').update({ purchased_coins: newBalance }).eq('id', user.id);
 
-    console.log(`[BILLING IMAGE] Giá gốc: $${baseCostUSD} | Giá bán (+30%): $${finalPriceUSD}`);
+    console.log(`[BILLING IMAGE] Giá gốc: $${baseCostUSD} | Giá bán (+15%): $${finalPriceUSD}`);
     console.log(`[BILLING IMAGE] SỐ TIỀN TRỪ VÀO VÍ KHÁCH (${user.email}): -${finalPriceVND} GEM. Số dư mới: ${newBalance}`);
 
     return NextResponse.json({ 
